@@ -79,7 +79,8 @@ class UserResource extends Resource
                     ->disabled(),
             ])
             ->filters([
-                Filter::make('verified')->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at'))
+                Filter::make('name'),
+                Filter::make('email'),
             ])
             ->actions([
                 EditAction::make(),
