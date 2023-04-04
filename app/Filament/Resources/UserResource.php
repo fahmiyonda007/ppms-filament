@@ -37,6 +37,7 @@ use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\Traits\HasRoles;
 
 class UserResource extends Resource
@@ -61,11 +62,9 @@ class UserResource extends Resource
                         ->required()
                         ->unique(ignoreRecord: true)
                         ->maxLength(255),
-                    TextInput::make('password')
+                    TextInput::make('Password')
                         ->password()
                         ->required()
-                        ->same('passwordConfirmation')
-                        ->minLength(8)
                         ->dehydrated(fn ($state) => filled($state))
                         ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                         ->visibleOn('create'),
@@ -73,7 +72,7 @@ class UserResource extends Resource
                         ->password()
                         ->visibleOn('create')
                         ->required(fn (Page $livewire) => $livewire instanceof CreateRecord)
-                        ->minLength(8)
+                        ->same('password')
                         ->dehydrated(false),
                     Select::make('roles')
                         ->multiple()
@@ -116,7 +115,6 @@ class UserResource extends Resource
                     ->hidden(fn ($record) => auth()->user()->role !== 'sa' & $record->email_verified_at !== null),
             ])
             ->bulkActions([
-                DeleteBulkAction::make(),
             ]);
     }
 
