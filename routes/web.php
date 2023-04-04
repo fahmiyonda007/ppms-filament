@@ -14,5 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('admin');
 });
+
+Route::get("/profile", function () {
+    // Only verified users may access this route...
+})->middleware('verified');

@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Tabs;
 use Filament\Notifications\Notification;
+use Filament\Pages\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Resources\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -36,6 +37,7 @@ use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Traits\HasRoles;
 
 class UserResource extends Resource
 {
@@ -73,11 +75,10 @@ class UserResource extends Resource
                         ->required(fn (Page $livewire) => $livewire instanceof CreateRecord)
                         ->minLength(8)
                         ->dehydrated(false),
-                    Toggle::make('verified'),
                     Select::make('roles')
                         ->multiple()
                         ->relationship('roles', 'name')->preload()
-                ])
+                ]),
             ]);
     }
 
@@ -91,17 +92,16 @@ class UserResource extends Resource
                             ->searchable()
                             ->sortable(),
                         TagsColumn::make('roles.name')
-                            ->separator(',')
                             ->searchable()
-                            ->sortable(),
                     ]),
                     Stack::make([
                         TextColumn::make('email')
                             ->searchable()
                             ->sortable()
-                            ->icon(fn ($record) => $record->verified == '1' ? '' : 'heroicon-o-shield-exclamation')
+                            ->alignLeft()
+                            ->icon(fn ($record) => $record->email_verified_at !== null ? '' : 'heroicon-o-shield-exclamation')
                             ->iconPosition('before')
-                            ->tooltip(fn ($record) => $record->verified == '1' ? 'verified' : 'not verified'),
+                            ->tooltip(fn ($record) => $record->email_verified_at !== null ? 'verified' : 'not verified'),
                     ])
                 ]),
 
@@ -112,7 +112,8 @@ class UserResource extends Resource
             ])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->hidden(fn ($record) => auth()->user()->role !== 'sa' & $record->email_verified_at !== null),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
@@ -130,7 +131,6 @@ class UserResource extends Resource
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
-            'profile' => Pages\ProfileUser::route('/{record}/profile'),
         ];
     }
 

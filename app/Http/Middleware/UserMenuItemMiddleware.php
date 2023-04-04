@@ -19,10 +19,10 @@ class UserMenuItemMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         Filament::registerUserMenuItems([
-            UserMenuItem::make()
-                ->label('Settings')
-                ->url(UserResource::getUrl('profile', ['record' => auth()->id()]))
-                ->icon('heroicon-s-cog'),
+            // UserMenuItem::make()
+            //     ->label('Settings')
+            //     ->url(route('profile', ['record' => auth()->id()]))
+            //     ->icon('heroicon-s-cog'),
         ]);
         return $next($request);
     }

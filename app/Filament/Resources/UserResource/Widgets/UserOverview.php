@@ -23,7 +23,7 @@ class UserOverview extends BaseWidget
 
         return [
             Card::make('Users', User::count()),
-            Card::make('Verified', User::where('verified', '1')->count())
+            Card::make('Verified', User::whereNotNull('email_verified_at')->count())
                 ->chart(
                     $orderData
                         ->map(fn (TrendValue $value) => $value->aggregate)
