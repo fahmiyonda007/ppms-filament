@@ -7,6 +7,7 @@ use App\Filament\Resources\RoleResource\RelationManagers;
 use Spatie\Permission\Models\Role;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -33,6 +34,9 @@ class RoleResource extends Resource
                     TextInput::make('name')
                         ->required()
                         ->maxLength(255),
+                    Select::make('permissions')
+                        ->multiple()
+                        ->relationship('permissions', 'name')->preload()
                 ])
             ]);
     }
@@ -42,6 +46,9 @@ class RoleResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('permissions.name')
                     ->searchable()
                     ->sortable()
             ])
