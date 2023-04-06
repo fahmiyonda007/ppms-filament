@@ -62,7 +62,7 @@ class UserResource extends Resource
                         ->required()
                         ->unique(ignoreRecord: true)
                         ->maxLength(255),
-                    TextInput::make('Password')
+                    TextInput::make('password')
                         ->password()
                         ->required()
                         ->dehydrated(fn ($state) => filled($state))
@@ -76,7 +76,13 @@ class UserResource extends Resource
                         ->dehydrated(false),
                     Select::make('roles')
                         ->multiple()
-                        ->relationship('roles', 'name')->preload()
+                        ->relationship('roles', 'name')->preload(),
+                    Toggle::make('verified')
+                        ->onIcon('heroicon-s-lightning-bolt')
+                        ->offIcon('heroicon-s-user')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->visibleOn('edit')
                 ]),
             ]);
     }
@@ -101,6 +107,8 @@ class UserResource extends Resource
                             ->icon(fn ($record) => $record->email_verified_at !== null ? '' : 'heroicon-o-shield-exclamation')
                             ->iconPosition('before')
                             ->tooltip(fn ($record) => $record->email_verified_at !== null ? 'verified' : 'not verified'),
+                        TextColumn::make('email_verified_at')
+                            ->sortable(),
                     ])
                 ]),
 
@@ -111,11 +119,9 @@ class UserResource extends Resource
             ])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make()
-                    ->hidden(fn ($record) => auth()->user()->role !== 'sa' & $record->email_verified_at !== null),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array

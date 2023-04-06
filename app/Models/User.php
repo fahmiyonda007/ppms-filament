@@ -18,7 +18,7 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, TwoFactorAuthenticatable;
 
@@ -52,8 +52,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function canAccessFilament(): bool
-    {
-        return $this->hasRole([...Role::all()->pluck('name')]);
-    }
+    // public function canAccessFilament(): bool
+    // {
+    //     return $this->hasRole([...Role::all()->pluck('name')]);
+    // }
 }
