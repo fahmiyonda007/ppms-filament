@@ -60,6 +60,7 @@ class BankAccountResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('banks.bank_name')
+                    ->label('Bank')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('account_number')

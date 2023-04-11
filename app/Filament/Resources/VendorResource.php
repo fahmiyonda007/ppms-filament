@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VendorResource\Pages;
 use App\Filament\Resources\VendorResource\RelationManagers;
+use App\Filament\Resources\VendorResource\RelationManagers\BankaccountsRelationManager;
+use App\Filament\Resources\VendorResource\RelationManagers\BankAccountsRelationManager as RelationManagersBankAccountsRelationManager;
 use App\Models\BankAccount;
 use App\Models\Vendor;
 use Filament\Forms;
@@ -51,10 +53,6 @@ class VendorResource extends Resource
                         ]),
                     Textarea::make('address')
                         ->maxLength(2000),
-                    Select::make('bankaccount_id')
-                        ->multiple(false)
-                        ->label('Bank Account')
-                        ->options(BankAccount::get()->pluck('Full_account', 'id')),
                 ])
             ]);
     }
@@ -92,7 +90,7 @@ class VendorResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BankaccountsRelationManager::class,
         ];
     }
 
