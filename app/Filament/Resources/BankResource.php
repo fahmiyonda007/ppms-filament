@@ -26,7 +26,7 @@ class BankResource extends Resource
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'Banks';
     protected static ?string $recordTitleAttribute = 'bank_name';
-
+    protected static ?int $navigationSort = 1;
 
 
     public static function form(Form $form): Form

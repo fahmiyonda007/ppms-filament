@@ -6,16 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BankAccount extends Model
+class Vendor extends Model
 {
     use HasFactory;
 
     public $timestamps = true;
 
     protected $fillable = [
-        'account_number',
-        'account_name',
-        'bank_id',
+        'name',
+        'address',
+        'phone',
+        'bankaccount_id'
     ];
 
     protected $dates = [
@@ -23,20 +24,14 @@ class BankAccount extends Model
         'updated_at',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'bankaccount_id' => 'integer',
+    ];
 
     protected $hidden = [
+        'bankaccount_id',
         'created_at',
         'updated_at',
     ];
 
-    public function banks(): BelongsTo
-    {
-        return $this->belongsTo(Bank::class, 'bank_id');
-    }
-
-    public function getFullAccountAttribute()
-    {
-        return $this->account_name . ' - ' . $this->account_number;
-    }
 }

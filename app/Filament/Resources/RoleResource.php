@@ -32,6 +32,8 @@ class RoleResource extends Resource
     protected static ?string $slug = 'settings/roles';
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?int $navigationSort = 2;
+
 
     public static function form(Form $form): Form
     {
@@ -69,8 +71,6 @@ class RoleResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
                     ->visible(auth()->user()->id == 1 | $user->count() > 0),
-                ExportBulkAction::make()
-
             ]);
     }
 
