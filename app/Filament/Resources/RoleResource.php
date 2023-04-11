@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
 use App\Filament\Resources\RoleResource\RelationManagers;
+use App\Models\User;
+use Filament\Facades\Filament;
 use Spatie\Permission\Models\Role;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
@@ -13,11 +15,15 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class RoleResource extends Resource
 {
@@ -44,6 +50,7 @@ class RoleResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $user = User::permission(['role:delete'])->where('id', auth()->id())->get();
         return $table
             ->columns([
                 TextColumn::make('name')
@@ -57,9 +64,13 @@ class RoleResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->visible(auth()->user()->id == 1 | $user->count() > 0),
+                ExportBulkAction::make()
+
             ]);
     }
 

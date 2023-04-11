@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Filament\Resources\BankAccountResource;
+use App\Filament\Resources\BankResource;
+use App\Filament\Resources\PermissionResource;
 use App\Filament\Resources\RoleResource;
 use App\Filament\Resources\UserResource;
+use App\Filament\Resources\VendorResource;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
@@ -59,8 +63,16 @@ class AppServiceProvider extends ServiceProvider
         //                 ->items([
         //                     ...UserResource::getNavigationItems(),
         //                     ...RoleResource::getNavigationItems(),
-        //                     ...PermissionResource::getNavigationItems()
-        //                 ])
+        //                     ...PermissionResource::getNavigationItems(),
+        //                 ])->collapsed(false)
+        //         ])
+        //         ->groups([
+        //             NavigationGroup::make('masters')
+        //                 ->items([
+        //                     ...BankResource::getNavigationItems(),
+        //                     ...BankAccountResource::getNavigationItems(),
+        //                     ...VendorResource::getNavigationItems(),
+        //                 ])->collapsed()
         //         ]);
         // });
     }

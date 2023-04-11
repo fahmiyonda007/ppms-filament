@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Spatie\Permission\Traits\HasRoles;
 
 class UserResource extends Resource
