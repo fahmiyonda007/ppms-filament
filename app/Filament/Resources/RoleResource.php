@@ -28,7 +28,7 @@ use pxlrbt\FilamentExcel\Exports\ExcelExport;
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-lock-closed';
     protected static ?string $slug = 'settings/roles';
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $recordTitleAttribute = 'name';

@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-key';
     protected static ?string $slug = 'settings/permissions';
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $recordTitleAttribute = 'name';

@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class BankAccountResource extends Resource
 {
     protected static ?string $model = BankAccount::class;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     protected static ?string $slug = 'master/bankaccounts';
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'Bank Accounts';
