@@ -5,11 +5,13 @@
 
     <div class="space-y-8">
         <h2 class="font-bold tracking-tight text-center text-2xl">
-            {{ __('filament-breezy::default.verification.heading') }}
+            {{-- {{ __('filament-breezy::default.verification.heading') }} --}}
+            Verification Required
         </h2>
         <div>
-            {{ __('filament-breezy::default.verification.before_proceeding') }}
-            @unless($hasBeenSent)
+            {{-- {{ __('filament-breezy::default.verification.before_proceeding') }} --}}
+
+            {{-- @unless($hasBeenSent)
                 {{ __('filament-breezy::default.verification.not_receive') }}
 
                 <a class="text-primary-600" href="#" wire:click="resend">
@@ -18,7 +20,9 @@
 
             @else
                 <span class="block text-success-600 font-semibold">{{ __('filament-breezy::default.verification.notification_success') }}</span>
-            @endunless
+            @endunless --}}
+
+            Before proceeding, please check your account for a verification. If you did not receive please contact your administrator.
         </div>
     </div>
 
