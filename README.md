@@ -22,6 +22,8 @@ git clone https://github.com/fahmiyonda007/ppms-filament.git
 composer install
 ```
 
+Copy file **.env.example**, rename to **.env**, setup your .env file and generate key with:
+
 ```bash
 php artisan key:generate
 ```
