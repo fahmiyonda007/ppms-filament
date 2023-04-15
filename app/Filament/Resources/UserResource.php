@@ -8,6 +8,7 @@ use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Filament\Resources\UserResource\Widgets\UserOverview;
 use App\Models\User;
 use BezhanSalleh\FilamentAddons\Tables\Columns\ChipColumn;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
@@ -41,15 +42,28 @@ use Illuminate\Validation\Rules\Password;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Spatie\Permission\Traits\HasRoles;
 
-class UserResource extends Resource
+class UserResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = User::class;
     protected static ?string $slug = 'settings/users';
-    protected static ?string $navigationGroup = 'Settings';
+    // protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static ?string $navigationLabel = 'Users';
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 1;
+
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
+    }
 
     public static function form(Form $form): Form
     {

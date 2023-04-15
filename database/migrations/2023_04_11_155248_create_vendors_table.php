@@ -23,7 +23,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::statement("CALL SetNewPermission('vendor')");
     }
 
     /**

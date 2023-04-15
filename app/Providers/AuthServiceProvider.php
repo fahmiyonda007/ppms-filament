@@ -24,7 +24,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::before(function($user, $ability) {
-            if ($user->email == 'sa@ppms.id') {
+            if ($user->id == 1) {
                 return true;
             }
         });

@@ -8,6 +8,7 @@ use App\Filament\Resources\VendorResource\RelationManagers\BankaccountsRelationM
 use App\Filament\Resources\VendorResource\RelationManagers\BankAccountsRelationManager as RelationManagersBankAccountsRelationManager;
 use App\Models\BankAccount;
 use App\Models\Vendor;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
-class VendorResource extends Resource
+class VendorResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Vendor::class;
 
@@ -35,6 +36,18 @@ class VendorResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 3;
 
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
+    }
 
     public static function form(Form $form): Form
     {

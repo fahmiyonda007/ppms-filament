@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BankAccountResource\Pages;
 use App\Filament\Resources\BankAccountResource\RelationManagers;
 use App\Models\BankAccount;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
@@ -19,7 +20,7 @@ use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BankAccountResource extends Resource
+class BankAccountResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = BankAccount::class;
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
@@ -29,6 +30,18 @@ class BankAccountResource extends Resource
     protected static ?string $recordTitleAttribute = 'account_name';
     protected static ?int $navigationSort = 2;
 
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
+    }
 
     public static function form(Form $form): Form
     {

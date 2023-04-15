@@ -4,17 +4,13 @@ namespace App\Providers;
 
 use App\Filament\Resources\BankAccountResource;
 use App\Filament\Resources\BankResource;
-use App\Filament\Resources\PermissionResource;
-use App\Filament\Resources\RoleResource;
+use App\Filament\Resources\Shield\RoleResource;
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\VendorResource;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-use Filament\Navigation\UserMenuItem;
-use Illuminate\Foundation\Auth\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use JeffGreco13\FilamentBreezy\FilamentBreezy;
@@ -62,9 +58,8 @@ class AppServiceProvider extends ServiceProvider
         //             NavigationGroup::make('settings')
         //                 ->items([
         //                     ...UserResource::getNavigationItems(),
-        //                     ...RoleResource::getNavigationItems(),
-        //                     ...PermissionResource::getNavigationItems(),
-        //                 ])->collapsed(false)
+        //                     ...RoleResource::getNavigationItems()->,
+        //                 ])->collapsed()
         //         ])
         //         ->groups([
         //             NavigationGroup::make('masters')
