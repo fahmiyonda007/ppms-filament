@@ -29,7 +29,7 @@ class BankAccountResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'Bank Accounts';
     protected static ?string $recordTitleAttribute = 'account_name';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
 
     public static function getPermissionPrefixes(): array
