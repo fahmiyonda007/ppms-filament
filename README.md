@@ -22,6 +22,8 @@ git clone https://github.com/fahmiyonda007/ppms-filament.git
 composer install
 ```
 
+Copy file **.env.example**, rename to **.env**, setup your .env file and generate key with:
+
 ```bash
 php artisan key:generate
 ```
@@ -30,15 +32,15 @@ php artisan key:generate
 php artisan migrate
 ```
 
-```bash
-php artisan ser
-php artisan serve
-```
-
 optional for optimize:
 
 ```bash
 php artisan optimize:clear 
+```
+
+```bash
+php artisan ser
+php artisan serve
 ```
 
 
@@ -64,6 +66,8 @@ php artisan migrate:generate --tables="banks"
 After create migration files, add this code:
 
 ```php
-\\...
-DB::statement("CALL SetNewPermission('bank')");
+public function up() {
+    \\...
+    DB::statement("CALL SetNewPermission('bank')");
+}
 ```
