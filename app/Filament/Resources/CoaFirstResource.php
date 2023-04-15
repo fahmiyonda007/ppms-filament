@@ -7,6 +7,7 @@ use App\Filament\Resources\CoaFirstResource\RelationManagers;
 use App\Filament\Resources\CoaSecondResource\RelationManagers\CoaLevelSecondsRelationManager;
 use App\Filament\Resources\CoaSecondResource\RelationManagers\CoaLevelThirdsRelationManager;
 use App\Models\CoaFirst;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
@@ -27,7 +28,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 
-class CoaFirstResource extends Resource
+class CoaFirstResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = CoaFirst::class;
     protected static ?string $navigationIcon = 'heroicon-o-cash';
@@ -37,6 +38,18 @@ class CoaFirstResource extends Resource
     protected static ?int $navigationSort = 1;
     protected static ?string $label = 'C O A ';
 
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
+    }
 
     public static function form(Form $form): Form
     {
