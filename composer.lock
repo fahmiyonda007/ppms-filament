@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f23d4e4f1f7f66cfa6cb84397b6161f3",
+    "content-hash": "081bf63f94f3d88578efcfeff7840a89",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -136,6 +136,81 @@
                 "source": "https://github.com/AnourValar/eloquent-serialize/tree/1.2.14"
             },
             "time": "2023-02-28T16:58:15+00:00"
+        },
+        {
+            "name": "awcodes/filament-badgeable-column",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/awcodes/filament-badgeable-column.git",
+                "reference": "79e5142f493e4978fc612f6653bbe297d10a7c9c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/awcodes/filament-badgeable-column/zipball/79e5142f493e4978fc612f6653bbe297d10a7c9c",
+                "reference": "79e5142f493e4978fc612f6653bbe297d10a7c9c",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^2.0",
+                "illuminate/contracts": "^9.0|^10.0",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.13.5"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^6.0|^7.0",
+                "orchestra/testbench": "^7.0|^8.0",
+                "pestphp/pest": "^1.21",
+                "pestphp/pest-plugin-laravel": "^1.1",
+                "pestphp/pest-plugin-livewire": "^1.0",
+                "pestphp/pest-plugin-parallel": "^0.3",
+                "phpunit/phpunit": "^9.5|^10.0",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Awcodes\\FilamentBadgeableColumn\\BadgeableColumnServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Awcodes\\FilamentBadgeableColumn\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "awcodes",
+                    "email": "awcodes1@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Filament Tables column with appendable badges.",
+            "homepage": "https://github.com/awcodes/filament-badgeable-column",
+            "keywords": [
+                "awcodes",
+                "filament",
+                "filament-badgeable-column",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/awcodes/filament-badgeable-column/issues",
+                "source": "https://github.com/awcodes/filament-badgeable-column/tree/v1.2.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/awcodes",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-03-10T14:21:40+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -2214,6 +2289,64 @@
                 }
             ],
             "time": "2023-04-03T17:57:52+00:00"
+        },
+        {
+            "name": "koalafacade/filament-alertbox",
+            "version": "v0.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KoalaFacade/Filament-Alertbox.git",
+                "reference": "adf9b2a464ebe2743078f5f763c60e6053de62fe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/KoalaFacade/Filament-Alertbox/zipball/adf9b2a464ebe2743078f5f763c60e6053de62fe",
+                "reference": "adf9b2a464ebe2743078f5f763c60e6053de62fe",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^2.16",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.13"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.3",
+                "nunomaduro/collision": "^6.4",
+                "nunomaduro/larastan": "^2.3",
+                "orchestra/testbench": "^7.18",
+                "pestphp/pest": "^1.22",
+                "pestphp/pest-plugin-laravel": "^1.3",
+                "pestphp/pest-plugin-livewire": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "KoalaFacade\\FilamentAlertBox\\FilamentAlertBoxServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "KoalaFacade\\FilamentAlertBox\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stiven Trizky Katuuk",
+                    "email": "pemudakoding@gmail.com"
+                }
+            ],
+            "description": "Alert box field for Filament forms",
+            "support": {
+                "issues": "https://github.com/KoalaFacade/Filament-Alertbox/issues",
+                "source": "https://github.com/KoalaFacade/Filament-Alertbox/tree/v0.2.3"
+            },
+            "time": "2023-03-10T15:06:40+00:00"
         },
         {
             "name": "laravel/framework",
@@ -7738,6 +7871,62 @@
                 }
             ],
             "time": "2022-03-08T17:03:00+00:00"
+        },
+        {
+            "name": "webbingbrasil/filament-advancedfilter",
+            "version": "v1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webbingbrasil/filament-advancedfilter.git",
+                "reference": "6871b6b41c16d10259edbc1d6df4b4f6a5163d08"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webbingbrasil/filament-advancedfilter/zipball/6871b6b41c16d10259edbc1d6df4b4f6a5163d08",
+                "reference": "6871b6b41c16d10259edbc1d6df4b4f6a5163d08",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^2.15.23",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.9.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Webbingbrasil\\FilamentAdvancedFilter\\FilamentAdvancedFilterProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webbingbrasil\\FilamentAdvancedFilter\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Danilo Andrade",
+                    "email": "danilo@webbingbrasil.com.br",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Advanced filter component for filament admin.",
+            "homepage": "https://github.com/webbingbrasil/filament-advancedfilter",
+            "keywords": [
+                "filament",
+                "filter",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/webbingbrasil/filament-advancedfilter/issues",
+                "source": "https://github.com/webbingbrasil/filament-advancedfilter/tree/v1.2.2"
+            },
+            "time": "2023-04-14T12:11:51+00:00"
         },
         {
             "name": "webmozart/assert",

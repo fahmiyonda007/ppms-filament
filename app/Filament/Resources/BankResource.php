@@ -18,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 
 class BankResource extends Resource implements HasShieldPermissions
 {
@@ -66,7 +67,7 @@ class BankResource extends Resource implements HasShieldPermissions
                     ->sortable(),
             ])
             ->filters([
-                Filter::make('bank_name'),
+                TextFilter::make('bank_name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
