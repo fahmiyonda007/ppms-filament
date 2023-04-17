@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\CoaSecondResource\RelationManagers;
 
+use App\Models\CoaFirst;
+use App\Models\CoaSecond;
+use Closure;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -23,7 +26,14 @@ class CoaLevelSecondsRelationManager extends RelationManager
             ->schema([
                 Forms\Components\TextInput::make('code')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabled()
+                    ->default(function (RelationManager $livewire) {
+                        $firstId = $livewire->ownerRecord->id;
+                        $seconds = CoaSecond::where('level_first_id', $firstId)->get();
+                        $len = str_pad($seconds->count() + 1, 2, '0', STR_PAD_LEFT);
+                        return $len;
+                    }),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -42,11 +52,14 @@ class CoaLevelSecondsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->label('New'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                ->before(function ($record) {
+                    $record->thirds()->where('level_second_id', $record->id)->delete();
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

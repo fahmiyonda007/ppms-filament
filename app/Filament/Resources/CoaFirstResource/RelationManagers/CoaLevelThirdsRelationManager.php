@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\CoaSecondResource\RelationManagers;
 
+use App\Models\CoaFirst;
 use App\Models\CoaSecond;
+use App\Models\CoaThird;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
@@ -15,6 +17,8 @@ use Filament\Tables\Actions\EditAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
+
 
 class CoaLevelThirdsRelationManager extends RelationManager
 {
@@ -42,7 +46,7 @@ class CoaLevelThirdsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                Tables\Actions\CreateAction::make()->label('New')
                     ->form(function (CreateAction $action, RelationManager $livewire) {
                         $parentId = $livewire->ownerRecord->id;
                         return [
@@ -51,16 +55,31 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                     Forms\Components\Select::make('level_second_id')
                                         ->label('Level 2')
                                         ->required()
-                                        // ->options(CoaSecond::where('level_first_id', '=', $parentId)->pluck('name', 'id'))
                                         ->relationship('second', 'name', fn (Builder $query) => $query->where('level_first_id', $parentId))
                                         ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
-                                        ->preload(),
+                                        ->preload()
+                                        ->reactive()
+                                        ->afterStateUpdated(function (Closure $set, $state) {
+                                            $second = CoaSecond::find($state);
+                                            if ($second) {
+                                                $thirds = CoaThird::where([
+                                                    ['level_first_id', '=', $second->level_first_id],
+                                                    ['level_second_id', '=', $second->id]
+                                                ]);
+                                                $first = CoaFirst::find($second->level_first_id);
+                                                $len = str_pad($thirds->count() + 1, 3, '0', STR_PAD_LEFT);
+                                                $numb =  "{$first->code}{$second->code}{$len}";
+                                                $set('code', $numb);
+                                            } else {
+                                                $set('code', '');
+                                            }
+                                        }),
                                 ]),
                             Grid::make(2)
                                 ->schema([
                                     Forms\Components\TextInput::make('code')
                                         ->required()
-                                        ->maxLength(255),
+                                        ->disabled(),
                                     Forms\Components\TextInput::make('name')
                                         ->required()
                                         ->maxLength(255),
@@ -78,10 +97,29 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                     Forms\Components\Select::make('level_second_id')
                                         ->label('Level 2')
                                         ->required()
-                                        // ->options(CoaSecond::where('level_first_id', '=', $parentId)->pluck('name', 'id'))
                                         ->relationship('second', 'name', fn (Builder $query) => $query->where('level_first_id', $parentId))
                                         ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
-                                        ->preload(),
+                                        ->preload()
+                                        ->reactive()
+                                        ->afterStateUpdated(function ($record, Closure $set, $state) {
+                                            $second = CoaSecond::find($state);
+                                            if ($second) {
+                                                if ($record->level_second_id <> $second->id) {
+                                                    $thirds = CoaThird::where([
+                                                        ['level_first_id', '=', $second->level_first_id],
+                                                        ['level_second_id', '=', $second->id]
+                                                    ]);
+                                                    $first = CoaFirst::find($second->level_first_id);
+                                                    $len = str_pad($thirds->count() + 1, 3, '0', STR_PAD_LEFT);
+                                                    $numb =  "{$first->code}{$second->code}{$len}";
+                                                    $set('code', $numb);
+                                                } else if ($record->level_second_id == $second->id) {
+                                                    $set('code', $record->code);
+                                                }
+                                            } else {
+                                                $set('code', '');
+                                            }
+                                        }),
                                 ]),
                             Grid::make(2)
                                 ->schema([

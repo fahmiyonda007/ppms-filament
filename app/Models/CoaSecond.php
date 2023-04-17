@@ -40,9 +40,9 @@ class CoaSecond extends Model
         return $this->belongsTo(CoaFirst::class, 'level_first_id');
     }
 
-    public function thirds(): BelongsToMany
+    public function thirds(): HasMany
     {
-        return $this->belongsToMany(CoaThird::class, 'level_second_id', 'id');
+        return $this->hasMany(CoaThird::class, 'level_second_id', 'id');
     }
 
 }

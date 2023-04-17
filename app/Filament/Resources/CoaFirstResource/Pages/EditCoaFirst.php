@@ -13,7 +13,11 @@ class EditCoaFirst extends EditRecord
     protected function getActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->before(function ($record) {
+                    $record->seconds()->where('level_first_id', $record->id)->delete();
+                    $record->thirds()->where('level_first_id', $record->id)->delete();
+                }),
         ];
     }
 }

@@ -8,6 +8,7 @@ use App\Filament\Resources\CoaSecondResource\RelationManagers\CoaLevelSecondsRel
 use App\Filament\Resources\CoaSecondResource\RelationManagers\CoaLevelThirdsRelationManager;
 use App\Models\CoaFirst;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
@@ -22,11 +23,13 @@ use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
+
 
 class CoaFirstResource extends Resource implements HasShieldPermissions
 {
@@ -60,7 +63,8 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
                         ->schema([
                             TextInput::make('code')
                                 ->required()
-                                ->maxLength(255),
+                                ->maxLength(255)
+                                ->unique(),
                             TextInput::make('name')
                                 ->required()
                                 ->maxLength(255),
@@ -86,10 +90,20 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function ($record) {
+                        $record->seconds()->where('level_first_id', $record->id)->delete();
+                        $record->thirds()->where('level_first_id', $record->id)->delete();
+                    }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->before(function ($records) {
+                        foreach ($records as $item) {
+                            $item->seconds()->where('level_first_id', $item->id)->delete();
+                            $item->thirds()->where('level_first_id', $item->id)->delete();
+                        }
+                    }),
             ]);
     }
 
