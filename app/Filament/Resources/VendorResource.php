@@ -34,7 +34,7 @@ class VendorResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'Vendors';
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?int $navigationSort = 3;
+    // protected static ?int $navigationSort = 3;
 
 
     public static function getPermissionPrefixes(): array

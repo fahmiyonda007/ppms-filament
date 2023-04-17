@@ -38,7 +38,7 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
     protected static ?string $slug = 'master/coa';
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'COA';
-    protected static ?int $navigationSort = 1;
+    // protected static ?int $navigationSort = 1;
     protected static ?string $label = 'C O A ';
 
 
