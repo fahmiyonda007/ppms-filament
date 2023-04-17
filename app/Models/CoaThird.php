@@ -19,6 +19,8 @@ class CoaThird extends Model
         'name',
         'level_first_id',
         'level_second_id',
+        'created_by',
+        'updated_by',
     ];
 
     protected $dates = [
@@ -33,6 +35,8 @@ class CoaThird extends Model
         'updated_at',
         'level_first_id',
         'level_second_id',
+        'created_by',
+        'updated_by',
     ];
 
     public function first(): BelongsTo

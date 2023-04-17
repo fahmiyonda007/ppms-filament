@@ -18,6 +18,8 @@ class CoaFirst extends Model
     protected $fillable = [
         'code',
         'name',
+        'created_by',
+        'updated_by',
     ];
 
     protected $dates = [
@@ -30,6 +32,8 @@ class CoaFirst extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        'created_by',
+        'updated_by',
     ];
 
     public function seconds(): HasMany

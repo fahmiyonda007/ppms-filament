@@ -14,6 +14,8 @@ class Project extends Model
     protected $fillable = [
         'name',
         'description',
+        'created_by',
+        'updated_by',
     ];
 
     protected $dates = [
@@ -26,5 +28,7 @@ class Project extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        'created_by',
+        'updated_by',
     ];
 }

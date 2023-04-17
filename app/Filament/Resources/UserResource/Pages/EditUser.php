@@ -42,6 +42,7 @@ class EditUser extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record['email_verified_at'] = $data['verified'] == '1' ? now() : null;
+        $data['updated_by'] = auth()->user()->email;
         $record->update($data);
         return $record;
     }

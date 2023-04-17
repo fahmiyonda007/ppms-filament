@@ -19,7 +19,9 @@ class CoaSecond extends Model
     protected $fillable = [
         'code',
         'name',
-        'level_first_id'
+        'level_first_id',
+        'created_by',
+        'updated_by',
     ];
 
     protected $dates = [
@@ -33,6 +35,8 @@ class CoaSecond extends Model
         'level_first_id',
         'created_at',
         'updated_at',
+        'created_by',
+        'updated_by',
     ];
 
     public function first(): BelongsTo

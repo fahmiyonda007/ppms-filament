@@ -19,6 +19,7 @@ class CreateUser extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $data['email_verified_at'] = now();
+        $data['created_by'] = auth()->user()->email;
         return static::getModel()::create($data);
     }
 }

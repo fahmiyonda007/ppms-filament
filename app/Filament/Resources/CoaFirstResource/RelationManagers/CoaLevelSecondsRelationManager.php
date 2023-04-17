@@ -10,7 +10,9 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CoaLevelSecondsRelationManager extends RelationManager
@@ -52,14 +54,23 @@ class CoaLevelSecondsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->label('New'),
+                Tables\Actions\CreateAction::make()->label('New')
+                    ->using(function (HasRelationshipTable $livewire, array $data): Model {
+                        $data['created_by'] = auth()->user()->email;
+                        return $livewire->getRelationship()->create($data);
+                    }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->using(function (Model $record, array $data): Model {
+                        $data['updated_by'] = auth()->user()->email;
+                        $record->update($data);
+                        return $record;
+                    }),
                 Tables\Actions\DeleteAction::make()
-                ->before(function ($record) {
-                    $record->thirds()->where('level_second_id', $record->id)->delete();
-                }),
+                    ->before(function ($record) {
+                        $record->thirds()->where('level_second_id', $record->id)->delete();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

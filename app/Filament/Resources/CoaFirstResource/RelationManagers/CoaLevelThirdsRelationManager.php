@@ -14,6 +14,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -47,6 +48,10 @@ class CoaLevelThirdsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('New')
+                    ->using(function (HasRelationshipTable $livewire, array $data): Model {
+                        $data['created_by'] = auth()->user()->email;
+                        return $livewire->getRelationship()->create($data);
+                    })
                     ->form(function (CreateAction $action, RelationManager $livewire) {
                         $parentId = $livewire->ownerRecord->id;
                         return [
@@ -89,6 +94,11 @@ class CoaLevelThirdsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
+                    ->using(function (Model $record, array $data): Model {
+                        $data['updated_by'] = auth()->user()->email;
+                        $record->update($data);
+                        return $record;
+                    })
                     ->form(function (EditAction $action, RelationManager $livewire) {
                         $parentId = $livewire->ownerRecord->id;
                         return [

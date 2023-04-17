@@ -13,6 +13,8 @@ class Bank extends Model
 
     protected $fillable = [
         'bank_name',
+        'created_by',
+        'updated_by',
     ];
 
     protected $dates = [
@@ -26,5 +28,7 @@ class Bank extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        'created_by',
+        'updated_by',
     ];
 }

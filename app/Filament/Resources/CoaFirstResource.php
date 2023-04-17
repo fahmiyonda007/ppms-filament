@@ -64,7 +64,7 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
                             TextInput::make('code')
                                 ->required()
                                 ->maxLength(255)
-                                ->unique(),
+                                ->unique(ignoreRecord: true),
                             TextInput::make('name')
                                 ->required()
                                 ->maxLength(255),

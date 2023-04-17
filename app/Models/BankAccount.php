@@ -17,6 +17,8 @@ class BankAccount extends Model
         'account_number',
         'account_name',
         'bank_id',
+        'created_by',
+        'updated_by',
     ];
 
     protected $dates = [
@@ -29,6 +31,8 @@ class BankAccount extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        'created_by',
+        'updated_by',
     ];
 
     public function banks(): BelongsTo

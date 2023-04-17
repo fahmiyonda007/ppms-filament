@@ -19,7 +19,9 @@ class Vendor extends Model
         'name',
         'address',
         'phone',
-        'bankaccount_id'
+        'bankaccount_id',
+        'created_by',
+        'updated_by',
     ];
 
     protected $dates = [
@@ -35,6 +37,8 @@ class Vendor extends Model
         'bankaccount_id',
         'created_at',
         'updated_at',
+        'created_by',
+        'updated_by',
     ];
 
     public function bankaccounts(): BelongsToMany
