@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\ProjectResource\Pages;
+namespace App\Filament\Resources\ProjectPlanResource\Pages;
 
-use App\Filament\Resources\ProjectResource;
+use App\Filament\Resources\ProjectPlanResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
-class EditProject extends EditRecord
+class EditProjectPlan extends EditRecord
 {
-    protected static string $resource = ProjectResource::class;
+    protected static string $resource = ProjectPlanResource::class;
 
     protected function getActions(): array
     {

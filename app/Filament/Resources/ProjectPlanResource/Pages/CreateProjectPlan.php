@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\ProjectResource\Pages;
+namespace App\Filament\Resources\ProjectPlanResource\Pages;
 
-use App\Filament\Resources\ProjectResource;
+use App\Filament\Resources\ProjectPlanResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
-class CreateProject extends CreateRecord
+class CreateProjectPlan extends CreateRecord
 {
-    protected static string $resource = ProjectResource::class;
+    protected static string $resource = ProjectPlanResource::class;
 
     protected function handleRecordCreation(array $data): Model
     {

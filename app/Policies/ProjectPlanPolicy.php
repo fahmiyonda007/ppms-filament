@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Project;
+use App\Models\ProjectPlan;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ProjectPolicy
+class ProjectPlanPolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,19 @@ class ProjectPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->can('view_any_project');
+        return $user->can('view_any_project::plan');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\ProjectPlan  $projectPlan
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Project $project)
+    public function view(User $user, ProjectPlan $projectPlan)
     {
-        return $user->can('view_project');
+        return $user->can('view_project::plan');
     }
 
     /**
@@ -41,31 +41,31 @@ class ProjectPolicy
      */
     public function create(User $user)
     {
-        return $user->can('create_project');
+        return $user->can('create_project::plan');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\ProjectPlan  $projectPlan
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Project $project)
+    public function update(User $user, ProjectPlan $projectPlan)
     {
-        return $user->can('update_project');
+        return $user->can('update_project::plan');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\ProjectPlan  $projectPlan
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Project $project)
+    public function delete(User $user, ProjectPlan $projectPlan)
     {
-        return $user->can('delete_project');
+        return $user->can('delete_project::plan');
     }
 
     /**
@@ -76,17 +76,17 @@ class ProjectPolicy
      */
     public function deleteAny(User $user)
     {
-        return $user->can('delete_any_project');
+        return $user->can('delete_any_project::plan');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\ProjectPlan  $projectPlan
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Project $project)
+    public function forceDelete(User $user, ProjectPlan $projectPlan)
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -106,10 +106,10 @@ class ProjectPolicy
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\ProjectPlan  $projectPlan
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Project $project)
+    public function restore(User $user, ProjectPlan $projectPlan)
     {
         return $user->can('{{ Restore }}');
     }
@@ -129,10 +129,10 @@ class ProjectPolicy
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\ProjectPlan  $projectPlan
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function replicate(User $user, Project $project)
+    public function replicate(User $user, ProjectPlan $projectPlan)
     {
         return $user->can('{{ Replicate }}');
     }

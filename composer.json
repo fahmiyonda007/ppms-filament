@@ -19,6 +19,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "*",
         "pxlrbt/filament-excel": "^1.1",
+        "ryangjchandler/filament-progress-column": "^0.3.2",
         "spatie/laravel-permission": "^5.10",
         "webbingbrasil/filament-advancedfilter": "^1.2"
     },
