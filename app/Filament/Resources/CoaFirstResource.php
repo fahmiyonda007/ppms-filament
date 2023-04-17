@@ -76,16 +76,22 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
                             ->searchable()
                             ->sortable(),
                     ]),
-                    Stack::make([TextColumn::make('name')
-                        ->searchable()
-                        ->sortable(),])
+                    Stack::make([
+                        TextColumn::make('name')
+                            ->searchable()
+                            ->sortable(),
+                    ])
                 ]),
 
 
                 Panel::make([
-                    TagsColumn::make('seconds.fullname'),
+                    TagsColumn::make('seconds.name')
+                        ->searchable(),
                     Panel::make([
-                        TagsColumn::make('thirds.fullname')
+                        // TagsColumn::make('thirds.fullname'),
+                        TagsColumn::make('thirds.name')
+                            ->searchable()
+
                     ])->collapsed(false)
                 ])->collapsed(false),
             ])
