@@ -49,4 +49,8 @@ class CoaSecond extends Model
         return $this->hasMany(CoaThird::class, 'level_second_id', 'id');
     }
 
+    public function getFullNameAttribute()
+    {
+        return $this->code . ' - ' . $this->name;
+    }
 }

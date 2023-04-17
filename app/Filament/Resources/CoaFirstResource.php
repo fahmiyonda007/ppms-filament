@@ -3,31 +3,24 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CoaFirstResource\Pages;
-use App\Filament\Resources\CoaFirstResource\RelationManagers;
-use App\Filament\Resources\CoaSecondResource\RelationManagers\CoaLevelSecondsRelationManager;
-use App\Filament\Resources\CoaSecondResource\RelationManagers\CoaLevelThirdsRelationManager;
+use App\Filament\Resources\CoaFirstResource\RelationManagers\CoaLevelSecondsRelationManager;
+use App\Filament\Resources\CoaFirstResource\RelationManagers\CoaLevelThirdsRelationManager;
+use App\Filament\Resources\CoaThirdResource\Pages\ListCoaThirds;
 use App\Models\CoaFirst;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use Closure;
-use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 
 
@@ -77,12 +70,24 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                TextColumn::make('code')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
+                Split::make([
+                    Stack::make([
+                        TextColumn::make('code')
+                            ->searchable()
+                            ->sortable(),
+                    ]),
+                    Stack::make([TextColumn::make('name')
+                        ->searchable()
+                        ->sortable(),])
+                ]),
+
+
+                Panel::make([
+                    TagsColumn::make('seconds.fullname'),
+                    Panel::make([
+                        TagsColumn::make('thirds.fullname')
+                    ])->collapsed(false)
+                ])->collapsed(false),
             ])
             ->filters([
                 TextFilter::make('code'),

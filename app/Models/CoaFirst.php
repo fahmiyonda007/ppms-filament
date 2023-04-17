@@ -45,4 +45,9 @@ class CoaFirst extends Model
     {
         return $this->hasMany(CoaThird::class, 'level_first_id', 'id');
     }
+
+    public function getFullNameAttribute()
+    {
+        return $this->code . ' - ' . $this->name;
+    }
 }

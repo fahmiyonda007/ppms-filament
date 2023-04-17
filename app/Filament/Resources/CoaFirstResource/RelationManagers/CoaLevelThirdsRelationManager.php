@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\CoaSecondResource\RelationManagers;
+namespace App\Filament\Resources\CoaFirstResource\RelationManagers;
 
 use App\Models\CoaFirst;
 use App\Models\CoaSecond;

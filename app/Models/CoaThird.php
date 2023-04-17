@@ -48,4 +48,9 @@ class CoaThird extends Model
     {
         return $this->belongsTo(CoaSecond::class, 'level_second_id');
     }
+
+    public function getFullNameAttribute()
+    {
+        return $this->code . ' - ' . $this->name;
+    }
 }
