@@ -46,4 +46,9 @@ class ProjectPlan extends Model
         return $this->hasMany(ProjectPlanDetail::class, 'project_plan_id', 'id');
     }
 
+    public function projectCost(): HasMany
+    {
+        return $this->hasMany(ProjectCost::class, 'project_plan_id', 'id');
+    }
+
 }

@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ProjectCostResource\RelationManagers\ProjectCostDetailsRelationManager;
 use App\Filament\Resources\ProjectPlanResource\Pages;
 use App\Filament\Resources\ProjectPlanResource\RelationManagers;
+use App\Filament\Resources\ProjectPlanResource\RelationManagers\ProjectCostRelationManager;
 use App\Filament\Resources\ProjectPlanResource\RelationManagers\ProjectPlanDetailsRelationManager;
 use App\Models\ProjectPlan;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
@@ -22,11 +24,11 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = ProjectPlan::class;
     protected static ?string $navigationIcon = 'heroicon-o-map';
-    protected static ?string $slug = 'project/Plan';
-    protected static ?string $navigationGroup = 'Project';
+    protected static ?string $slug = 'project/plans';
+    protected static ?string $navigationGroup = 'Projects';
     protected static ?string $navigationLabel = 'Plans';
     protected static ?string $recordTitleAttribute = 'name';
-    // protected static ?int $navigationSort = -1;
+    protected static ?int $navigationSort = 1;
 
 
     public static function getPermissionPrefixes(): array
@@ -112,6 +114,7 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
     {
         return [
             ProjectPlanDetailsRelationManager::class,
+            ProjectCostRelationManager::class,
         ];
     }
 
