@@ -17,6 +17,7 @@ class ProjectCostRelationManager extends RelationManager
 {
     protected static string $relationship = 'projectCost';
     // protected static ?string $recordTitleAttribute = 'project_plan_id';
+    protected static ?string $title = 'Project Costs';
 
     public static function form(Form $form): Form
     {

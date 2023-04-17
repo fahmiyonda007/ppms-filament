@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProjectPlanResource\RelationManagers;
 
 use Filament\Forms;
+use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
@@ -50,6 +51,92 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                         Forms\Components\RichEditor::make('description')
                             ->maxLength(2000),
                     ]),
+                Card::make([
+                    Grid::make(2)
+                        ->schema([
+                            Forms\Components\Select::make('booking_by')
+                                ->relationship('customer', 'name')
+                                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->phone}")
+                                ->label('Booking By'),
+                            Forms\Components\DatePicker::make('booking_date'),
+                            Forms\Components\TextInput::make('deal_price')
+                                ->numeric()
+                                ->mask(
+                                    fn (Mask $mask) => $mask
+                                        ->numeric()
+                                        ->decimalPlaces(2)
+                                        ->decimalSeparator(',')
+                                        ->thousandsSeparator(',')
+                                ),
+                            Forms\Components\Select::make('payment_type')
+                                ->options([
+                                    'TUNAI' => 'TUNAI',
+                                    'TUNAI BERTAHAP' => 'TUNAI BERTAHAP',
+                                    'KPR' => 'KPR',
+                                ]),
+                            Forms\Components\TextInput::make('down_payment')
+                                ->numeric()
+                                ->mask(
+                                    fn (Mask $mask) => $mask
+                                        ->numeric()
+                                        ->decimalPlaces(2)
+                                        ->decimalSeparator(',')
+                                        ->thousandsSeparator(',')
+                                ),
+                            Forms\Components\TextInput::make('tax')
+                                ->numeric()
+                                ->mask(
+                                    fn (Mask $mask) => $mask
+                                        ->numeric()
+                                        ->decimalPlaces(2)
+                                        ->decimalSeparator(',')
+                                        ->thousandsSeparator(',')
+                                ),
+                            Forms\Components\TextInput::make('notary_fee')
+                                ->numeric()
+                                ->mask(
+                                    fn (Mask $mask) => $mask
+                                        ->numeric()
+                                        ->decimalPlaces(2)
+                                        ->decimalSeparator(',')
+                                        ->thousandsSeparator(',')
+                                ),
+                            Forms\Components\TextInput::make('commission')
+                                ->numeric()
+                                ->mask(
+                                    fn (Mask $mask) => $mask
+                                        ->numeric()
+                                        ->decimalPlaces(2)
+                                        ->decimalSeparator(',')
+                                        ->thousandsSeparator(',')
+                                ),
+                            Forms\Components\TextInput::make('other_commission')
+                                ->numeric()
+                                ->mask(
+                                    fn (Mask $mask) => $mask
+                                        ->numeric()
+                                        ->decimalPlaces(2)
+                                        ->decimalSeparator(',')
+                                        ->thousandsSeparator(',')
+                                ),
+                            Forms\Components\TextInput::make('net_price')
+                                ->numeric()
+                                ->mask(
+                                    fn (Mask $mask) => $mask
+                                        ->numeric()
+                                        ->decimalPlaces(2)
+                                        ->decimalSeparator(',')
+                                        ->thousandsSeparator(',')
+                                ),
+                        ]),
+                    Forms\Components\Select::make('sales_id')
+                        ->options([
+                            '1' => 'dummy 1',
+                            '2' => 'dummy 2',
+                            '3' => 'dummy 3',
+                        ]),
+
+                ])
 
             ]);
     }
@@ -59,10 +146,13 @@ class ProjectPlanDetailsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('unit_kavling')
-                ->searchable()
-                ->sortable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('unit_price')->money('idr'),
-                Tables\Columns\TextColumn::make('booking_by'),
+                Tables\Columns\TextColumn::make('customer.name')->label('Booking By'),
+                Tables\Columns\TextColumn::make('unit_price')->money('idr'),
+                Tables\Columns\TextColumn::make('net_price')->money('idr'),
+                Tables\Columns\TextColumn::make('deal_price')->money('idr'),
             ])
             ->filters([
                 TextFilter::make('unit_kavling')

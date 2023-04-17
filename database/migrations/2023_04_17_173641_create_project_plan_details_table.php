@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('unit_kavling', 20)->nullable();
             $table->decimal('unit_price', 10, 0)->nullable();
             $table->string('description', 2000)->nullable();
-            $table->string('booking_by', 10)->nullable();
+            $table->integer('booking_by')->nullable();
             $table->dateTime('booking_date')->nullable();
             $table->decimal('deal_price', 10, 0)->nullable();
             $table->decimal('down_payment', 10, 0)->nullable();
