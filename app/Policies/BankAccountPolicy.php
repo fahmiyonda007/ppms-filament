@@ -88,7 +88,7 @@ class BankAccountPolicy
      */
     public function forceDelete(User $user, BankAccount $bankAccount)
     {
-        return $user->can('force_delete_bank::account');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -99,7 +99,7 @@ class BankAccountPolicy
      */
     public function forceDeleteAny(User $user)
     {
-        return $user->can('force_delete_any_bank::account');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -111,7 +111,7 @@ class BankAccountPolicy
      */
     public function restore(User $user, BankAccount $bankAccount)
     {
-        return $user->can('restore_bank::account');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -122,7 +122,7 @@ class BankAccountPolicy
      */
     public function restoreAny(User $user)
     {
-        return $user->can('restore_any_bank::account');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -134,7 +134,7 @@ class BankAccountPolicy
      */
     public function replicate(User $user, BankAccount $bankAccount)
     {
-        return $user->can('replicate_bank::account');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -145,7 +145,7 @@ class BankAccountPolicy
      */
     public function reorder(User $user)
     {
-        return $user->can('reorder_bank::account');
+        return $user->can('{{ Reorder }}');
     }
 
 }

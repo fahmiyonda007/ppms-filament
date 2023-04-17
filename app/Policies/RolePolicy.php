@@ -18,7 +18,7 @@ class RolePolicy
      */
     public function viewAny(User $user)
     {
-        return $user->can('view_any_role');
+        return $user->can('view_any_shield::role');
     }
 
     /**
@@ -30,7 +30,7 @@ class RolePolicy
      */
     public function view(User $user, Role $role)
     {
-        return $user->can('view_role');
+        return $user->can('view_shield::role');
     }
 
     /**
@@ -41,7 +41,7 @@ class RolePolicy
      */
     public function create(User $user)
     {
-        return $user->can('create_role');
+        return $user->can('create_shield::role');
     }
 
     /**
@@ -53,7 +53,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role)
     {
-        return $user->can('update_role');
+        return $user->can('update_shield::role');
     }
 
     /**
@@ -65,7 +65,7 @@ class RolePolicy
      */
     public function delete(User $user, Role $role)
     {
-        return $user->can('delete_role');
+        return $user->can('delete_shield::role');
     }
 
     /**
@@ -76,7 +76,7 @@ class RolePolicy
      */
     public function deleteAny(User $user)
     {
-        return $user->can('delete_any_role');
+        return $user->can('delete_any_shield::role');
     }
 
     /**
@@ -88,7 +88,7 @@ class RolePolicy
      */
     public function forceDelete(User $user, Role $role)
     {
-        return $user->can('force_delete_role');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -99,7 +99,7 @@ class RolePolicy
      */
     public function forceDeleteAny(User $user)
     {
-        return $user->can('force_delete_any_role');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -111,7 +111,7 @@ class RolePolicy
      */
     public function restore(User $user, Role $role)
     {
-        return $user->can('restore_role');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -122,7 +122,7 @@ class RolePolicy
      */
     public function restoreAny(User $user)
     {
-        return $user->can('restore_any_role');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -134,7 +134,7 @@ class RolePolicy
      */
     public function replicate(User $user, Role $role)
     {
-        return $user->can('replicate_role');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -145,7 +145,7 @@ class RolePolicy
      */
     public function reorder(User $user)
     {
-        return $user->can('reorder_role');
+        return $user->can('{{ Reorder }}');
     }
 
 }

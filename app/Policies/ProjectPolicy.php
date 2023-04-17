@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\CoaFirst;
+use App\Models\Project;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CoaFirstPolicy
+class ProjectPolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,19 @@ class CoaFirstPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->can('view_any_coa::first');
+        return $user->can('view_any_project');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\CoaFirst  $coaFirst
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, CoaFirst $coaFirst)
+    public function view(User $user, Project $project)
     {
-        return $user->can('view_coa::first');
+        return $user->can('view_project');
     }
 
     /**
@@ -41,31 +41,31 @@ class CoaFirstPolicy
      */
     public function create(User $user)
     {
-        return $user->can('create_coa::first');
+        return $user->can('create_project');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\CoaFirst  $coaFirst
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, CoaFirst $coaFirst)
+    public function update(User $user, Project $project)
     {
-        return $user->can('update_coa::first');
+        return $user->can('update_project');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\CoaFirst  $coaFirst
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, CoaFirst $coaFirst)
+    public function delete(User $user, Project $project)
     {
-        return $user->can('delete_coa::first');
+        return $user->can('delete_project');
     }
 
     /**
@@ -76,17 +76,17 @@ class CoaFirstPolicy
      */
     public function deleteAny(User $user)
     {
-        return $user->can('delete_any_coa::first');
+        return $user->can('delete_any_project');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\CoaFirst  $coaFirst
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, CoaFirst $coaFirst)
+    public function forceDelete(User $user, Project $project)
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -106,10 +106,10 @@ class CoaFirstPolicy
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\CoaFirst  $coaFirst
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, CoaFirst $coaFirst)
+    public function restore(User $user, Project $project)
     {
         return $user->can('{{ Restore }}');
     }
@@ -129,10 +129,10 @@ class CoaFirstPolicy
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\CoaFirst  $coaFirst
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function replicate(User $user, CoaFirst $coaFirst)
+    public function replicate(User $user, Project $project)
     {
         return $user->can('{{ Replicate }}');
     }

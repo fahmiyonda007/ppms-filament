@@ -88,7 +88,7 @@ class VendorPolicy
      */
     public function forceDelete(User $user, Vendor $vendor)
     {
-        return $user->can('force_delete_vendor');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -99,7 +99,7 @@ class VendorPolicy
      */
     public function forceDeleteAny(User $user)
     {
-        return $user->can('force_delete_any_vendor');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -111,7 +111,7 @@ class VendorPolicy
      */
     public function restore(User $user, Vendor $vendor)
     {
-        return $user->can('restore_vendor');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -122,7 +122,7 @@ class VendorPolicy
      */
     public function restoreAny(User $user)
     {
-        return $user->can('restore_any_vendor');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -134,7 +134,7 @@ class VendorPolicy
      */
     public function replicate(User $user, Vendor $vendor)
     {
-        return $user->can('replicate_vendor');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -145,7 +145,7 @@ class VendorPolicy
      */
     public function reorder(User $user)
     {
-        return $user->can('reorder_vendor');
+        return $user->can('{{ Reorder }}');
     }
 
 }
