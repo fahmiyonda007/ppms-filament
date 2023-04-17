@@ -56,14 +56,29 @@ class VendorResource extends Resource implements HasShieldPermissions
                 Card::make([
                     Grid::make(2)
                         ->schema([
+                            TextInput::make('code')
+                                ->required()
+                                ->maxLength(10),
                             TextInput::make('name')
                                 ->required()
-                                ->maxLength(255),
+                                ->maxLength(50),
                             TextInput::make('phone')
                                 ->tel()
                                 ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
-
+                            TextInput::make('pic')
+                                ->required()
+                                ->maxLength(50),
                         ]),
+                    TextInput::make('deposit')
+                        ->required()
+                        ->numeric()
+                        ->mask(
+                            fn (TextInput\Mask $mask) => $mask
+                                ->numeric()
+                                ->decimalPlaces(2)
+                                ->decimalSeparator(',')
+                                ->thousandsSeparator(',')
+                        ),
                     Textarea::make('address')
                         ->maxLength(2000),
                 ])
@@ -81,6 +96,13 @@ class VendorResource extends Resource implements HasShieldPermissions
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('phone')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('deposit')
+                    ->money('idr')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('pic')
                     ->searchable()
                     ->sortable(),
             ])

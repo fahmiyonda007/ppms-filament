@@ -16,9 +16,12 @@ class Vendor extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'code',
         'name',
         'address',
         'phone',
+        'deposit',
+        'pic',
         'bankaccount_id',
         'created_by',
         'updated_by',
