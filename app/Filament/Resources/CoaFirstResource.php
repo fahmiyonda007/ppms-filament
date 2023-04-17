@@ -82,8 +82,6 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
                             ->sortable(),
                     ])
                 ]),
-
-
                 Panel::make([
                     TagsColumn::make('seconds.name')
                         ->searchable(),
