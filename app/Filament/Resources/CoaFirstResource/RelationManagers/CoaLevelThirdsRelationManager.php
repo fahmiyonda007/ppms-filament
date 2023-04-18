@@ -41,7 +41,7 @@ class CoaLevelThirdsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('first.code')->label('level 1')->sortable(),
                 Tables\Columns\TextColumn::make('second.code')->label('level 2')->sortable(),
                 Tables\Columns\TextColumn::make('code')->sortable(),
-                Tables\Columns\TextColumn::make('name')->sortable(),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
             ])
             ->filters([
                 //

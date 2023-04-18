@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('description', 500)->nullable();
             $table->timestamp('order_date')->nullable();
             $table->timestamp('payment_date')->nullable();
-            $table->boolean('payment_status')->nullable()->default(false);
+            $table->string('payment_status')->nullable();
             $table->integer('vendor_id')->nullable();
             $table->string('coa_id_source1', 10)->nullable();
             $table->string('coa_id_source2', 10)->nullable();

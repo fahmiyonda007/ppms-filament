@@ -12,6 +12,10 @@ use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -61,8 +65,6 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->default('NOT PAID')
                                 ->maxLength(50),
                         ]),
-
-
                     Grid::make(2)
                         ->schema([
                             Forms\Components\Select::make('project_plan_id')
@@ -95,6 +97,65 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->maxLength(500),
                         ]),
                 ]),
+                Card::make([
+                    Repeater::make('Details')
+                        ->relationship('projectCostDetails')
+                        ->schema([
+                            Grid::make(4)
+                                ->schema([
+                                    Forms\Components\Select::make('coa_id')
+                                        ->relationship('coaThird', 'name', fn (Builder $query) => $query->where('code', 'like', '1%'))
+                                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
+                                        ->required()
+                                        ->preload()
+                                        ->columnSpanFull(),
+                                    Forms\Components\TextInput::make('uom')
+                                        ->required(),
+                                    Forms\Components\TextInput::make('qty')
+                                        ->required()
+                                        ->numeric()
+                                        ->reactive()
+                                        ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                                            $unit_price = $get('unit_price');
+                                            $val = (float)$state * (float)$unit_price;
+                                            $set('amount', (string)$val);
+                                        })
+                                        ->mask(
+                                            fn (Mask $mask) => $mask
+                                                ->numeric()
+                                                ->thousandsSeparator(',')
+                                        ),
+                                    Forms\Components\TextInput::make('unit_price')
+                                        ->required()
+                                        ->numeric()
+                                        ->reactive()
+                                        ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                                            $qty = $get('qty');
+                                            $val = (float)$state * (float)$qty;
+                                            $set('amount', (string)$val);
+                                        })
+                                        ->mask(
+                                            fn (Mask $mask) => $mask
+                                                ->numeric()
+                                                ->decimalPlaces(2)
+                                                ->decimalSeparator(',')
+                                                ->thousandsSeparator(',')
+                                        ),
+                                    Forms\Components\TextInput::make('amount')
+                                        ->disabled()
+                                        ->numeric()
+                                        ->dehydrated(false)
+                                        ->mask(
+                                            fn (Mask $mask) => $mask
+                                                ->numeric()
+                                                ->decimalPlaces(2)
+                                                ->decimalSeparator(',')
+                                                ->thousandsSeparator(',')
+                                        ),
+                                ])
+                        ])
+                        ->collapsed(false)
+                ])
             ]);
     }
 
@@ -104,7 +165,6 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
             ->columns([
                 Tables\Columns\TextColumn::make('projectPlan.name'),
                 Tables\Columns\TextColumn::make('transaction_code'),
-                Tables\Columns\TextColumn::make('description'),
                 Tables\Columns\TextColumn::make('order_date')
                     ->date(),
                 Tables\Columns\TextColumn::make('payment_date')
@@ -131,7 +191,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            ProjectCostDetailsRelationManager::class,
+            // ProjectCostDetailsRelationManager::class,
         ];
     }
 

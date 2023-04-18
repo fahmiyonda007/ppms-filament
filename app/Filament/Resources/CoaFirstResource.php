@@ -20,7 +20,10 @@ use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\DB;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 
 
@@ -70,35 +73,26 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Split::make([
-                    Stack::make([
-                        TextColumn::make('code')
-                            ->searchable()
-                            ->sortable(),
-                    ]),
-                    Stack::make([
-                        TextColumn::make('name')
-                            ->searchable()
-                            ->sortable(),
-                    ])
-                ]),
-                Panel::make([
-                    TagsColumn::make('seconds.name')
-                        ->searchable(),
-                    Panel::make([
-                        // TagsColumn::make('thirds.fullname'),
-                        TagsColumn::make('thirds.name')
-                            ->searchable()
-
-                    ])->collapsed(false)
-                ])->collapsed(false),
+                TextColumn::make('code')
+                    ->sortable(),
+                TextColumn::make('name')
+                    ->sortable(),
+                TextColumn::make('second')
+                    ->sortable(),
+                TextColumn::make('third')
+                    // ->searchable(['coa_level_thirds.code', 'coa_level_thirds.name'])
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('coa_level_thirds.name', 'like', "%{$search}%");
+                    })
+                    ->sortable(),
             ])
             ->filters([
-                TextFilter::make('code'),
-                TextFilter::make('name'),
+                // TextFilter::make('third')->query()
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->url(fn (Model $record): string => CoaFirstResource::getUrl('index') . '/' . $record->id . '/edit?activeRelationManager=1'),
                 Tables\Actions\DeleteAction::make()
                     ->before(function ($record) {
                         $record->seconds()->where('level_first_id', $record->id)->delete();

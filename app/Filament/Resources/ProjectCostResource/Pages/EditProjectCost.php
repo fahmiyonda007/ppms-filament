@@ -21,7 +21,14 @@ class EditProjectCost extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $data['updated_by'] = auth()->user()->email;
+        // dd($record->projectCostDetails);
+
         $record->update($data);
         return $record;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return $data;
     }
 }

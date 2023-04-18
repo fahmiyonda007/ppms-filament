@@ -70,7 +70,6 @@ class VendorResource extends Resource implements HasShieldPermissions
                                 ->maxLength(50),
                         ]),
                     TextInput::make('deposit')
-                        ->required()
                         ->numeric()
                         ->mask(
                             fn (TextInput\Mask $mask) => $mask

@@ -28,4 +28,5 @@ class EditCoaFirst extends EditRecord
         $record->update($data);
         return $record;
     }
+
 }

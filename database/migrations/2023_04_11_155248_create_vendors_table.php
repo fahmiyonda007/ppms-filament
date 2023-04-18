@@ -17,12 +17,14 @@ return new class extends Migration
         Schema::create('vendors', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('code');
+            $table->decimal('deposit', 10, 0)->nullable();
+            $table->string('pic');
             $table->string('address', 2000)->nullable();
             $table->string('phone')->nullable();
             $table->integer('bankaccount_id')->nullable();
             $table->timestamps();
         });
-
     }
 
     /**
