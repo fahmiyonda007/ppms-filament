@@ -98,28 +98,28 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         ]),
                 ]),
                 Card::make([
-                    Repeater::make('Details')
-                        ->relationship('projectCostDetails')
+                    Repeater::make('projectCostDetails')
+                        ->relationship()
                         ->schema([
-                            Grid::make(4)
+                            Grid::make(6)
                                 ->schema([
                                     Forms\Components\Select::make('coa_id')
                                         ->relationship('coaThird', 'name', fn (Builder $query) => $query->where('code', 'like', '1%'))
                                         ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
                                         ->required()
-                                        ->preload()
-                                        ->columnSpanFull(),
+                                        ->columnSpan(2)
+                                        ->preload(),
                                     Forms\Components\TextInput::make('uom')
                                         ->required(),
                                     Forms\Components\TextInput::make('qty')
                                         ->required()
                                         ->numeric()
-                                        ->reactive()
-                                        ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                                            $unit_price = $get('unit_price');
-                                            $val = (float)$state * (float)$unit_price;
-                                            $set('amount', (string)$val);
-                                        })
+                                        // ->reactive()
+                                        // ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                                        //     $unit_price = $get('unit_price');
+                                        //     $val = (float)$state * (float)$unit_price;
+                                        //     $set('amount', (string)$val);
+                                        // })
                                         ->mask(
                                             fn (Mask $mask) => $mask
                                                 ->numeric()
@@ -128,12 +128,12 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                     Forms\Components\TextInput::make('unit_price')
                                         ->required()
                                         ->numeric()
-                                        ->reactive()
-                                        ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                                            $qty = $get('qty');
-                                            $val = (float)$state * (float)$qty;
-                                            $set('amount', (string)$val);
-                                        })
+                                        // ->reactive()
+                                        // ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                                        //     $qty = $get('qty');
+                                        //     $val = (float)$state * (float)$qty;
+                                        //     $set('amount', (string)$val);
+                                        // })
                                         ->mask(
                                             fn (Mask $mask) => $mask
                                                 ->numeric()
@@ -144,7 +144,6 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                     Forms\Components\TextInput::make('amount')
                                         ->disabled()
                                         ->numeric()
-                                        ->dehydrated(false)
                                         ->mask(
                                             fn (Mask $mask) => $mask
                                                 ->numeric()
@@ -155,7 +154,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ])
                         ])
                         ->collapsed(false)
-                ])
+                ])->visibleOn('edit')
             ]);
     }
 
