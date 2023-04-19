@@ -25,7 +25,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('coa_id')
-                    ->relationship('coaThird', 'name', fn (Builder $query) => $query->where('code', 'like', '1%'))
+                    ->relationship('coaThird', 'name', fn (Builder $query) => $query->where('code', 'like', '5%'))
                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
                     ->required()
                     ->preload(),

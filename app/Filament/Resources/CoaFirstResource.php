@@ -73,15 +73,21 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                TextColumn::make('code')
-                    ->sortable(),
-                TextColumn::make('name')
-                    ->sortable(),
+                TextColumn::make('first')
+                    ->sortable()
+                    ->searchable(isIndividual: true, query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('coa_level_firsts.name', 'like', "%{$search}%");
+                    }),
                 TextColumn::make('second')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(isIndividual: true, query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('coa_level_seconds.name', 'like', "%{$search}%");
+                    }),
                 TextColumn::make('third')
                     // ->searchable(['coa_level_thirds.code', 'coa_level_thirds.name'])
-                    ->searchable(query: function (Builder $query, string $search): Builder {
+                    ->searchable(isIndividual: true, query: function (Builder $query, string $search): Builder {
                         return $query
                             ->where('coa_level_thirds.name', 'like', "%{$search}%");
                     })

@@ -22,9 +22,11 @@ class ListCoaFirsts extends ListRecords
     protected function getTableQuery(): Builder
     {
         $coas = CoaFirst::selectRaw(
+
             "coa_level_firsts.*
-                ,CONCAT_WS(' - ', coa_level_seconds.code, coa_level_seconds.name) as second
-                ,CONCAT_WS(' - ', coa_level_thirds.code, coa_level_thirds.name) as third"
+            ,CONCAT_WS(' - ', coa_level_firsts.code, coa_level_firsts.name) as first
+            ,CONCAT_WS(' - ', coa_level_seconds.code, coa_level_seconds.name) as second
+            ,CONCAT_WS(' - ', coa_level_thirds.code, coa_level_thirds.name) as third"
         )
             ->join('coa_level_seconds', 'coa_level_firsts.id', '=', 'coa_level_seconds.level_first_id')
             ->join('coa_level_thirds', function ($join) {
