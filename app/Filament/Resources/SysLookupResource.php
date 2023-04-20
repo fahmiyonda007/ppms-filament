@@ -23,8 +23,8 @@ class SysLookupResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = SysLookup::class;
     protected static ?string $navigationIcon = 'heroicon-o-cog';
-    // protected static ?string $slug = 'settings/syslookups';
-    // protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $slug = 'settings/syslookups';
+    protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'System Lookups';
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 100;

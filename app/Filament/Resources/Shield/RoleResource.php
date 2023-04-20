@@ -20,6 +20,8 @@ use Illuminate\Support\Str;
 class RoleResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $navigationGroup = 'Settings';
+
     protected static $permissionsCollection;
 
 
@@ -284,8 +286,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                 ->columnSpan(1)
                 ->visible(function () use ($entity) {
                     return $entity['resource'] == 'exception' ? false : true;
-                })
-                ;
+                });
 
             return $entities;
         }, collect())

@@ -26,7 +26,7 @@ use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 class EmployeeResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Employee::class;
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
     protected static ?string $slug = 'master/employess';
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'Employees';

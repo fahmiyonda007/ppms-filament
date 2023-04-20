@@ -20,7 +20,7 @@ use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 class CustomerResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Customer::class;
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $slug = 'master/customers';
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'Customers';

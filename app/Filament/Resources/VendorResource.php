@@ -29,7 +29,7 @@ class VendorResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Vendor::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-library';
     protected static ?string $slug = 'master/vendors';
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'Vendors';
