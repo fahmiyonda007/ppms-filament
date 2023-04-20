@@ -65,6 +65,7 @@ class CustomerResource extends Resource implements HasShieldPermissions
                         ->schema([
                             Forms\Components\TextInput::make('phone')
                                 ->tel()
+                                ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
                                 ->maxLength(50)
                                 ->required(),
                             Forms\Components\Textarea::make('address')
