@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BankAccountResource\Pages;
 use App\Filament\Resources\BankAccountResource\RelationManagers;
 use App\Models\BankAccount;
+use App\Models\SysLookup;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
@@ -51,11 +52,11 @@ class BankAccountResource extends Resource implements HasShieldPermissions
                 Card::make([
                     Grid::make(1)
                         ->schema([
-                            Select::make('bank_id')
+                            Select::make('bank_name')
                                 ->multiple(false)
-                                ->relationship('banks', 'bank_name')
                                 ->searchable()
-                                ->preload(),
+                                ->preload()
+                                ->options(SysLookup::where('group_name', 'BANK')->pluck('name', 'name')),
                         ]),
                     Grid::make(2)
                         ->schema([
@@ -75,7 +76,7 @@ class BankAccountResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                TextColumn::make('banks.bank_name')
+                TextColumn::make('bank_name')
                     ->label('Bank')
                     ->searchable()
                     ->sortable(),

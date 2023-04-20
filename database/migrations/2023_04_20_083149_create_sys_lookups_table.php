@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bank_accounts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('bank_name');
-            $table->string('account_number');
-            $table->string('account_name');
-            $table->timestamps();
+        Schema::create('sys_lookups', function (Blueprint $table) {
+            $table->integer('id')->primary();
+            $table->string('group_name')->nullable();
+            $table->string('code', 50)->nullable();
+            $table->string('name')->nullable();
+            $table->string('description', 1000)->nullable();
         });
-
     }
 
     /**
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bank_accounts');
+        Schema::dropIfExists('sys_lookups');
     }
 };

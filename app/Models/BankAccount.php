@@ -16,7 +16,7 @@ class BankAccount extends Model
     protected $fillable = [
         'account_number',
         'account_name',
-        'bank_id',
+        'bank_name',
         'created_by',
         'updated_by',
     ];
@@ -34,11 +34,6 @@ class BankAccount extends Model
         'created_by',
         'updated_by',
     ];
-
-    public function banks(): BelongsTo
-    {
-        return $this->belongsTo(Bank::class, 'bank_id');
-    }
 
     public function vendors(): BelongsToMany
     {
