@@ -24,10 +24,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Gate::before(function($user, $ability) {
-        //     if ($user->id == 1) {
-        //         return true;
-        //     }
-        // });
+        Gate::before(function($user, $ability) {
+            if ($user->id == 1) {
+                return true;
+            }
+        });
     }
 }

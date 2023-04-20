@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('salary_day', 10, 0)->nullable();
             $table->decimal('overtime', 10, 0)->nullable();
             $table->decimal('total_loan', 10, 0)->nullable();
-            $table->integer('bank_account_id', 30)->nullable();
+            $table->integer('bank_account_id')->nullable();
             $table->boolean('is_resign')->nullable();
             $table->timestamp('resign_date')->nullable();
             $table->timestamps();
