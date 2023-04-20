@@ -8,6 +8,7 @@ use App\Models\CoaThird;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -38,10 +39,16 @@ class CoaLevelThirdsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('first.code')->label('level 1')->sortable(),
-                Tables\Columns\TextColumn::make('second.code')->label('level 2')->sortable(),
-                Tables\Columns\TextColumn::make('code')->sortable(),
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('first.fullname')->label('level 1'),
+                Tables\Columns\TextColumn::make('second.fullname')->label('level 2'),
+                Tables\Columns\TextColumn::make('fullname')->label('level 3')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('name', 'like', "%{$search}%");
+                    }),
+                Tables\Columns\TextColumn::make('balance')
+                    ->sortable()
+                    ->money('idr', true)->alignRight(),
             ])
             ->filters([
                 //
@@ -63,6 +70,7 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                         ->relationship('second', 'name', fn (Builder $query) => $query->where('level_first_id', $parentId))
                                         ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
                                         ->preload()
+                                        ->searchable()
                                         ->reactive()
                                         ->afterStateUpdated(function (Closure $set, $state) {
                                             $second = CoaSecond::find($state);
@@ -80,7 +88,7 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                             }
                                         }),
                                 ]),
-                            Grid::make(2)
+                            Grid::make(3)
                                 ->schema([
                                     Forms\Components\TextInput::make('code')
                                         ->required()
@@ -88,6 +96,14 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                     Forms\Components\TextInput::make('name')
                                         ->required()
                                         ->maxLength(255),
+                                    Forms\Components\TextInput::make('balance')
+                                        ->required()
+                                        ->numeric()
+                                        ->mask(
+                                            fn (Mask $mask) => $mask
+                                                ->numeric()
+                                                ->thousandsSeparator(',')
+                                        ),
                                 ]),
                         ];
                     }),
@@ -110,6 +126,7 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                         ->relationship('second', 'name', fn (Builder $query) => $query->where('level_first_id', $parentId))
                                         ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
                                         ->preload()
+                                        ->searchable()
                                         ->reactive()
                                         ->afterStateUpdated(function ($record, Closure $set, $state) {
                                             $second = CoaSecond::find($state);
@@ -131,7 +148,7 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                             }
                                         }),
                                 ]),
-                            Grid::make(2)
+                            Grid::make(3)
                                 ->schema([
                                     Forms\Components\TextInput::make('code')
                                         ->required()
@@ -139,6 +156,14 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                     Forms\Components\TextInput::make('name')
                                         ->required()
                                         ->maxLength(255),
+                                    Forms\Components\TextInput::make('balance')
+                                        ->required()
+                                        ->numeric()
+                                        ->mask(
+                                            fn (Mask $mask) => $mask
+                                                ->numeric()
+                                                ->thousandsSeparator(',')
+                                        ),
                                 ]),
                         ];
                     }),

@@ -46,9 +46,12 @@ class CoaLevelSecondsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('first.code')->label('level 1')->sortable(),
-                Tables\Columns\TextColumn::make('code'),
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('first.fullname')->label('level 1'),
+                Tables\Columns\TextColumn::make('fullname')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('name', 'like', "%{$search}%");
+                    }),
             ])
             ->filters([
                 //

@@ -53,7 +53,9 @@ class BankAccountResource extends Resource implements HasShieldPermissions
                         ->schema([
                             Select::make('bank_id')
                                 ->multiple(false)
-                                ->relationship('banks', 'bank_name')->preload(),
+                                ->relationship('banks', 'bank_name')
+                                ->searchable()
+                                ->preload(),
                         ]),
                     Grid::make(2)
                         ->schema([

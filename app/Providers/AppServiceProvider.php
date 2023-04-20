@@ -11,8 +11,11 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\Page;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use JeffGreco13\FilamentBreezy\FilamentBreezy;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,6 +47,13 @@ class AppServiceProvider extends ServiceProvider
             // Using Vite
             Filament::registerViteTheme('resources/css/filament.css');
         });
+
+        Page::$reportValidationErrorUsing = function (ValidationException $exception) {
+            Notification::make()
+                ->title($exception->getMessage())
+                ->danger()
+                ->send();
+        };
 
         // Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
         //     return $builder

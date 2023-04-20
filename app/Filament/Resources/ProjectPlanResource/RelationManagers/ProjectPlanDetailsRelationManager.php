@@ -56,6 +56,8 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                         ->schema([
                             Forms\Components\Select::make('booking_by')
                                 ->relationship('customer', 'name')
+                                ->searchable()
+                                ->preload()
                                 ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->phone}")
                                 ->label('Booking By'),
                             Forms\Components\DatePicker::make('booking_date'),
@@ -148,11 +150,11 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('unit_kavling')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('unit_price')->money('idr'),
+                Tables\Columns\TextColumn::make('unit_price')->money('idr', true),
                 Tables\Columns\TextColumn::make('customer.name')->label('Booking By'),
-                Tables\Columns\TextColumn::make('unit_price')->money('idr'),
-                Tables\Columns\TextColumn::make('net_price')->money('idr'),
-                Tables\Columns\TextColumn::make('deal_price')->money('idr'),
+                Tables\Columns\TextColumn::make('unit_price')->money('idr', true),
+                Tables\Columns\TextColumn::make('net_price')->money('idr', true),
+                Tables\Columns\TextColumn::make('deal_price')->money('idr', true),
             ])
             ->filters([
                 TextFilter::make('unit_kavling')

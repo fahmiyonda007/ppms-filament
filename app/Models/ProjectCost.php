@@ -24,6 +24,7 @@ class ProjectCost extends Model
         'coa_id_source1',
         'coa_id_source2',
         'coa_id_source3',
+        'total_amount',
         'created_by',
         'updated_by',
     ];
@@ -59,5 +60,20 @@ class ProjectCost extends Model
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class, 'vendor_id');
+    }
+
+    public function coaThird1(): BelongsTo
+    {
+        return $this->belongsTo(CoaThird::class, 'coa_id_source1');
+    }
+
+    public function coaThird2(): BelongsTo
+    {
+        return $this->belongsTo(CoaThird::class, 'coa_id_source2');
+    }
+
+    public function coaThird3(): BelongsTo
+    {
+        return $this->belongsTo(CoaThird::class, 'coa_id_source3');
     }
 }

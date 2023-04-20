@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('coa_id_source1', 10)->nullable();
             $table->string('coa_id_source2', 10)->nullable();
             $table->string('coa_id_source3', 10)->nullable();
+            $table->decimal('total_amount', 10, 0)->nullable();
             $table->timestamps();
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();

@@ -25,10 +25,11 @@ class ProjectCostDetailsRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('coa_id')
-                    ->relationship('coaThird', 'name', fn (Builder $query) => $query->where('code', 'like', '5%'))
+                    ->relationship('coaSecond', 'name')
+                    ->searchable()
+                    ->preload()
                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
-                    ->required()
-                    ->preload(),
+                    ->required(),
                 Forms\Components\TextInput::make('uom')
                     ->required(),
                 Forms\Components\TextInput::make('qty')
@@ -69,8 +70,8 @@ class ProjectCostDetailsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('coaThird.fullname')->label('COA'),
                 Tables\Columns\TextColumn::make('uom'),
                 Tables\Columns\TextColumn::make('qty'),
-                Tables\Columns\TextColumn::make('unit_price')->money('idr'),
-                Tables\Columns\TextColumn::make('amount')->money('idr'),
+                Tables\Columns\TextColumn::make('unit_price')->money('idr', true),
+                Tables\Columns\TextColumn::make('amount')->money('idr', true),
             ])
             ->filters([
                 //

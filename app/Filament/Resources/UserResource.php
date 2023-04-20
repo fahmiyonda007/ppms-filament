@@ -92,7 +92,9 @@ class UserResource extends Resource implements HasShieldPermissions
                         ->dehydrated(false),
                     Select::make('roles')
                         ->multiple()
-                        ->relationship('roles', 'name')->preload(),
+                        ->relationship('roles', 'name')
+                        ->searchable()
+                        ->preload(),
                     Toggle::make('verified')
                         ->onIcon('heroicon-s-lightning-bolt')
                         ->offIcon('heroicon-s-user')

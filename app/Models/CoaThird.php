@@ -17,6 +17,7 @@ class CoaThird extends Model
     protected $fillable = [
         'code',
         'name',
+        'balance',
         'level_first_id',
         'level_second_id',
         'created_by',

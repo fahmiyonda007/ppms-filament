@@ -98,7 +98,7 @@ class VendorResource extends Resource implements HasShieldPermissions
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('deposit')
-                    ->money('idr')
+                    ->money('idr', true)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('pic')

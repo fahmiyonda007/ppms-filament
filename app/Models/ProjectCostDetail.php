@@ -31,8 +31,6 @@ class ProjectCostDetail extends Model
     protected $casts = [];
 
     protected $hidden = [
-        'project_cost_id',
-        'coa_id',
         'created_at',
         'updated_at',
         'created_by',
