@@ -12,7 +12,13 @@
 Admin panel, form builder and table builder for Laravel. Built with the TALL stack. Designed for humans.
 
 
-## Intallation
+
+# Project Planning Management System
+
+A brief description of what this project does and who it's for Property Project
+
+
+## Installation
 
 ```bash
 git clone https://github.com/fahmiyonda007/ppms-filament.git
@@ -45,11 +51,12 @@ php artisan serve
 
 
 
-## Laravel - Filament
+##  [Laravel - Filament](https://filamentphp.com/)
 
-Generate resource:
+create migration file OR Generate migration file from existing table:
+
 ```bash
-php artisan make:filament-resource Bank --generate
+php artisan migrate:generate --tables="banks"
 ```
 
 Create model and setup manually your field:
@@ -57,17 +64,28 @@ Create model and setup manually your field:
 php artisan make:model Bank
 ```
 
-create migration file OR Generate migration file from existing table:
+Generate resource by model:
 ```bash
-php artisan migrate:generate --tables="banks"
+php artisan make:filament-resource Bank --generate
 ```
 
-## Permissions
-After create migration files, add this code:
-
-```php
-public function up() {
-    \\...
-    DB::statement("CALL SetNewPermission('bank')");
-}
+generate policy and permission by [Filament Shield](https://filamentphp.com/):
+```bash
+php artisan shield:generate --all
 ```
+## Authors
+
+- [@fahmiyonda007](https://www.github.com/fahmiyonda007)
+- [@muzaenigos](https://www.github.com/muzaenigos)
+
+
+## Features
+
+- Light/dark mode toggle
+- Fullscreen mode
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
