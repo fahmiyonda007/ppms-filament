@@ -69,7 +69,11 @@ Generate resource by model:
 php artisan make:filament-resource Bank --generate
 ```
 
-generate policy and permission by [Filament Shield](https://filamentphp.com/):
+generate policy and permission by [Filament Shield](https://filamentphp.com/plugins/shield):
+
+```bash
+php artisan shield:super-admin --user={ID integer of user}
+```
 ```bash
 php artisan shield:generate --all
 ```
