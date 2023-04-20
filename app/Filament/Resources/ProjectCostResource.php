@@ -85,6 +85,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->required()
                                 ->searchable()
                                 ->reactive()
+                                ->preload()
                                 ->afterStateUpdated(function (Closure $set, $state) {
                                     $projectCosts = ProjectCost::where('project_plan_id', $state);
                                     $len = str_pad($projectCosts->count() + 1, 3, '0', STR_PAD_LEFT);
@@ -186,7 +187,6 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->numeric()
                                 ->thousandsSeparator(',')
                         ),
-                    Forms\Components\TextInput::make('id'),
                     TableRepeater::make('details')
                         ->relationship('projectCostDetails')
                         ->schema([
