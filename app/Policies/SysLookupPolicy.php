@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use BezhanSalleh\FilamentExceptions\Models\Exception;
+use App\Models\SysLookup;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ExceptionPolicy
+class SysLookupPolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,19 @@ class ExceptionPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->can('view_any_exception');
+        return $user->can('view_any_sys::lookup');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \BezhanSalleh\FilamentExceptions\Models\Exception  $exception
+     * @param  \App\Models\SysLookup  $sysLookup
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Exception $exception)
+    public function view(User $user, SysLookup $sysLookup)
     {
-        return $user->can('view_exception');
+        return $user->can('view_sys::lookup');
     }
 
     /**
@@ -41,31 +41,31 @@ class ExceptionPolicy
      */
     public function create(User $user)
     {
-        return $user->can('create_exception');
+        return $user->can('create_sys::lookup');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \BezhanSalleh\FilamentExceptions\Models\Exception  $exception
+     * @param  \App\Models\SysLookup  $sysLookup
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Exception $exception)
+    public function update(User $user, SysLookup $sysLookup)
     {
-        return $user->can('update_exception');
+        return $user->can('update_sys::lookup');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \BezhanSalleh\FilamentExceptions\Models\Exception  $exception
+     * @param  \App\Models\SysLookup  $sysLookup
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Exception $exception)
+    public function delete(User $user, SysLookup $sysLookup)
     {
-        return $user->can('delete_exception');
+        return $user->can('delete_sys::lookup');
     }
 
     /**
@@ -76,19 +76,19 @@ class ExceptionPolicy
      */
     public function deleteAny(User $user)
     {
-        return $user->can('delete_any_exception');
+        return $user->can('delete_any_sys::lookup');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \BezhanSalleh\FilamentExceptions\Models\Exception  $exception
+     * @param  \App\Models\SysLookup  $sysLookup
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Exception $exception)
+    public function forceDelete(User $user, SysLookup $sysLookup)
     {
-        return $user->can('force_delete_exception');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -99,19 +99,19 @@ class ExceptionPolicy
      */
     public function forceDeleteAny(User $user)
     {
-        return $user->can('force_delete_any_exception');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \BezhanSalleh\FilamentExceptions\Models\Exception  $exception
+     * @param  \App\Models\SysLookup  $sysLookup
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Exception $exception)
+    public function restore(User $user, SysLookup $sysLookup)
     {
-        return $user->can('restore_exception');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -122,19 +122,19 @@ class ExceptionPolicy
      */
     public function restoreAny(User $user)
     {
-        return $user->can('restore_any_exception');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \BezhanSalleh\FilamentExceptions\Models\Exception  $exception
+     * @param  \App\Models\SysLookup  $sysLookup
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function replicate(User $user, Exception $exception)
+    public function replicate(User $user, SysLookup $sysLookup)
     {
-        return $user->can('replicate_exception');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -145,7 +145,7 @@ class ExceptionPolicy
      */
     public function reorder(User $user)
     {
-        return $user->can('reorder_exception');
+        return $user->can('{{ Reorder }}');
     }
 
 }
