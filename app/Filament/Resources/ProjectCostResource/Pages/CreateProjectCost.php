@@ -14,6 +14,7 @@ class CreateProjectCost extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $data['created_by'] = auth()->user()->email;
+        $data['payment_status'] = 'NOT PAID';
         return static::getModel()::create($data);
     }
 

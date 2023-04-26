@@ -32,9 +32,15 @@ class EditProjectCost extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $data['total_amount'] = $record->projectCostDetails->sum('amount');
+        $totAmt = $record->projectCostDetails->sum('amount');
+        $data['total_amount'] = $totAmt;
         $data['total_payment'] = $this->getSumPaymentSource($data);
         $data['updated_by'] = auth()->user()->email;
+
+        if ($totAmt == 0) {
+            $data['payment_status'] = 'NOT PAID';
+        }
+
         $record->update($data);
 
         if ($data['payment_status'] == 'PAID') {

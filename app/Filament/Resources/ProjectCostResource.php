@@ -164,6 +164,8 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                         if ($record) {
                                             if ((float)$record->total_amount == 0) {
                                                 $query->where('id', 0);
+                                            } else {
+                                                $query->where('code', 'like', '1%');
                                             }
                                         } else {
                                             $query->where('code', 'like', '1%');
