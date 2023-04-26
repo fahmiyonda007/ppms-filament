@@ -141,7 +141,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                     if ($record) {
                                         $payment = static::getSumPaymentSource($get, $record);
                                         $detail = (float)$record->total_amount;
-                                        if ($state && $payment >= $detail) {
+                                        if ($state && $payment >= $detail && $detail > 0) {
                                             $set('payment_status', 'PAID');
                                         }
                                     } else {
@@ -284,7 +284,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         ->content(function (callable $get, Closure $set, ?Model $record) {
                             $payment = static::getSumPaymentSource($get, $record);
                             $detail = (float)$record->total_amount;
-                            if ($get('payment_date') !== null && $payment >= $detail) {
+                            if ($get('payment_date') !== null && $payment >= $detail && $detail > 0) {
                                 $set('payment_status', 'PAID');
                             } else {
                                 $set('payment_status', 'NOT PAID');
