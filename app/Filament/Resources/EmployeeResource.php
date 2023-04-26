@@ -78,7 +78,6 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                                 ->maxLength(50),
                             Forms\Components\TextInput::make('email')
                                 ->email()
-                                ->required()
                                 ->maxLength(255),
                             Forms\Components\TextInput::make('phone')
                                 ->tel()

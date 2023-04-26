@@ -119,18 +119,30 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                             Forms\Components\DatePicker::make('order_date')
                                 ->required(),
                             Forms\Components\DatePicker::make('payment_date')
-                                ->disabled(fn ($record) => $record->total_amount == 0)
-                                ->required(function (callable $get, Model $record) {
-                                    $payment = static::getSumPaymentSource($get, $record);
-                                    $detail = (float)$record->total_amount;
-                                    return $detail > 0 && $payment >= $detail;
+                                ->disabled(
+                                    function ($record) {
+                                        if ($record) {
+                                            return $record->total_amount == 0;
+                                        }
+                                        return false;
+                                    }
+                                )
+                                ->required(function (callable $get, ?Model $record) {
+                                    if ($record) {
+                                        $payment = static::getSumPaymentSource($get, $record);
+                                        $detail = (float)$record->total_amount;
+                                        return $detail > 0 && $payment >= $detail;
+                                    }
+                                    return false;
                                 })
                                 ->reactive()
-                                ->afterStateUpdated(function (Closure $set, callable $get, Model $record, $state) {
-                                    $payment = static::getSumPaymentSource($get, $record);
-                                    $detail = (float)$record->total_amount;
-                                    if ($state && $payment >= $detail) {
-                                        $set('payment_status', 'PAID');
+                                ->afterStateUpdated(function (Closure $set, callable $get, ?Model $record, $state) {
+                                    if ($record) {
+                                        $payment = static::getSumPaymentSource($get, $record);
+                                        $detail = (float)$record->total_amount;
+                                        if ($state && $payment >= $detail) {
+                                            $set('payment_status', 'PAID');
+                                        }
                                     } else {
                                         $set('payment_status', 'NOT PAID');
                                     }
@@ -147,9 +159,11 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'coaThird1',
                                     'name',
-                                    function (Builder $query, Model $record) {
-                                        if ((float)$record->total_amount == 0) {
-                                            $query->where('id', 0);
+                                    function (Builder $query, ?Model $record) {
+                                        if ($record) {
+                                            if ((float)$record->total_amount == 0) {
+                                                $query->where('id', 0);
+                                            }
                                         } else {
                                             $query->where('code', 'like', '1%');
                                         }
@@ -168,7 +182,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'coaThird2',
                                     'name',
-                                    function (Builder $query, Closure $get, Model $record) {
+                                    function (Builder $query, Closure $get) {
                                         if ($get('coa_id_source1') == null) {
                                             $query->where('id', 0);
                                         } else {
@@ -215,7 +229,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         ->schema([
                             Placeholder::make('amount_source1')
                                 ->label('')
-                                ->content(function (Model $record, callable $get) {
+                                ->content(function (callable $get) {
                                     $res = 0;
                                     $coaThird = CoaThird::find($get('coa_id_source1'));
                                     if ($coaThird) {
@@ -236,7 +250,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                         return $coaThird !== null;
                                     }
                                 )
-                                ->content(function (Model $record, callable $get) {
+                                ->content(function (callable $get) {
                                     $coaThird = CoaThird::find($get('coa_id_source2'));
                                     return "Rp " . number_format($coaThird->balance, 0, ',', '.');
                                 }),
@@ -248,16 +262,23 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                         return $coaThird !== null;
                                     }
                                 )
-                                ->content(function (Model $record, callable $get) {
+                                ->content(function (callable $get) {
                                     $coaThird = CoaThird::find($get('coa_id_source3'));
                                     return "Rp " . number_format($coaThird->balance, 0, ',', '.');
                                 }),
-                        ])->visible(fn ($record) => $record->payment_status == 'NOT PAID'),
+                        ])->visible(
+                            function ($record) {
+                                if ($record) {
+                                    return $record->payment_status == 'NOT PAID';
+                                }
+                                return true;
+                            }
+                        ),
                 ]),
                 Card::make([
                     Placeholder::make('total_payment_source')
                         ->label('Total Payment Source')
-                        ->content(function (callable $get, Closure $set, Model $record) {
+                        ->content(function (callable $get, Closure $set, ?Model $record) {
                             $payment = static::getSumPaymentSource($get, $record);
                             $detail = (float)$record->total_amount;
                             if ($get('payment_date') !== null && $payment >= $detail) {
@@ -277,7 +298,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         ->helperText(text: 'Pembayaran kurang dari Total Amount.')
                         ->resolveIconUsing(name: 'heroicon-o-x-circle')
                         ->warning()
-                        ->hidden(function (Model $record, callable $get) {
+                        ->hidden(function (?Model $record, callable $get) {
                             $payment = static::getSumPaymentSource($get, $record);
                             $detail = (float)$record->total_amount;
                             return $detail <= $payment;
@@ -316,10 +337,13 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         // ->panelAspectRatio('2:1')
                         // ->imageCropAspectRatio('2:1')
                         // ->panelLayout('integrated')
-                        ->required(function (callable $get, Model $record) {
-                            $payment = static::getSumPaymentSource($get, $record);
-                            $detail = (float)$record->total_amount;
-                            return $detail > 0 && $payment >= $detail;
+                        ->required(function (callable $get, ?Model $record) {
+                            if ($record) {
+                                $payment = static::getSumPaymentSource($get, $record);
+                                $detail = (float)$record->total_amount;
+                                return $detail > 0 && $payment >= $detail;
+                            }
+                            return false;
                         })
                         ->enableReordering(),
                 ])
