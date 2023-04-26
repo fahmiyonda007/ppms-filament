@@ -59,4 +59,8 @@ class ProjectPlanDetail extends Model
         return $this->belongsTo(Customer::class, 'booking_by');
     }
 
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'sales_id');
+    }
 }

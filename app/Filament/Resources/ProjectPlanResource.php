@@ -17,8 +17,10 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use RyanChandler\FilamentProgressColumn\ProgressColumn;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
 
 class ProjectPlanResource extends Resource implements HasShieldPermissions
 {
@@ -89,8 +91,12 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
             ->columns([
                 ProgressColumn::make('progress')
                     ->color('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'),
-                Tables\Columns\TextColumn::make('code'),
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('code')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('start_project')
                     ->date(),
                 Tables\Columns\TextColumn::make('est_end_project')
@@ -99,11 +105,19 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
                     ->date(),
             ])
             ->filters([
-                //
+                DateFilter::make('start_project'),
+                DateFilter::make('end_project'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(function (Model $record) {
+                        return $record->progress < 100.0;
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(function (Model $record) {
+                        return $record->progress < 100.0;
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -123,6 +137,7 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListProjectPlans::route('/'),
             'create' => Pages\CreateProjectPlan::route('/create'),
+            'view' => Pages\ViewProjectPlan::route('/{record}'),
             'edit' => Pages\EditProjectPlan::route('/{record}/edit'),
         ];
     }

@@ -25,6 +25,7 @@ class ProjectCost extends Model
         'coa_id_source2',
         'coa_id_source3',
         'total_amount',
+        'total_payment',
         'created_by',
         'updated_by',
     ];

@@ -97,7 +97,7 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                         ->required()
                                         ->maxLength(255),
                                     Forms\Components\TextInput::make('balance')
-                                        ->required()
+                                        ->disabled()
                                         ->numeric()
                                         ->mask(
                                             fn (Mask $mask) => $mask
@@ -152,12 +152,13 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                 ->schema([
                                     Forms\Components\TextInput::make('code')
                                         ->required()
+                                        ->disabled()
                                         ->maxLength(255),
                                     Forms\Components\TextInput::make('name')
                                         ->required()
                                         ->maxLength(255),
                                     Forms\Components\TextInput::make('balance')
-                                        ->required()
+                                        ->disabled()
                                         ->numeric()
                                         ->mask(
                                             fn (Mask $mask) => $mask

@@ -9,12 +9,14 @@ use App\Models\CoaThird;
 use App\Models\ProjectCost;
 use App\Models\ProjectCostDetail;
 use App\Models\ProjectPlan;
+use App\Models\Vendor;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -30,8 +32,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Http\Request;
+use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Unique;
 use Illuminate\Validation\ValidationException;
+use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\BooleanFilter;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
@@ -46,7 +50,19 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
     protected static ?string $recordTitleAttribute = 'transaction_code';
     protected static ?int $navigationSort = 2;
 
-    public $arr = [];
+    protected string | Closure $itemLink = '';
+
+    public function itemLink(string | Closure $itemLink): static
+    {
+        $this->itemLink = $itemLink;
+
+        return $this;
+    }
+
+    public function getItemLink(): string
+    {
+        return $this->evaluate($this->itemLink);
+    }
 
     public static function getPermissionPrefixes(): array
     {
@@ -94,19 +110,33 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                             Forms\Components\Select::make('vendor_id')
                                 ->relationship('vendor', 'name')
                                 ->searchable()
+                                ->reactive()
                                 ->preload()
                                 ->required(),
                             Forms\Components\DatePicker::make('order_date')
                                 ->required(),
                             Forms\Components\DatePicker::make('payment_date')
+                                ->disabled(fn ($record) => $record->total_amount == 0)
+                                ->required(function (callable $get, Model $record) {
+                                    $payment = static::getSumPaymentSource($get, $record);
+                                    $detail = (float)$record->total_amount;
+                                    return $detail > 0 && $payment >= $detail;
+                                })
                                 ->reactive()
-                                ->afterStateUpdated(function (Closure $set, $state) {
-                                    if ($state) {
+                                ->afterStateUpdated(function (Closure $set, callable $get, Model $record, $state) {
+                                    $payment = static::getSumPaymentSource($get, $record);
+                                    $detail = (float)$record->total_amount;
+                                    if ($state && $payment >= $detail) {
                                         $set('payment_status', 'PAID');
                                     } else {
                                         $set('payment_status', 'NOT PAID');
                                     }
                                 }),
+                        ]),
+                    Grid::make(1)
+                        ->schema([
+                            Forms\Components\TextArea::make('description')
+                                ->maxLength(500),
                         ]),
                     Grid::make(3)
                         ->schema([
@@ -114,12 +144,18 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'coaThird1',
                                     'name',
-                                    fn (Builder $query) => $query->where('code', 'like', '1%')
+                                    function (Builder $query, Model $record) {
+                                        if ((float)$record->total_amount == 0) {
+                                            $query->where('id', 0);
+                                        } else {
+                                            $query->where('code', 'like', '1%');
+                                        }
+                                    }
                                 )
                                 ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
                                 ->searchable()
                                 ->preload()
-                                ->label('Payment Source')
+                                ->label('Payment Source 1')
                                 ->reactive()
                                 ->afterStateUpdated(function (Closure $set) {
                                     $set('coa_id_source2', null);
@@ -129,7 +165,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'coaThird2',
                                     'name',
-                                    function (Builder $query, Closure $get) {
+                                    function (Builder $query, Closure $get, Model $record) {
                                         if ($get('coa_id_source1') == null) {
                                             $query->where('id', 0);
                                         } else {
@@ -144,7 +180,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
                                 ->searchable()
                                 ->preload()
-                                ->label('Payment Source')
+                                ->label('Payment Source 2')
                                 ->reactive()
                                 ->afterStateUpdated(function (Closure $set) {
                                     $set('coa_id_source3', null);
@@ -169,74 +205,83 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
                                 ->searchable()
                                 ->preload()
-                                ->label('Payment Source')
+                                ->reactive()
+                                ->label('Payment Source 3'),
                         ]),
-
-                    Grid::make(1)
+                    Grid::make(3)
                         ->schema([
-                            Forms\Components\RichEditor::make('description')
-                                ->maxLength(500),
-                        ]),
-                ]),
-                Card::make([
-                    Forms\Components\TextInput::make('total_amount')
-                        ->disabled()
-                        ->numeric()
-                        ->mask(
-                            fn (Mask $mask) => $mask
-                                ->numeric()
-                                ->thousandsSeparator(',')
-                        ),
-                    TableRepeater::make('details')
-                        ->relationship('projectCostDetails')
-                        ->schema([
-                            Forms\Components\Select::make('coa_id')
-                                ->relationship(
-                                    'coaThird',
-                                    'name',
-                                    function (Builder $query, Closure $get) {
-                                        $query->where([
-                                            ['code', 'like', '5%'],
-                                        ]);
+                            Placeholder::make('amount_source1')
+                                ->label('')
+                                ->content(function (Model $record, callable $get) {
+                                    $res = 0;
+                                    $coaThird = CoaThird::find($get('coa_id_source1'));
+                                    if ($coaThird) {
+                                        if ($coaThird->name == 'DEPOSIT TOKO' && $get('vendor_id') != null) {
+                                            $vendor = Vendor::find($get('vendor_id'));
+                                            $res = $vendor->deposit;
+                                        } else if ($coaThird->name != 'DEPOSIT TOKO') {
+                                            $res = $coaThird->balance;
+                                        }
+                                    }
+                                    return "Rp " . number_format($res, 0, ',', '.');
+                                }),
+                            Placeholder::make('amount_source2')
+                                ->label('')
+                                ->when(
+                                    function (callable $get) {
+                                        $coaThird = CoaThird::find($get('coa_id_source2'));
+                                        return $coaThird !== null;
                                     }
                                 )
-                                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
-                                ->required()
-                                ->columnSpan(2)
-                                ->searchable()
-                                ->preload(),
-                            Forms\Components\TextInput::make('uom')
-                                ->required(),
-                            Forms\Components\TextInput::make('qty')
-                                ->required()
-                                ->numeric(),
-                            Forms\Components\TextInput::make('unit_price')
-                                ->required()
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\TextInput::make('amount')
-                                ->disabled()
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                        ])
-                        ->colStyles([
-                            'coa_id' => 'width: 450px;',
-                        ])
-                        ->createItemButtonLabel('ADD DETAILS')
-                        ->collapsible()
-                ])->visibleOn('edit')
+                                ->content(function (Model $record, callable $get) {
+                                    $coaThird = CoaThird::find($get('coa_id_source2'));
+                                    return "Rp " . number_format($coaThird->balance, 0, ',', '.');
+                                }),
+                            Placeholder::make('amount_source3')
+                                ->label('')
+                                ->when(
+                                    function (callable $get) {
+                                        $coaThird = CoaThird::find($get('coa_id_source3'));
+                                        return $coaThird !== null;
+                                    }
+                                )
+                                ->content(function (Model $record, callable $get) {
+                                    $coaThird = CoaThird::find($get('coa_id_source3'));
+                                    return "Rp " . number_format($coaThird->balance, 0, ',', '.');
+                                }),
+                        ])->visible(fn ($record) => $record->payment_status == 'NOT PAID'),
+                ]),
+                Card::make([
+                    Placeholder::make('total_payment_source')
+                        ->label('Total Payment Source')
+                        ->content(function (callable $get, Closure $set, Model $record) {
+                            $payment = static::getSumPaymentSource($get, $record);
+                            $detail = (float)$record->total_amount;
+                            if ($get('payment_date') !== null && $payment >= $detail) {
+                                $set('payment_status', 'PAID');
+                            } else {
+                                $set('payment_status', 'NOT PAID');
+                            }
+                            return "Rp " . number_format($payment, 2, ',', '.');
+                        }),
+                    Placeholder::make('total_amount_detail')
+                        ->label('Total Amount Detail')
+                        ->content(function (Model $record) {
+                            return "Rp " . number_format($record->total_amount, 2, ',', '.');
+                        }),
+                    AlertBox::make()
+                        ->label(label: 'Oops...')
+                        ->helperText(text: 'Pembayaran kurang dari Total Amount.')
+                        ->resolveIconUsing(name: 'heroicon-o-x-circle')
+                        ->warning()
+                        ->hidden(function (Model $record, callable $get) {
+                            $payment = static::getSumPaymentSource($get, $record);
+                            $detail = (float)$record->total_amount;
+                            return $detail <= $payment;
+                        })->columnSpanFull(),
+                ])
+                    ->columns(2)
+                    ->visibleOn(['view', 'edit'])
             ]);
     }
 
@@ -244,8 +289,8 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('projectPlan.name')->sortable(),
-                Tables\Columns\TextColumn::make('transaction_code')->sortable(),
+                Tables\Columns\TextColumn::make('projectPlan.name')->sortable()->searchable(['project_plans.name']),
+                Tables\Columns\TextColumn::make('transaction_code')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('order_date')
                     ->date()
                     ->sortable(),
@@ -256,6 +301,8 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                     ->color(fn (Model $record) => $record->payment_status == 'PAID' ? 'success' : 'danger')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('vendor.name')->sortable(),
+                Tables\Columns\TextColumn::make('total_payment')->money('idr', true)->sortable()
+                    ->color(fn ($record) => $record->total_amount > $record->total_payment ? 'danger' : 'success'),
                 Tables\Columns\TextColumn::make('total_amount')->money('idr', true)->sortable(),
                 Tables\Columns\TextColumn::make('coaThird1.fullname')
                     ->label('Payment Source 1')->sortable(['name']),
@@ -273,8 +320,15 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                 DateFilter::make('order_date'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(function (Model $record) {
+                        return $record->payment_status == "NOT PAID";
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(function (Model $record) {
+                        return $record->payment_status == "NOT PAID";
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -284,7 +338,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            // ProjectCostDetailsRelationManager::class,
+            ProjectCostDetailsRelationManager::class,
         ];
     }
 
@@ -293,8 +347,30 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListProjectCosts::route('/'),
             'create' => Pages\CreateProjectCost::route('/create'),
+            'view' => Pages\ViewProjectCost::route('/{record}'),
             'edit' => Pages\EditProjectCost::route('/{record}/edit'),
         ];
+    }
+
+    protected static function getSumPaymentSource(callable $get, Model $record): float
+    {
+        $coaThird1 = 0;
+        $coaThird = CoaThird::find($get('coa_id_source1'));
+        if ($coaThird) {
+            $cond = $coaThird->name == 'DEPOSIT TOKO' && $get('vendor_id') != null;
+            if ($cond) {
+                $vendor = Vendor::find($get('vendor_id'));
+                $coaThird1 = $vendor->deposit;
+            } else {
+                $coaThird1 = $coaThird->balance;
+            }
+        }
+        $coaThird2 = CoaThird::find($get('coa_id_source2'))->balance ?? 0;
+        $coaThird3 = CoaThird::find($get('coa_id_source3'))->balance ?? 0;
+        $sum = (float)$coaThird1 + (float)$coaThird2 + (float)$coaThird3;
+        $res = (float)$record->total_payment != null && (float)$record->total_payment == $sum ? $record->total_payment : $sum;
+
+        return $res;
     }
 
     protected function arrRepeater(): array

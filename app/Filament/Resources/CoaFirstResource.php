@@ -73,6 +73,8 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
+                // TextColumn::make('code'),
+                // TextColumn::make('thirds.name'),
                 TextColumn::make('first')
                     ->sortable()
                     ->searchable(isIndividual: true, query: function (Builder $query, string $search): Builder {
@@ -88,8 +90,10 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
                 TextColumn::make('third')
                     // ->searchable(['coa_level_thirds.code', 'coa_level_thirds.name'])
                     ->searchable(isIndividual: true, query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('coa_level_thirds.name', 'like', "%{$search}%");
+                        // dd($query->get());
+                        $qry = $query->where('coa_level_thirds.name', 'like', "%{$search}%");
+                        //  dd($qry->toSql());
+                        return $qry;
                     })
                     ->sortable(),
             ])

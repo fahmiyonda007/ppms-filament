@@ -132,12 +132,17 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                 ),
                         ]),
                     Forms\Components\Select::make('sales_id')
-                        ->options([
-                            '1' => 'dummy 1',
-                            '2' => 'dummy 2',
-                            '3' => 'dummy 3',
-                        ]),
-
+                        ->relationship(
+                            'employee',
+                            'employee_name',
+                            fn (Builder $query) => $query
+                                ->where('department', 'SALES')
+                                ->Where('is_resign', 0)
+                        )
+                        ->searchable()
+                        ->preload()
+                        // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->empname} - {$record->phone}")
+                        ->label('Sales'),
                 ])
 
             ]);
@@ -161,6 +166,9 @@ class ProjectPlanDetailsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        return $livewire->ownerRecord->progress < 100.0;
+                    })
                     ->using(function (HasRelationshipTable $livewire, array $data): Model {
                         $data['created_by'] = auth()->user()->email;
                         return $livewire->getRelationship()->create($data);
@@ -168,15 +176,32 @@ class ProjectPlanDetailsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        return $livewire->ownerRecord->progress < 100.0;
+                    })
                     ->using(function (Model $record, array $data): Model {
                         $data['updated_by'] = auth()->user()->email;
                         $record->update($data);
                         return $record;
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        return $livewire->ownerRecord->progress < 100.0;
+                    }),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        return $livewire->ownerRecord->progress < 100.0;
+                    }),
             ]);
+    }
+
+    public static function canViewForRecord(Model $ownerRecord): bool
+    {
+        // dd($ownerRecord->progress);
+        return true;
+        // return $ownerRecord->progress < 100.0;
     }
 }

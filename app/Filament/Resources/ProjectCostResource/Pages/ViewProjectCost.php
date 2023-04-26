@@ -4,18 +4,20 @@ namespace App\Filament\Resources\ProjectCostResource\Pages;
 
 use App\Filament\Resources\ProjectCostResource;
 use Filament\Pages\Actions;
-use Filament\Resources\Pages\ListRecords;
-use Illuminate\Contracts\View\View;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
 
-class ListProjectCosts extends ListRecords
+class ViewProjectCost extends ViewRecord
 {
     protected static string $resource = ProjectCostResource::class;
 
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\EditAction::make()
+                ->visible(function (Model $record) {
+                    return $record->payment_status == "NOT PAID";
+                }),
         ];
     }
-
 }
