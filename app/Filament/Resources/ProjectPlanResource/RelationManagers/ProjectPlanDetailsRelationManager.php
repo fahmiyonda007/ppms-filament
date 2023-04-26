@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
+use Illuminate\Support\Str;
+
 
 class ProjectPlanDetailsRelationManager extends RelationManager
 {
@@ -167,7 +169,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->progress < 100.0;
+                        return Str::contains(url()->current(), '/edit') && $livewire->ownerRecord->progress < 100.0;
                     })
                     ->using(function (HasRelationshipTable $livewire, array $data): Model {
                         $data['created_by'] = auth()->user()->email;
@@ -177,7 +179,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->progress < 100.0;
+                        return Str::contains(url()->current(), '/edit') && $livewire->ownerRecord->progress < 100.0;
                     })
                     ->using(function (Model $record, array $data): Model {
                         $data['updated_by'] = auth()->user()->email;
@@ -186,14 +188,14 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     }),
                 Tables\Actions\DeleteAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->progress < 100.0;
+                        return Str::contains(url()->current(), '/edit') && $livewire->ownerRecord->progress < 100.0;
                     }),
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->progress < 100.0;
+                        return Str::contains(url()->current(), '/edit') && $livewire->ownerRecord->progress < 100.0;
                     }),
             ]);
     }

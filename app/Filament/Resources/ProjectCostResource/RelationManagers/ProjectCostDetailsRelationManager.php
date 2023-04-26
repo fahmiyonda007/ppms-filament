@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProjectCostResource\RelationManagers;
 
+use App\Filament\Resources\ProjectCostResource;
 use App\Models\ProjectCost;
 use App\Models\ProjectCostDetail;
 use Closure;
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Http\Client\Request;
 use Illuminate\Validation\Rules\Unique;
+use Illuminate\Support\Str;
+
 
 class ProjectCostDetailsRelationManager extends RelationManager
 {
@@ -110,7 +113,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->payment_status == "NOT PAID";
+                        return Str::contains(url()->current(), '/edit') && $livewire->ownerRecord->payment_status == "NOT PAID";
                     })
                     ->using(function (HasRelationshipTable $livewire, array $data): Model {
                         $data['created_by'] = auth()->user()->email;
@@ -127,7 +130,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->payment_status == "NOT PAID";
+                        return Str::contains(url()->current(), '/edit') && $livewire->ownerRecord->payment_status == "NOT PAID";
                     })
                     ->using(function (HasRelationshipTable $livewire, Model $record, array $data): Model {
                         $data['updated_by'] = auth()->user()->email;
@@ -143,7 +146,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
                     }),
                 Tables\Actions\DeleteAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->payment_status == "NOT PAID";
+                        return Str::contains(url()->current(), '/edit') && $livewire->ownerRecord->payment_status == "NOT PAID";
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = ProjectCostDetail::where('project_cost_id', $record->project_cost_id);
@@ -161,7 +164,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->payment_status == "NOT PAID";
+                        return Str::contains(url()->current(), '/edit') && $livewire->ownerRecord->payment_status == "NOT PAID";
                     }),
             ]);
     }

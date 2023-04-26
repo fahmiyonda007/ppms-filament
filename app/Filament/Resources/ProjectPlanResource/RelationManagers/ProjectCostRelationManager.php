@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
+use Illuminate\Support\Str;
 
 class ProjectCostRelationManager extends RelationManager
 {
@@ -70,12 +71,12 @@ class ProjectCostRelationManager extends RelationManager
                     ->url(fn (ProjectCost $record): string => env('APP_URL') . '/admin/project/costs/' . $record->id, true),
                 Tables\Actions\EditAction::make()
                     ->visible(function (Model $record) {
-                        return $record->payment_status == "NOT PAID";
+                        return Str::contains(url()->current(), '/edit') &&$record->payment_status == "NOT PAID";
                     })
                     ->url(fn (ProjectCost $record): string => env('APP_URL') . '/admin/project/costs/' . $record->id . '/edit', true),
                 Tables\Actions\DeleteAction::make()
                     ->visible(function (Model $record) {
-                        return $record->payment_status == "NOT PAID";
+                        return Str::contains(url()->current(), '/edit') &&$record->payment_status == "NOT PAID";
                     }),
             ])
             ->bulkActions([

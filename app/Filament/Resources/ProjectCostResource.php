@@ -15,10 +15,12 @@ use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Notifications\Notification;
@@ -36,6 +38,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Unique;
 use Illuminate\Validation\ValidationException;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
+use Livewire\TemporaryUploadedFile;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\BooleanFilter;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
@@ -281,7 +284,46 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         })->columnSpanFull(),
                 ])
                     ->columns(2)
-                    ->visibleOn(['view', 'edit'])
+                    ->visibleOn(['view', 'edit']),
+                Card::make([
+                    // FileUpload::make('attachment')
+                    //     // ->disk('s3')
+                    //     ->directory(fn ($record) => 'cost-attachments\\' . $record->transaction_code)
+                    //     // ->visibility('private')
+                    //     ->multiple()
+                    //     ->image()
+                    //     ->imageResizeMode('cover')
+                    //     ->imageCropAspectRatio('16:9')
+                    //     ->imageResizeTargetWidth('1920')
+                    //     ->imageResizeTargetHeight('1080')
+                    //     ->imagePreviewHeight('250')
+                    //     ->enableReordering()
+                    //     ->enableOpen()
+                    //     ->enableDownload()
+                    //     ->imagePreviewHeight('250')
+                    //     ->maxSize(1024)
+                    //     ->storeFileNamesIn('attachment_file_names')
+                    SpatieMediaLibraryFileUpload::make('attachment')
+                        ->multiple()
+                        ->responsiveImages()
+                        ->enableOpen()
+                        ->enableDownload()
+                        ->image()
+                        ->maxSize(1024)
+                        ->collection(fn ($record) => 'project-costs\\' . $record->transaction_code)
+                        // ->collection('project-costs')
+                        ->imagePreviewHeight(100)
+                        // ->panelAspectRatio('2:1')
+                        // ->imageCropAspectRatio('2:1')
+                        // ->panelLayout('integrated')
+                        ->required(function (callable $get, Model $record) {
+                            $payment = static::getSumPaymentSource($get, $record);
+                            $detail = (float)$record->total_amount;
+                            return $detail > 0 && $payment >= $detail;
+                        })
+                        ->enableReordering(),
+                ])
+
             ]);
     }
 
