@@ -39,6 +39,9 @@ class EditProjectCost extends EditRecord
 
         if ($totAmt == 0) {
             $data['payment_status'] = 'NOT PAID';
+            $data['coa_id_source1'] = null;
+            $data['coa_id_source2'] = null;
+            $data['coa_id_source3'] = null;
         }
 
         $record->update($data);

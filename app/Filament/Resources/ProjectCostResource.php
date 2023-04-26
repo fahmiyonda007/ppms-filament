@@ -168,7 +168,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                                 $query->where('code', 'like', '1%');
                                             }
                                         } else {
-                                            $query->where('code', 'like', '1%');
+                                            $query->where('id', 0);
                                         }
                                     }
                                 )
