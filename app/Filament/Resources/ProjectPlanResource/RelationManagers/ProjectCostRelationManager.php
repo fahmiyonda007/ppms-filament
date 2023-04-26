@@ -71,12 +71,12 @@ class ProjectCostRelationManager extends RelationManager
                     ->url(fn (ProjectCost $record): string => env('APP_URL') . '/admin/project/costs/' . $record->id, true),
                 Tables\Actions\EditAction::make()
                     ->visible(function (Model $record) {
-                        return Str::contains(url()->current(), '/edit') &&$record->payment_status == "NOT PAID";
+                        return $record->payment_status == "NOT PAID";
                     })
                     ->url(fn (ProjectCost $record): string => env('APP_URL') . '/admin/project/costs/' . $record->id . '/edit', true),
                 Tables\Actions\DeleteAction::make()
                     ->visible(function (Model $record) {
-                        return Str::contains(url()->current(), '/edit') &&$record->payment_status == "NOT PAID";
+                        return $record->payment_status == "NOT PAID";
                     }),
             ])
             ->bulkActions([
