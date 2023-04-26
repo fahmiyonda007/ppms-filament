@@ -21,6 +21,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Notifications\Notification;
@@ -150,7 +151,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         ]),
                     Grid::make(1)
                         ->schema([
-                            Forms\Components\TextArea::make('description')
+                            Textarea::make('description')
                                 ->maxLength(500),
                         ]),
                     Grid::make(3)
