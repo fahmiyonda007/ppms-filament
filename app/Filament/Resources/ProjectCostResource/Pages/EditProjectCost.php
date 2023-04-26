@@ -60,10 +60,14 @@ class EditProjectCost extends EditRecord
         return $record;
     }
 
-    // protected function getRedirectUrl(): string
-    // {
-    //     return $this->getResource()::getUrl('edit', ['record' => $this->record]);
-    // }
+    protected function getRedirectUrl(): string
+    {
+        if ($this->record->payment_status == 'PAID'){
+            return $this->getResource()::getUrl('view', ['record' => $this->record]);
+        }else{
+            return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+        }
+    }
 
     // protected function beforeSave(): void
     // {
