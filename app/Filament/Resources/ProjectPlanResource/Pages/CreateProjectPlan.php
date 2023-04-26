@@ -16,4 +16,9 @@ class CreateProjectPlan extends CreateRecord
         $data['created_by'] = auth()->user()->email;
         return static::getModel()::create($data);
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
 }
