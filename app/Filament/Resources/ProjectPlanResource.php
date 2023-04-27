@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\ProjectCostResource\RelationManagers\ProjectCostDetailsRelationManager;
 use App\Filament\Resources\ProjectPlanResource\Pages;
 use App\Filament\Resources\ProjectPlanResource\RelationManagers;
@@ -16,6 +17,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -103,6 +105,13 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
                     ->date(),
                 Tables\Columns\TextColumn::make('end_project')
                     ->date(),
+            ])
+            ->headerActions([
+                FilamentExportHeaderAction::make('export')
+                    ->extraViewData(fn ($action) => [
+                        'recordCount' => $action->getRecords()->count()
+                    ])
+                    ->snappy()
             ])
             ->filters([
                 DateFilter::make('start_project'),
