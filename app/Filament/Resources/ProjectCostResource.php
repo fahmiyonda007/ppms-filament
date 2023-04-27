@@ -390,15 +390,17 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                 DateFilter::make('order_date'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()
-                    ->visible(function (Model $record) {
-                        return $record->payment_status == "NOT PAID";
-                    }),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(function (Model $record) {
-                        return $record->payment_status == "NOT PAID";
-                    }),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->visible(function (Model $record) {
+                            return $record->payment_status == "NOT PAID";
+                        }),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(function (Model $record) {
+                            return $record->payment_status == "NOT PAID";
+                        }),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

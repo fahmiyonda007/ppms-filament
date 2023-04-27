@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use RyanChandler\FilamentProgressColumn\ProgressColumn;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\NumberFilter;
 
 class ProjectPlanResource extends Resource implements HasShieldPermissions
 {
@@ -92,6 +93,7 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 ProgressColumn::make('progress')
+                    ->sortable()
                     ->color('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'),
                 Tables\Columns\TextColumn::make('code')
                     ->sortable()
@@ -114,6 +116,7 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
                     ->snappy()
             ])
             ->filters([
+                NumberFilter::make('progress'),
                 DateFilter::make('start_project'),
                 DateFilter::make('end_project'),
             ])

@@ -27,7 +27,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
     protected static ?string $label = 'Details';
 
 
-
     public static function form(Form $form): Form
     {
         return $form
@@ -169,7 +168,9 @@ class ProjectPlanDetailsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->progress < 100.0;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        $isProgress = $livewire->ownerRecord->progress < 100.0;
+                        return $isEdit && $isProgress;
                     })
                     ->using(function (HasRelationshipTable $livewire, array $data): Model {
                         $data['created_by'] = auth()->user()->email;
@@ -179,7 +180,9 @@ class ProjectPlanDetailsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->progress < 100.0;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        $isProgress = $livewire->ownerRecord->progress < 100.0;
+                        return $isEdit && $isProgress;
                     })
                     ->using(function (Model $record, array $data): Model {
                         $data['updated_by'] = auth()->user()->email;
@@ -188,14 +191,18 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     }),
                 Tables\Actions\DeleteAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->progress < 100.0;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        $isProgress = $livewire->ownerRecord->progress < 100.0;
+                        return $isEdit && $isProgress;
                     }),
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
                     ->visible(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->progress < 100.0;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        $isProgress = $livewire->ownerRecord->progress < 100.0;
+                        return $isEdit && $isProgress;
                     }),
             ]);
     }
