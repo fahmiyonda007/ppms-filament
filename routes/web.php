@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return redirect('admin');
-});
-
+// Route::get('/', function () {
+//     return redirect('admin');
+// });
+Route::redirect('/', '/admin');
 Route::get("/profile", function () {
     // Only verified users may access this route...
 })->middleware('verified');

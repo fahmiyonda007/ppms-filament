@@ -88,7 +88,7 @@ class ExceptionPolicy
      */
     public function forceDelete(User $user, Exception $exception)
     {
-        return $user->can('force_delete_exception');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -99,7 +99,7 @@ class ExceptionPolicy
      */
     public function forceDeleteAny(User $user)
     {
-        return $user->can('force_delete_any_exception');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -111,7 +111,7 @@ class ExceptionPolicy
      */
     public function restore(User $user, Exception $exception)
     {
-        return $user->can('restore_exception');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -122,7 +122,7 @@ class ExceptionPolicy
      */
     public function restoreAny(User $user)
     {
-        return $user->can('restore_any_exception');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -134,7 +134,7 @@ class ExceptionPolicy
      */
     public function replicate(User $user, Exception $exception)
     {
-        return $user->can('replicate_exception');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -145,7 +145,7 @@ class ExceptionPolicy
      */
     public function reorder(User $user)
     {
-        return $user->can('reorder_exception');
+        return $user->can('{{ Reorder }}');
     }
 
 }
