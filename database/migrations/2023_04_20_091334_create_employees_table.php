@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('department')->nullable();
             $table->timestamp('join_date')->nullable();
-            $table->decimal('salary_day', 10, 0)->nullable();
+            $table->string('salary_type')->nullable();
+            $table->decimal('salary_amount', 10, 0)->nullable();
             $table->decimal('overtime', 10, 0)->nullable();
             $table->decimal('total_loan', 10, 0)->nullable();
             $table->integer('bank_account_id')->nullable();

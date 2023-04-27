@@ -8,6 +8,8 @@ use App\Models\BankAccount;
 use App\Models\Employee;
 use App\Models\SysLookup;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Carbon\Carbon;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
@@ -22,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
+use illuminate\Support\Str;
 
 class EmployeeResource extends Resource implements HasShieldPermissions
 {
@@ -86,35 +89,67 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                             Forms\Components\Textarea::make('address')
                                 ->maxLength(255)
                                 ->columnSpanFull(),
-                            Forms\Components\TextInput::make('salary_day')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\TextInput::make('overtime')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\TextInput::make('total_loan')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->thousandsSeparator(',')
-                                ),
+                            Card::make([
+                                Forms\Components\Radio::make('salary_type')
+                                    ->label('Type of Salary?')
+                                    ->inline()
+                                    ->columnSpanFull()
+                                    ->reactive()
+                                    ->options([
+                                        'DAILY' => 'Daily',
+                                        'MONTLY' => 'Montly',
+                                    ])
+                                    ->default('MONTLY'),
+                                Forms\Components\TextInput::make('salary_amount')
+                                    ->label(function (callable $get) {
+                                        $isMonthly = $get('salary_type');
+                                        if ($isMonthly == 'DAILY') {
+                                            return 'Salary (Daily)';
+                                        } else {
+                                            return 'Salary (Monthly)';
+                                        }
+                                    })
+                                    ->numeric()
+                                    ->mask(
+                                        fn (Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    ),
+                                Forms\Components\TextInput::make('overtime')
+                                    ->numeric()
+                                    ->mask(
+                                        fn (Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    ),
+                                Forms\Components\TextInput::make('total_loan')
+                                    ->numeric()
+                                    ->mask(
+                                        fn (Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    ),
+                            ])
+                                ->columns(3),
                             Forms\Components\Select::make('bank_account_id')
                                 ->relationship('bankAccount', 'account_name')
                                 ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->account_number} - {$record->account_name}")
                                 ->searchable()
                                 ->preload(),
                             Forms\Components\DatePicker::make('join_date'),
-                            Forms\Components\DateTimePicker::make('resign_date'),
-                            Forms\Components\Toggle::make('is_resign'),
+                            Forms\Components\DatePicker::make('resign_date')
+                                ->reactive()
+                                ->required(function (callable $get) {
+                                    if ($get('is_resign')) {
+                                        return true;
+                                    }
+                                    return false;
+                                })
+                                ->afterStateUpdated(function (Closure $set, $state) {
+                                    $set('is_resign', $state ? 1 : 0);
+                                }),
+                            Forms\Components\Toggle::make('is_resign')
+                                ->reactive(),
                         ]),
                 ]),
             ]);
@@ -146,7 +181,8 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\TextColumn::make('join_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('salary_day')->money('idr', true),
+                Tables\Columns\TextColumn::make('salary_type'),
+                Tables\Columns\TextColumn::make('salary_amount')->money('idr', true),
                 Tables\Columns\TextColumn::make('overtime')->money('idr', true),
                 Tables\Columns\TextColumn::make('total_loan')->money('idr', true),
                 Tables\Columns\TextColumn::make('bankAccount.bank_name')
@@ -154,7 +190,7 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\TextColumn::make('bankAccount.account_name'),
                 Tables\Columns\TextColumn::make('bankAccount.account_number'),
-                Tables\Columns\ToggleColumn::make('is_resign'),
+                Tables\Columns\BooleanColumn::make('is_resign'),
                 Tables\Columns\TextColumn::make('resign_date')
                     ->date(),
             ])
