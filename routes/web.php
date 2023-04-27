@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ProjectPlanController;
 use Illuminate\Support\Facades\Route;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +22,6 @@ Route::redirect('/', '/admin');
 Route::get("/profile", function () {
     // Only verified users may access this route...
 })->middleware('verified');
+
+Route::get('/print/{record}', ProjectPlanController::class)->name('plan-pdf')->middleware('verified');
+Route::get('projectplan/export-excel/{record}', [ProjectPlanController::class, 'PrintExcel'])->name('plan-excel')->middleware('verified');

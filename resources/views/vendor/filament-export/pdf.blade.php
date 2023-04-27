@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>{{ $fileName }} {{ $recordCount }}</title>
+    <title>{{ $fileName }}</title>
     <style type="text/css" media="all">
         * {
             font-family: DejaVu Sans, sans-serif !important;

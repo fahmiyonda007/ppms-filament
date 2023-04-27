@@ -108,9 +108,9 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
             ])
             ->headerActions([
                 FilamentExportHeaderAction::make('export')
-                    ->extraViewData(fn ($action) => [
-                        'recordCount' => $action->getRecords()->count()
-                    ])
+                    // ->extraViewData(fn ($action) => [
+                    //     'recordCount' => $action->getRecords()->count()
+                    // ])
                     ->snappy()
             ])
             ->filters([
@@ -118,15 +118,17 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
                 DateFilter::make('end_project'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()
-                    ->visible(function (Model $record) {
-                        return $record->progress < 100.0;
-                    }),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(function (Model $record) {
-                        return $record->progress < 100.0;
-                    }),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->visible(function (Model $record) {
+                            return $record->progress < 100.0;
+                        }),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(function (Model $record) {
+                            return $record->progress < 100.0;
+                        }),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

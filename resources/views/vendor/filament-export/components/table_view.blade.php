@@ -7,7 +7,6 @@
 $wire.on('close-preview-modal-{{ $getUniqueActionId() }}', () => { isOpen = false; });"
     :heading="$getPreviewModalHeading()">
     <div class="preview-table-wrapper space-y-4">
-        {{ $recordCount }}
         <table class="preview-table" x-init="$wire.on('print-table-{{ $getUniqueActionId() }}', function() {
             triggerInputEvent('{{ $getStatePath() }}', 'print-{{ $getUniqueActionId() }}')
         })">
