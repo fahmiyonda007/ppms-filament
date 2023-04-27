@@ -24,6 +24,7 @@
         "pxlrbt/filament-excel": "^1.1",
         "ryangjchandler/filament-progress-column": "^0.3.2",
         "spatie/laravel-permission": "^5.10",
+        "vinkla/hashids": "^11.0",
         "webbingbrasil/filament-advancedfilter": "^1.2"
     },
     "require-dev": {
