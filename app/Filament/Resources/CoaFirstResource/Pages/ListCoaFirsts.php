@@ -39,7 +39,7 @@ class ListCoaFirsts extends ListRecords
 
     protected function getTableRecordsPerPageSelectOptions(): array
     {
-        return [10, 15, 25, 50];
+        return [5, 10, 15, 20];
     }
 
     protected function paginateTableQuery(Builder $query): Paginator
