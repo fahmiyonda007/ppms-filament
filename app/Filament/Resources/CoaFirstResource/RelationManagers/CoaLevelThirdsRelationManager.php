@@ -179,4 +179,9 @@ class CoaLevelThirdsRelationManager extends RelationManager
     {
         return parent::getTableQuery();
     }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 15, 25, 50];
+    }
 }

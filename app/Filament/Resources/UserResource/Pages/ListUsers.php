@@ -5,6 +5,8 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListUsers extends ListRecords
 {
@@ -20,5 +22,15 @@ class ListUsers extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return UserResource::getWidgets();
+    }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 15, 25, 50];
+    }
+
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->fastPaginate($this->getTableRecordsPerPage());
     }
 }

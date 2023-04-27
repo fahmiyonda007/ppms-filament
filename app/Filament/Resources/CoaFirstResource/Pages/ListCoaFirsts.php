@@ -6,6 +6,7 @@ use App\Filament\Resources\CoaFirstResource;
 use App\Models\CoaFirst;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListCoaFirsts extends ListRecords
@@ -34,5 +35,15 @@ class ListCoaFirsts extends ListRecords
             });
         // dd(($coas));
         return $coas;
+    }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 15, 25, 50];
+    }
+
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->fastPaginate($this->getTableRecordsPerPage());
     }
 }

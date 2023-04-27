@@ -45,4 +45,9 @@ class BankAccountsRelationManager extends RelationManager
                 Tables\Actions\DetachBulkAction::make(),
             ]);
     }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 15, 25, 50];
+    }
 }
