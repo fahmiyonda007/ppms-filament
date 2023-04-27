@@ -52,10 +52,24 @@ class EditProjectCost extends EditRecord
                 $this->getSource2($data),
                 $this->getSource3($data),
             ];
+
+            $totalAmount = (float)$data['total_amount'];
             foreach ($sources as $key => $value) {
                 if ($value['id'] !== 0) {
-                    $qry = "update {$value['table']} set {$value['column']} = `{$value['column']}` - {$value['amount']} where id = {$value['id']}";
-                    // DB::statement((string)$qry);
+                    $paymentAmount = (float)$value['amount'];
+                    $calcAmount = $totalAmount > $paymentAmount ? $paymentAmount : $totalAmount;
+                    if ($totalAmount > 0) {
+                        if ($value['table'] == 'vendors') {
+                            // $qryCoa = "update coa_level_thirds set balance = balance - {$calcAmount} where name = 'DEPOSIT TOKO'";
+                            // DB::statement((string)$qryCoa);
+                            $coa = CoaThird::where('name', 'DEPOSIT TOKO')->first();
+                            $coa->update(['balance' => (float)$coa->getOriginal('balance') - $calcAmount]);
+                        }
+
+                        $qry = "update {$value['table']} set {$value['column']} = `{$value['column']}` - {$calcAmount} where id = {$value['id']}";
+                        DB::statement((string)$qry);
+                        $totalAmount = $totalAmount - $calcAmount;
+                    }
                 }
             }
         }
@@ -65,27 +79,12 @@ class EditProjectCost extends EditRecord
 
     protected function getRedirectUrl(): string
     {
-        if ($this->record->payment_status == 'PAID'){
+        if ($this->record->payment_status == 'PAID') {
             return $this->getResource()::getUrl('view', ['record' => $this->record]);
-        }else{
+        } else {
             return $this->getResource()::getUrl('edit', ['record' => $this->record]);
         }
     }
-
-    // protected function beforeSave(): void
-    // {
-    //     $dt = $this->record->projectCostDetails->where('project_cost_id', $this->record->id);
-    //     $uniq = $dt->unique('coa_id');
-    //     $not_unique = $dt->diff($uniq);
-
-    //     if (count($not_unique) > 0) {
-    //         Notification::make()
-    //             ->title('COA is duplicate')
-    //             ->danger()
-    //             ->send();
-    //         $this->halt();
-    //     }
-    // }
 
     protected function getSource1(array $data): array
     {

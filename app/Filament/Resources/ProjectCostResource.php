@@ -359,82 +359,26 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
 
     protected static function getSumPaymentSource(callable $get, Model $record): float
     {
-        $coaThird1 = 0;
-        $coaThird = CoaThird::find($get('coa_id_source1'));
-        if ($coaThird) {
-            $cond = $coaThird->name == 'DEPOSIT TOKO' && $get('vendor_id') != null;
-            if ($cond) {
-                $vendor = Vendor::find($get('vendor_id'));
-                $coaThird1 = $vendor->deposit;
-            } else {
-                $coaThird1 = $coaThird->balance;
+        $res = $record->total_payment;
+        if (Str::contains(url()->current(), '/edit')) {
+            $coaThird1 = 0;
+            $coaThird = CoaThird::find($get('coa_id_source1'));
+            if ($coaThird) {
+                $cond = $coaThird->name == 'DEPOSIT TOKO' && $get('vendor_id') != null;
+                if ($cond) {
+                    $vendor = Vendor::find($get('vendor_id'));
+                    $coaThird1 = $vendor->deposit;
+                } else {
+                    $coaThird1 = $coaThird->balance;
+                }
             }
+            $coaThird2 = CoaThird::find($get('coa_id_source2'))->balance ?? 0;
+            $coaThird3 = CoaThird::find($get('coa_id_source3'))->balance ?? 0;
+            $sum = (float) $coaThird1 + (float) $coaThird2 + (float) $coaThird3;
+            $res = (float) $record->total_payment != null && (float) $record->total_payment == $sum ? $record->total_payment : $sum;
         }
-        $coaThird2 = CoaThird::find($get('coa_id_source2'))->balance ?? 0;
-        $coaThird3 = CoaThird::find($get('coa_id_source3'))->balance ?? 0;
-        $sum = (float) $coaThird1 + (float) $coaThird2 + (float) $coaThird3;
-        $res = (float) $record->total_payment != null && (float) $record->total_payment == $sum ? $record->total_payment : $sum;
 
         return $res;
-    }
-
-    protected function arrRepeater(): array
-    {
-        return [
-            Repeater::make('projectCostDetails')
-                ->relationship()
-                ->schema([
-                    Grid::make(6)->schema([
-                        Forms\Components\Select::make('coa_id')
-                            ->relationship('coaThird', 'name', function (Builder $query, Closure $get) {
-                                $query->where('code', 'like', '5%');
-                            })
-                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
-                            ->required()
-                            ->columnSpan(2)
-                            ->searchable()
-                            ->preload(),
-                        Forms\Components\TextInput::make('uom')->required(),
-                        Forms\Components\TextInput::make('qty')
-                            ->required()
-                            ->numeric()
-                            // ->reactive()
-                            // ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                            //     $unit_price = $get('unit_price');
-                            //     $val = (float)$state * (float)$unit_price;
-                            //     $set('amount', (string)$val);
-                            // })
-                            ->mask(fn (Mask $mask) => $mask->numeric()->thousandsSeparator(',')),
-                        Forms\Components\TextInput::make('unit_price')
-                            ->required()
-                            ->numeric()
-                            // ->reactive()
-                            // ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                            //     $qty = $get('qty');
-                            //     $val = (float)$state * (float)$qty;
-                            //     $set('amount', (string)$val);
-                            // })
-                            ->mask(
-                                fn (Mask $mask) => $mask
-                                    ->numeric()
-                                    ->decimalPlaces(2)
-                                    ->decimalSeparator(',')
-                                    ->thousandsSeparator(','),
-                            ),
-                        Forms\Components\TextInput::make('amount')
-                            ->disabled()
-                            ->numeric()
-                            ->mask(
-                                fn (Mask $mask) => $mask
-                                    ->numeric()
-                                    ->decimalPlaces(2)
-                                    ->decimalSeparator(',')
-                                    ->thousandsSeparator(','),
-                            ),
-                    ]),
-                ])
-                ->collapsible(),
-        ];
     }
 
     protected static function generateCode($state): string
