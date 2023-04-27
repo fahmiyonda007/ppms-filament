@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc091a51c2390dff62acc119d7bd5edc",
+    "content-hash": "c3b5681e1eda7519265faefd36413c4a",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -211,6 +211,83 @@
                 }
             ],
             "time": "2023-03-10T14:21:40+00:00"
+        },
+        {
+            "name": "awcodes/overlook",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/awcodes/overlook.git",
+                "reference": "c8ff6124bfdf88d421a5132528bf33d4d87bb6b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/awcodes/overlook/zipball/c8ff6124bfdf88d421a5132528bf33d4d87bb6b8",
+                "reference": "c8ff6124bfdf88d421a5132528bf33d4d87bb6b8",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^2.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.13.5"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^6.0",
+                "nunomaduro/larastan": "^2.0.1",
+                "orchestra/testbench": "^7.0",
+                "pestphp/pest": "^1.21",
+                "pestphp/pest-plugin-laravel": "^1.1",
+                "pestphp/pest-plugin-livewire": "^1.0",
+                "pestphp/pest-plugin-parallel": "^0.3",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^9.5",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Awcodes\\Overlook\\OverlookServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Awcodes\\Overlook\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adam Weston",
+                    "email": "awcodes1@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Filament plugin that adds an app overview widget to your admin panel.",
+            "homepage": "https://github.com/awcodes/overlook",
+            "keywords": [
+                "awcodes",
+                "laravel",
+                "overlook"
+            ],
+            "support": {
+                "issues": "https://github.com/awcodes/overlook/issues",
+                "source": "https://github.com/awcodes/overlook"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/awcodes",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-03-16T13:08:17+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
