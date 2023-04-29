@@ -139,15 +139,17 @@ class EditProjectCost extends EditRecord
                         if ($value['table'] == 'vendors') {
                             $coa = CoaThird::where('name', Common::$depositToko)->first();
                             $coa->update(['balance' => (float)$coa->getOriginal('balance') - $calcAmount]);
-                            GeneralJournalDetail::create([
-                                'jurnal_id' => $journal->id,
-                                'no_inc' => $countJournalDetails,
-                                'coa_id' => $coa->id,
-                                'coa_code' => $coa->code,
-                                'debet_amount' => 0,
-                                'credit_amount' => $calcAmount,
-                                'description' => $coa->name,
-                            ]);
+                            if ($calcAmount > 0) {
+                                GeneralJournalDetail::create([
+                                    'jurnal_id' => $journal->id,
+                                    'no_inc' => $countJournalDetails,
+                                    'coa_id' => $coa->id,
+                                    'coa_code' => $coa->code,
+                                    'debet_amount' => 0,
+                                    'credit_amount' => $calcAmount,
+                                    'description' => $coa->name,
+                                ]);
+                            }
                         }
                         $qry = "update {$value['table']} set {$value['column']} = `{$value['column']}` - {$calcAmount} where id = {$value['id']}";
                         DB::statement((string)$qry);
@@ -155,16 +157,18 @@ class EditProjectCost extends EditRecord
 
                         if ($value['table'] != 'vendors') {
                             $coaForJournal = CoaThird::find($value['id']);
-                            GeneralJournalDetail::create([
-                                'jurnal_id' => $journal->id,
-                                'no_inc' => $countJournalDetails,
-                                'coa_id' => $coaForJournal->id,
-                                'coa_code' => $coaForJournal->code,
-                                'debet_amount' => 0,
-                                'credit_amount' => $calcAmount,
-                                'description' => $coaForJournal->name,
-                            ]);
-                            $countJournalDetails = $countJournalDetails + 1;
+                            if ($calcAmount > 0) {
+                                GeneralJournalDetail::create([
+                                    'jurnal_id' => $journal->id,
+                                    'no_inc' => $countJournalDetails,
+                                    'coa_id' => $coaForJournal->id,
+                                    'coa_code' => $coaForJournal->code,
+                                    'debet_amount' => 0,
+                                    'credit_amount' => $calcAmount,
+                                    'description' => $coaForJournal->name,
+                                ]);
+                                $countJournalDetails = $countJournalDetails + 1;
+                            }
                         }
                     }
                 }
@@ -172,16 +176,18 @@ class EditProjectCost extends EditRecord
 
             foreach ($record->projectCostDetails as $key => $value) {
                 $coaForJournal = CoaThird::find($value->coa_id);
-                GeneralJournalDetail::create([
-                    'jurnal_id' => $journal->id,
-                    'no_inc' => $countJournalDetails,
-                    'coa_id' => $coaForJournal->id,
-                    'coa_code' => $coaForJournal->code,
-                    'debet_amount' => $value->amount,
-                    'credit_amount' => 0,
-                    'description' => $coaForJournal->name,
-                ]);
-                $countJournalDetails = $countJournalDetails + 1;
+                if ($value->amount > 0) {
+                    GeneralJournalDetail::create([
+                        'jurnal_id' => $journal->id,
+                        'no_inc' => $countJournalDetails,
+                        'coa_id' => $coaForJournal->id,
+                        'coa_code' => $coaForJournal->code,
+                        'debet_amount' => $value->amount,
+                        'credit_amount' => 0,
+                        'description' => $coaForJournal->name,
+                    ]);
+                    $countJournalDetails = $countJournalDetails + 1;
+                }
             }
 
 
