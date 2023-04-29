@@ -43,7 +43,6 @@ class ProjectCost extends Model implements HasMedia
 
     protected $hidden = [
         'project_plan_id',
-        'vendor_id',
         'created_at',
         'updated_at',
         'created_by',

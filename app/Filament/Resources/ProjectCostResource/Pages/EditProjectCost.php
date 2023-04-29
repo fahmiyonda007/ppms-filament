@@ -112,6 +112,11 @@ class EditProjectCost extends EditRecord
 
 
         if ($totPayment >= $totAmount) {
+            $sources = [
+                $this->getSource1($data),
+                $this->getSource2($data),
+                $this->getSource3($data),
+            ];
 
             $dataJournal = [
                 "project_plan_id" => $record->project_plan_id,
@@ -125,11 +130,6 @@ class EditProjectCost extends EditRecord
             $journal = GeneralJournal::create($dataJournal);
             $countJournalDetails = 1;
 
-            $sources = [
-                $this->getSource1($data),
-                $this->getSource2($data),
-                $this->getSource3($data),
-            ];
             $totalAmount = (float)$data['total_amount'];
             foreach ($sources as $key => $value) {
                 if ($value['id'] != 0) {
