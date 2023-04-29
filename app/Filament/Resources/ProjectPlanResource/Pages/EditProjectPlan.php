@@ -30,4 +30,11 @@ class EditProjectPlan extends EditRecord
         $record->update($data);
         return $record;
     }
+
+    protected function beforeFill(): void
+    {
+        if ($this->record->progress == 100) {
+            $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record]));
+        }
+    }
 }
