@@ -218,11 +218,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         if ($record) {
                             $num = $record->total_payment;
                         }
-
-                        if ($num > $record->total_amount) {
-                            $num = $record->total_amount;
-                        }
-
+                        $num = $num > $record->total_amount ? $record->total_amount : $num;
                         return 'Rp ' . number_format($num, 2, ',', '.');
                     }),
                 Placeholder::make('total_amount_detail')

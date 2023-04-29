@@ -56,6 +56,26 @@ class EditProjectCost extends EditRecord
         }
     }
 
+    protected function beforeSave()
+    {
+        $data = $this->data;
+        $sources = [
+            $this->getSource1($data),
+            $this->getSource2($data),
+            $this->getSource3($data),
+        ];
+
+        foreach ($sources as $key => $value) {
+            if ($value['amount'] == 0) {
+                Notification::make()
+                    ->title('Saldo Payment source tidak boleh 0.')
+                    ->danger()
+                    ->send();
+                $this->halt();
+            }
+        }
+    }
+
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $totAmt = $record->projectCostDetails->sum('amount');
