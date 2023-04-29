@@ -197,7 +197,6 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                             }),
                         Placeholder::make('total_amount_source')
                             ->label('TOTAL')
-
                             ->content(function (callable $get, $record) {
                                 $payment = static::getSumPaymentSource($get);
                                 return 'Rp ' . number_format($payment, 2, ',', '.');
@@ -219,6 +218,11 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         if ($record) {
                             $num = $record->total_payment;
                         }
+
+                        if ($num > $record->total_amount) {
+                            $num = $record->total_amount;
+                        }
+
                         return 'Rp ' . number_format($num, 2, ',', '.');
                     }),
                 Placeholder::make('total_amount_detail')
