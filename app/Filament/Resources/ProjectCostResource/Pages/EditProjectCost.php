@@ -66,7 +66,7 @@ class EditProjectCost extends EditRecord
         ];
 
         foreach ($sources as $key => $value) {
-            if ($value['amount'] == 0) {
+            if ($value['amount'] == 0 && $value['id'] != 0) {
                 Notification::make()
                     ->title('Saldo Payment source tidak boleh 0.')
                     ->danger()
