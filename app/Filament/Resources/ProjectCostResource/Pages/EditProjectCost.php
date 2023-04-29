@@ -2,16 +2,22 @@
 
 namespace App\Filament\Resources\ProjectCostResource\Pages;
 
+use App\Filament\Common\Common;
 use App\Filament\Resources\ProjectCostResource;
 use App\Models\CoaThird;
+use App\Models\GeneralJournal;
+use App\Models\GeneralJournalDetail;
+use App\Models\ProjectCost;
 use App\Models\ProjectCostDetail;
 use App\Models\Vendor;
+use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 class EditProjectCost extends EditRecord
 {
@@ -21,13 +27,33 @@ class EditProjectCost extends EditRecord
     protected function getActions(): array
     {
         return [
+            Actions\Action::make('set_to_paid')
+                ->label('Set to PAID')
+                ->icon('heroicon-s-cash')
+                ->action('setToPaid')
+                ->requiresConfirmation(),
             Actions\DeleteAction::make(),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction(),
+            $this->getCancelFormAction(),
         ];
     }
 
     public function refreshForm()
     {
         $this->fillForm();
+    }
+
+    protected function beforeFill(): void
+    {
+        if ($this->record->payment_status == 'PAID') {
+            $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record]));
+        }
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
@@ -46,43 +72,113 @@ class EditProjectCost extends EditRecord
 
         $record->update($data);
 
-        if ($data['payment_status'] == 'PAID') {
+        return $record;
+    }
+
+    // protected function getRedirectUrl(): string
+    // {
+    //     if ($this->record->payment_status == 'PAID') {
+    //         return $this->getResource()::getUrl('view', ['record' => $this->record]);
+    //     } else {
+    //         return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    //     }
+    // }
+
+    public function setToPaid()
+    {
+        $record = $this->record;
+        if ($record->payment_status == 'PAID') {
+            Notification::make()
+                ->title('Tidak Dapat melakukan proses ini jika data sudah PAID.')
+                ->danger()
+                ->send();
+            $this->halt();
+        }
+
+        $this->save(false);
+        $data = $record->toArray();
+
+        $totPayment = (float)$data['total_payment'];
+        $totAmount = (float)$data['total_amount'];
+
+        if ($totPayment < $totAmount) {
+            Notification::make()
+                ->title('Pembayaran kurang dari Total Amount.')
+                ->danger()
+                ->send();
+            $this->halt();
+        }
+
+
+
+        if ($totPayment >= $totAmount) {
+
+            $dataJournal = [
+                "project_plan_id" => $record->project_plan_id,
+                'jurnal_id' => Common::getNewJournalId(),
+                'reference_code' => $record->transaction_code,
+                'description' => $record->description,
+                'transaction_date' => Carbon::now(),
+                'created_by' => auth()->user()->email,
+                // 'updated_by'=> null
+            ];
+            $journal = GeneralJournal::create($dataJournal);
+            $countJournalDetails = 1;
+
             $sources = [
                 $this->getSource1($data),
                 $this->getSource2($data),
                 $this->getSource3($data),
             ];
-
             $totalAmount = (float)$data['total_amount'];
             foreach ($sources as $key => $value) {
-                if ($value['id'] !== 0) {
+                if ($value['id'] != 0) {
                     $paymentAmount = (float)$value['amount'];
                     $calcAmount = $totalAmount > $paymentAmount ? $paymentAmount : $totalAmount;
                     if ($totalAmount > 0) {
                         if ($value['table'] == 'vendors') {
-                            // $qryCoa = "update coa_level_thirds set balance = balance - {$calcAmount} where name = 'DEPOSIT TOKO'";
-                            // DB::statement((string)$qryCoa);
-                            $coa = CoaThird::where('name', 'DEPOSIT TOKO')->first();
+                            $coa = CoaThird::where('name', Common::$depositToko)->first();
                             $coa->update(['balance' => (float)$coa->getOriginal('balance') - $calcAmount]);
                         }
-
                         $qry = "update {$value['table']} set {$value['column']} = `{$value['column']}` - {$calcAmount} where id = {$value['id']}";
                         DB::statement((string)$qry);
                         $totalAmount = $totalAmount - $calcAmount;
+
+
+                        $coaForJournal = CoaThird::find($value['id']);
+                        GeneralJournalDetail::create([
+                            'jurnal_id' => $journal->id,
+                            'no_inc' => $countJournalDetails,
+                            'coa_id' => $coaForJournal->id,
+                            'coa_code' => $coaForJournal->code,
+                            'debet_amount' => 0,
+                            'credit_amount' => $calcAmount,
+                            'description' => $coaForJournal->name,
+                        ]);
+                        $countJournalDetails = $countJournalDetails + 1;
                     }
                 }
             }
-        }
 
-        return $record;
-    }
+            foreach ($record->projectCostDetails as $key => $value) {
+                $coaForJournal = CoaThird::find($value->coa_id);
+                GeneralJournalDetail::create([
+                    'jurnal_id' => $journal->id,
+                    'no_inc' => $countJournalDetails,
+                    'coa_id' => $coaForJournal->id,
+                    'coa_code' => $coaForJournal->code,
+                    'debet_amount' => $value->amount,
+                    'credit_amount' => 0,
+                    'description' => $coaForJournal->name,
+                ]);
+                $countJournalDetails = $countJournalDetails + 1;
+            }
 
-    protected function getRedirectUrl(): string
-    {
-        if ($this->record->payment_status == 'PAID') {
-            return $this->getResource()::getUrl('view', ['record' => $this->record]);
-        } else {
-            return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+
+            $data['payment_status'] = 'PAID';
+            $record->update($data);
+
+            $this->redirect($this->getResource()::getUrl('view', ['record' => $record]));
         }
     }
 
@@ -98,7 +194,7 @@ class EditProjectCost extends EditRecord
         $coaThird1 = 0;
         $coaThird = CoaThird::find($data['coa_id_source1']);
         if ($coaThird) {
-            $cond = $coaThird->name == 'DEPOSIT TOKO' && $data['vendor_id'] != null;
+            $cond = $coaThird->name == Common::$depositToko && $data['vendor_id'] != null;
             if ($cond) {
                 $vendor = Vendor::find($data['vendor_id']);
                 $coaThird1 = $vendor->deposit;
@@ -160,7 +256,7 @@ class EditProjectCost extends EditRecord
         $coaThird1 = 0;
         $coaThird = CoaThird::find($data['coa_id_source1']);
         if ($coaThird) {
-            $cond = $coaThird->name == 'DEPOSIT TOKO' && $data['vendor_id'] != null;
+            $cond = $coaThird->name == Common::$depositToko && $data['vendor_id'] != null;
             if ($cond) {
                 $vendor = Vendor::find($data['vendor_id']);
                 $coaThird1 = $vendor->deposit;

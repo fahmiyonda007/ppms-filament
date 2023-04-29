@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Common\Common;
 use App\Filament\Resources\ProjectCostResource\Pages;
 use App\Filament\Resources\ProjectCostResource\RelationManagers\ProjectCostDetailsRelationManager;
 use App\Models\CoaThird;
@@ -102,18 +103,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                             }
                             return false;
                         })
-                        ->reactive()
-                        ->afterStateUpdated(function (Closure $set, callable $get, ?Model $record, $state) {
-                            if ($record) {
-                                $payment = static::getSumPaymentSource($get, $record);
-                                $detail = (float) $record->total_amount;
-                                if ($state && $payment >= $detail && $detail > 0) {
-                                    $set('payment_status', 'PAID');
-                                }
-                            } else {
-                                $set('payment_status', 'NOT PAID');
-                            }
-                        }),
+                        ->reactive(),
                 ]),
                 Grid::make(1)->schema([Textarea::make('description')->maxLength(500)]),
                 Grid::make(3)->schema([
@@ -176,10 +166,10 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 $res = 0;
                                 $coaThird = CoaThird::find($get('coa_id_source1'));
                                 if ($coaThird) {
-                                    if ($coaThird->name == 'DEPOSIT TOKO' && $get('vendor_id') != null) {
+                                    if ($coaThird->name == Common::$depositToko && $get('vendor_id') != null) {
                                         $vendor = Vendor::find($get('vendor_id'));
                                         $res = $vendor->deposit;
-                                    } elseif ($coaThird->name != 'DEPOSIT TOKO') {
+                                    } elseif ($coaThird->name != Common::$depositToko) {
                                         $res = $coaThird->balance;
                                     }
                                 }
@@ -205,6 +195,14 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 $coaThird = CoaThird::find($get('coa_id_source3'));
                                 return 'Rp ' . number_format($coaThird->balance, 0, ',', '.');
                             }),
+                        Placeholder::make('total_amount_source')
+                            ->label('TOTAL')
+
+                            ->content(function (callable $get, $record) {
+                                $payment = static::getSumPaymentSource($get, $record);
+                                return 'Rp ' . number_format($payment, 2, ',', '.');
+                            })
+                            ->columnSpanFull(),
                     ])
                     ->visible(function ($record) {
                         if ($record) {
@@ -216,15 +214,12 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
             Card::make([
                 Placeholder::make('total_payment_source')
                     ->label('Total Payment Source')
-                    ->content(function (callable $get, Closure $set, ?Model $record) {
-                        $payment = static::getSumPaymentSource($get, $record);
-                        $detail = (float) $record->total_amount;
-                        if ($get('payment_date') !== null && $payment >= $detail && $detail > 0) {
-                            $set('payment_status', 'PAID');
-                        } else {
-                            $set('payment_status', 'NOT PAID');
+                    ->content(function (?Model $record) {
+                        $num = 0;
+                        if ($record) {
+                            $num = $record->total_payment;
                         }
-                        return 'Rp ' . number_format($payment, 2, ',', '.');
+                        return 'Rp ' . number_format($num, 2, ',', '.');
                     }),
                 Placeholder::make('total_amount_detail')
                     ->label('Total Amount Detail')
@@ -331,12 +326,14 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()->visible(function (Model $record) {
-                        return $record->payment_status == 'NOT PAID';
-                    }),
-                    Tables\Actions\DeleteAction::make()->visible(function (Model $record) {
-                        return $record->payment_status == 'NOT PAID';
-                    }),
+                    Tables\Actions\EditAction::make()
+                        ->visible(function (Model $record) {
+                            return $record->payment_status == 'NOT PAID';
+                        }),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(function (Model $record) {
+                            return $record->payment_status == 'NOT PAID';
+                        }),
                 ]),
             ])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
@@ -359,26 +356,23 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
 
     protected static function getSumPaymentSource(callable $get, Model $record): float
     {
-        $res = $record->total_payment;
-        if (Str::contains(url()->current(), '/edit')) {
-            $coaThird1 = 0;
-            $coaThird = CoaThird::find($get('coa_id_source1'));
-            if ($coaThird) {
-                $cond = $coaThird->name == 'DEPOSIT TOKO' && $get('vendor_id') != null;
-                if ($cond) {
-                    $vendor = Vendor::find($get('vendor_id'));
-                    $coaThird1 = $vendor->deposit;
-                } else {
-                    $coaThird1 = $coaThird->balance;
-                }
+        $coaThird1 = 0;
+        $coaThird = CoaThird::find($get('coa_id_source1'));
+        if ($coaThird) {
+            $cond = $coaThird->name == Common::$depositToko && $get('vendor_id') != null;
+            if ($cond) {
+                $vendor = Vendor::find($get('vendor_id'));
+                $coaThird1 = $vendor->deposit;
+            } else {
+                $coaThird1 = $coaThird->balance;
             }
-            $coaThird2 = CoaThird::find($get('coa_id_source2'))->balance ?? 0;
-            $coaThird3 = CoaThird::find($get('coa_id_source3'))->balance ?? 0;
-            $sum = (float) $coaThird1 + (float) $coaThird2 + (float) $coaThird3;
-            $res = (float) $record->total_payment != null && (float) $record->total_payment == $sum ? $record->total_payment : $sum;
         }
+        $coaThird2 = CoaThird::find($get('coa_id_source2'))->balance ?? 0;
+        $coaThird3 = CoaThird::find($get('coa_id_source3'))->balance ?? 0;
+        $sum = (float) $coaThird1 + (float) $coaThird2 + (float) $coaThird3;
 
-        return $res ?? 0;
+        $res = (float) $sum;
+        return $res;
     }
 
     protected static function generateCode($state): string
