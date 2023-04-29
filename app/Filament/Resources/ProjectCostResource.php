@@ -97,7 +97,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         })
                         ->required(function (callable $get, ?Model $record) {
                             if ($record) {
-                                $payment = static::getSumPaymentSource($get, $record);
+                                $payment = static::getSumPaymentSource($get);
                                 $detail = (float) $record->total_amount;
                                 return $detail > 0 && $payment >= $detail;
                             }
@@ -199,7 +199,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                             ->label('TOTAL')
 
                             ->content(function (callable $get, $record) {
-                                $payment = static::getSumPaymentSource($get, $record);
+                                $payment = static::getSumPaymentSource($get);
                                 return 'Rp ' . number_format($payment, 2, ',', '.');
                             })
                             ->columnSpanFull(),
@@ -232,7 +232,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                     ->resolveIconUsing(name: 'heroicon-o-x-circle')
                     ->warning()
                     ->hidden(function (?Model $record, callable $get) {
-                        $payment = static::getSumPaymentSource($get, $record);
+                        $payment = static::getSumPaymentSource($get);
                         $detail = (float) $record->total_amount;
                         return $detail <= $payment;
                     })
@@ -274,7 +274,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                     // ->panelLayout('integrated')
                     ->required(function (callable $get, ?Model $record) {
                         if ($record) {
-                            $payment = static::getSumPaymentSource($get, $record);
+                            $payment = static::getSumPaymentSource($get);
                             $detail = (float) $record->total_amount;
                             return $detail > 0 && $payment >= $detail;
                         }
@@ -354,7 +354,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
         ];
     }
 
-    protected static function getSumPaymentSource(callable $get, Model $record): float
+    protected static function getSumPaymentSource(callable $get): float
     {
         $coaThird1 = 0;
         $coaThird = CoaThird::find($get('coa_id_source1'));
