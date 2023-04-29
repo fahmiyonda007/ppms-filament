@@ -32,7 +32,7 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
     protected static ?string $slug = 'project/plans';
     protected static ?string $navigationGroup = 'Projects';
     protected static ?string $navigationLabel = 'Plans';
-    // protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 1;
 
 
@@ -92,6 +92,8 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->hidden(),
                 ProgressColumn::make('progress')
                     ->sortable()
                     ->color('bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'),
@@ -113,6 +115,10 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
                     // ->extraViewData(fn ($action) => [
                     //     'recordCount' => $action->getRecords()->count()
                     // ])
+                    // ->withColumns([
+                    //     TextColumn::make('id')
+                    //     ])
+                    ->withHiddenColumns()
                     ->snappy()
             ])
             ->filters([

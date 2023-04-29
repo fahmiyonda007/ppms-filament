@@ -9,6 +9,7 @@
         "alperenersoy/filament-export": "^0.2.9",
         "awcodes/filament-badgeable-column": "^1.2",
         "awcodes/overlook": "^1.0",
+        "barryvdh/laravel-snappy": "^1.0",
         "bezhansalleh/filament-addons": "^1.0",
         "bezhansalleh/filament-exceptions": "^1.1",
         "bezhansalleh/filament-shield": "^2.4",

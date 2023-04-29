@@ -378,7 +378,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
             $res = (float) $record->total_payment != null && (float) $record->total_payment == $sum ? $record->total_payment : $sum;
         }
 
-        return $res;
+        return $res ?? 0;
     }
 
     protected static function generateCode($state): string
