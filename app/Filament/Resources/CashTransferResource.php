@@ -72,6 +72,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                                     return $query->where([
                                         ['code', 'like', '1%'],
                                         ['balance', '>', 0],
+                                        ['name', '!=', Common::$depositToko],
                                     ]);
                                 }),
                             Forms\Components\Select::make('coa_id_destination')
@@ -87,7 +88,8 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                                         $query->where([
                                             ['code', 'like', '1%'],
                                             ['balance', '>', 0],
-                                            ['id', '!=', $get('coa_id_source')]
+                                            ['id', '!=', $get('coa_id_source')],
+                                            ['name', '!=', Common::$depositToko],
                                         ]);
                                     }
                                 }),
@@ -199,7 +201,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                     ->sortable()
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('created_by')
-                ->sortable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('description')
             ])
             ->filters([
