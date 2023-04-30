@@ -14,6 +14,8 @@ class CreateVendor extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $data['created_by'] = auth()->user()->email;
+
+
         return static::getModel()::create($data);
     }
 }
