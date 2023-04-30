@@ -6,6 +6,7 @@ use App\Filament\Resources\VendorResource\Pages;
 use App\Filament\Resources\VendorResource\RelationManagers;
 use App\Filament\Resources\VendorResource\RelationManagers\BankaccountsRelationManager;
 use App\Filament\Resources\VendorResource\RelationManagers\BankAccountsRelationManager as RelationManagersBankAccountsRelationManager;
+use App\Filament\Resources\VendorResource\RelationManagers\DepositVendorRelationManager;
 use App\Models\BankAccount;
 use App\Models\Vendor;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
@@ -126,6 +127,7 @@ class VendorResource extends Resource implements HasShieldPermissions
     {
         return [
             BankaccountsRelationManager::class,
+            DepositVendorRelationManager::class,
         ];
     }
 
