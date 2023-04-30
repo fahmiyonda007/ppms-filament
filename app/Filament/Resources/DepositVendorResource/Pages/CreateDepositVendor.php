@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\CashTransferResource\Pages;
+namespace App\Filament\Resources\DepositVendorResource\Pages;
 
 use App\Filament\Common\Common;
-use App\Filament\Resources\CashTransferResource;
+use App\Filament\Resources\DepositVendorResource;
 use App\Models\CoaThird;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
@@ -13,9 +13,9 @@ use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
-class CreateCashTransfer extends CreateRecord
+class CreateDepositVendor extends CreateRecord
 {
-    protected static string $resource = CashTransferResource::class;
+    protected static string $resource = DepositVendorResource::class;
 
     protected function afterValidate()
     {
@@ -67,7 +67,7 @@ class CreateCashTransfer extends CreateRecord
         $journal = GeneralJournal::create([
             "project_plan_id" => $record->project_plan_id,
             'jurnal_id' => Common::getNewJournalId(),
-            'reference_code' => $record->transaction_id,
+            'reference_code' => $record->transaction_code,
             'description' => $record->description,
             'transaction_date' => Carbon::now(),
             'created_by' => auth()->user()->email,

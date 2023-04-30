@@ -3,6 +3,7 @@
 namespace App\Filament\Common;
 
 use App\Models\CashTransfer;
+use App\Models\DepositVendor;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
 use App\Models\SysLookup;
@@ -34,10 +35,20 @@ class Common
         return $formatCode . $len;
     }
 
-    public static function getNewTransactionId(): string
+    public static function getNewCashTransferTransactionId(): string
     {
         $journal = CashTransfer::whereDate('created_at', Carbon::today())->max('transaction_id');
         $formatCode = 'CT-' . Carbon::today()->format('Ymd');
+        $lastCode = $journal ?? $formatCode . '000';
+        $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
+        $len = str_pad($num, 3, '0', STR_PAD_LEFT);
+        return $formatCode . $len;
+    }
+
+    public static function getNewDepositVendorTransactionId(): string
+    {
+        $journal = DepositVendor::whereDate('created_at', Carbon::today())->max('transaction_code');
+        $formatCode = 'DPST-' . Carbon::today()->format('Ymd');
         $lastCode = $journal ?? $formatCode . '000';
         $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
         $len = str_pad($num, 3, '0', STR_PAD_LEFT);

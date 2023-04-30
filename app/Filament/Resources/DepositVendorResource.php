@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Common\CoaMasterDetails;
 use App\Filament\Common\Common;
-use App\Filament\Resources\CashTransferResource\Pages;
-use App\Filament\Resources\CashTransferResource\RelationManagers;
-use App\Models\CashTransfer;
+use App\Filament\Resources\DepositVendorResource\Pages;
+use App\Filament\Resources\DepositVendorResource\RelationManagers;
 use App\Models\CoaThird;
+use App\Models\DepositVendor;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
@@ -18,7 +17,6 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -26,15 +24,16 @@ use Illuminate\Support\Collection;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 
-class CashTransferResource extends Resource implements HasShieldPermissions
+class DepositVendorResource extends Resource implements HasShieldPermissions
 {
-    protected static ?string $model = CashTransfer::class;
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-copy';
-    protected static ?string $slug = 'cash/cash-transfer';
+    protected static ?string $model = DepositVendor::class;
+    protected static ?string $navigationIcon = 'heroicon-o-library';
+    protected static ?string $slug = 'cash/deposit-vendor';
     protected static ?string $navigationGroup = 'Cash';
-    protected static ?string $navigationLabel = 'Cash Transfers';
-    protected static ?string $recordTitleAttribute = 'transaction_id';
+    protected static ?string $navigationLabel = 'Deposit Vendors';
+    protected static ?string $recordTitleAttribute = 'transaction_code';
     // protected static ?int $navigationSort = 3;
+
     public static function getPermissionPrefixes(): array
     {
         return [
@@ -54,14 +53,22 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                 Card::make([
                     Grid::make(2)
                         ->schema([
-                            Forms\Components\TextInput::make('transaction_id')
-                                ->label('Transaction ID')
+                            Forms\Components\TextInput::make('transaction_code')
+                                ->label('Transaction Code')
                                 ->required()
                                 ->disabled()
                                 ->maxLength(20)
-                                ->default(fn () => Common::getNewCashTransferTransactionId()),
+                                ->default(fn () => Common::getNewDepositVendorTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required(),
+                            Forms\Components\Select::make('vendor_id')
+                                ->label('vendor')
+                                ->required()
+                                ->reactive()
+                                ->preload()
+                                ->searchable()
+                                ->relationship('vendor', 'name')
+                                ->columnSpanFull(),
                             Forms\Components\Select::make('coa_id_source')
                                 ->label('Source')
                                 ->required()
@@ -87,8 +94,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                                     if ($get('coa_id_source') != null) {
                                         $datas = Common::getViewCoaMasterDetails([
                                             ["level_first_id", "=", 1],
-                                            ["level_second_code", "=", "01"],
-                                            ['level_third_id', '!=', $get('coa_id_source')],
+                                            ["level_second_code", "=", "02"],
                                         ])->get();
                                     }
                                     return $datas->pluck('level_third_name', 'level_third_id');
@@ -161,7 +167,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                     ])->columns(2),
                     Forms\Components\Textarea::make('description')
                         ->maxLength(500)
-                ])
+                ]),
             ]);
     }
 
@@ -169,12 +175,13 @@ class CashTransferResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('transaction_id')
-                    ->label('Transaction ID')
+                Tables\Columns\TextColumn::make('transaction_code')
+                    ->label('Transaction Code')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
+                Tables\Columns\TextColumn::make('vendor.name'),
                 Tables\Columns\TextColumn::make('amount')->money('idr', true),
                 Tables\Columns\TextColumn::make('coaThirdSource.fullname')
                     ->label('COA Source')
@@ -196,7 +203,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('description')
             ])
             ->filters([
-                TextFilter::make('transaction_id'),
+                TextFilter::make('transaction_code'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -216,10 +223,10 @@ class CashTransferResource extends Resource implements HasShieldPermissions
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCashTransfers::route('/'),
-            'create' => Pages\CreateCashTransfer::route('/create'),
-            'view' => Pages\ViewCashTransfer::route('/{record}'),
-            // 'edit' => Pages\EditCashTransfer::route('/{record}/edit'),
+            'index' => Pages\ListDepositVendors::route('/'),
+            'create' => Pages\CreateDepositVendor::route('/create'),
+            'view' => Pages\ViewDepositVendor::route('/{record}'),
+            // 'edit' => Pages\EditDepositVendor::route('/{record}/edit'),
         ];
     }
 }
