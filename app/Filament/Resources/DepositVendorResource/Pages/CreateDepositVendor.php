@@ -7,6 +7,7 @@ use App\Filament\Resources\DepositVendorResource;
 use App\Models\CoaThird;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
+use App\Models\Vendor;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
@@ -54,11 +55,20 @@ class CreateDepositVendor extends CreateRecord
     protected function afterCreate()
     {
         $this->setJurnal();
+        $this->setDepositVendor();
     }
 
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    protected function setDepositVendor()
+    {
+        $record = $this->record;
+        $vendor = Vendor::find($record->vendor_id);
+        $vendor->deposit = $vendor->deposit + $record->amount;
+        $vendor->save();
     }
 
     protected function setJurnal()
