@@ -6,6 +6,7 @@ use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\ProjectCostResource\RelationManagers\ProjectCostDetailsRelationManager;
 use App\Filament\Resources\ProjectPlanResource\Pages;
 use App\Filament\Resources\ProjectPlanResource\RelationManagers;
+use App\Filament\Resources\ProjectPlanResource\RelationManagers\CashFlowsRelationManager;
 use App\Filament\Resources\ProjectPlanResource\RelationManagers\ProjectCostRelationManager;
 use App\Filament\Resources\ProjectPlanResource\RelationManagers\ProjectPlanDetailsRelationManager;
 use App\Models\ProjectPlan;
@@ -149,6 +150,7 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
         return [
             ProjectPlanDetailsRelationManager::class,
             ProjectCostRelationManager::class,
+            CashFlowsRelationManager::class,
         ];
     }
 

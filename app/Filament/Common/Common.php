@@ -2,6 +2,7 @@
 
 namespace App\Filament\Common;
 
+use App\Models\CashFlow;
 use App\Models\CashTransfer;
 use App\Models\DepositVendor;
 use App\Models\GeneralJournal;
@@ -49,6 +50,16 @@ class Common
     {
         $journal = DepositVendor::whereDate('created_at', Carbon::today())->max('transaction_code');
         $formatCode = 'DPST-' . Carbon::today()->format('Ymd');
+        $lastCode = $journal ?? $formatCode . '000';
+        $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
+        $len = str_pad($num, 3, '0', STR_PAD_LEFT);
+        return $formatCode . $len;
+    }
+
+    public static function getNewCashFlowTransactionId(): string
+    {
+        $journal = CashFlow::whereDate('created_at', Carbon::today())->max('transaction_code');
+        $formatCode = 'CF-' . Carbon::today()->format('Ymd');
         $lastCode = $journal ?? $formatCode . '000';
         $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
         $len = str_pad($num, 3, '0', STR_PAD_LEFT);

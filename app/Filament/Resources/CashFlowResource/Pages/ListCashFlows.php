@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\DepositVendorResource\Pages;
+namespace App\Filament\Resources\CashFlowResource\Pages;
 
-use App\Filament\Resources\DepositVendorResource;
+use App\Filament\Resources\CashFlowResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListDepositVendors extends ListRecords
+class ListCashFlows extends ListRecords
 {
-    protected static string $resource = DepositVendorResource::class;
+    protected static string $resource = CashFlowResource::class;
 
     protected function getActions(): array
     {

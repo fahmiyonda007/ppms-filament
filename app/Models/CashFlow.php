@@ -4,30 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ProjectPlan extends Model
+class CashFlow extends Model
 {
     use HasFactory;
 
     public $timestamps = true;
 
     protected $fillable = [
-        'code',
-        'name',
+        'transaction_code',
+        'transaction_date',
+        'project_plan_id',
+        'coa_id',
+        'cash_flow_type',
         'description',
-        'start_project',
-        'est_end_project',
-        'end_project',
-        'progress',
+        'is_jurnal',
         'created_by',
         'updated_by',
     ];
 
     protected $dates = [
-        'start_project',
-        'est_end_project',
-        'end_project',
+        'transaction_date',
         'created_at',
         'updated_at',
     ];
@@ -41,19 +40,18 @@ class ProjectPlan extends Model
         'updated_by',
     ];
 
-    public function projectPlanDetails(): HasMany
+    public function cashFlowDetails(): HasMany
     {
-        return $this->hasMany(ProjectPlanDetail::class, 'project_plan_id', 'id');
+        return $this->hasMany(CashFlowDetail::class, 'cash_flow_id', 'id');
     }
 
-    public function projectCost(): HasMany
+    public function projectPlan(): BelongsTo
     {
-        return $this->hasMany(ProjectCost::class, 'project_plan_id', 'id');
+        return $this->belongsTo(ProjectPlan::class, 'project_plan_id');
     }
 
-    public function cashFlows(): HasMany
+    public function coaThird(): BelongsTo
     {
-        return $this->hasMany(CashFlow::class, 'project_plan_id', 'id');
+        return $this->belongsTo(CoaThird::class, 'coa_id');
     }
-
 }

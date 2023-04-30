@@ -4,7 +4,8 @@ module.exports = {
   content: [
     "./resources/**/*.blade.php",
     "./vendor/filament/**/*.blade.php",
-    "./vendor/koalafacade/filament-alertbox/**/*.blade.php"
+    "./vendor/koalafacade/filament-alertbox/**/*.blade.php",
+    "./vendor/awcodes/shout/resources/views/**/*.blade.php"
   ],
   darkMode: "class",
   theme: {

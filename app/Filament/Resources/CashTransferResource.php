@@ -35,6 +35,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationLabel = 'Cash Transfers';
     protected static ?string $recordTitleAttribute = 'transaction_id';
     // protected static ?int $navigationSort = 3;
+
     public static function getPermissionPrefixes(): array
     {
         return [
@@ -117,6 +118,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                     ])->columns(2),
                     Forms\Components\TextInput::make('amount')
                         ->numeric()
+                        ->required()
                         ->reactive()
                         ->mask(
                             fn (Mask $mask) => $mask

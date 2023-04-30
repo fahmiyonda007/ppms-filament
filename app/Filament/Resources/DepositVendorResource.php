@@ -123,6 +123,7 @@ class DepositVendorResource extends Resource implements HasShieldPermissions
                     ])->columns(2),
                     Forms\Components\TextInput::make('amount')
                         ->numeric()
+                        ->required()
                         ->reactive()
                         ->mask(
                             fn (Mask $mask) => $mask
