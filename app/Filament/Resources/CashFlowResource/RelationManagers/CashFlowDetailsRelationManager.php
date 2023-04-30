@@ -53,12 +53,12 @@ class CashFlowDetailsRelationManager extends RelationManager
                                 return $datas->pluck('level_third_name', 'level_third_id');
                             }),
                         Card::make([
-                            Placeholder::make('coa_detail_balance')
-                                ->label('COA Detail Balance')
-                                ->content(function (callable $get) {
-                                    $num = CoaThird::find($get('coa_id'))->balance ?? 0;
-                                    return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
-                                }),
+                            // Placeholder::make('coa_detail_balance')
+                            //     ->label('COA Detail Balance')
+                            //     ->content(function (callable $get) {
+                            //         $num = CoaThird::find($get('coa_id'))->balance ?? 0;
+                            //         return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
+                            //     }),
                             Placeholder::make('coa_header_balance')
                                 ->label('COA Header Balance')
                                 ->content(function (callable $get, RelationManager $livewire) {
