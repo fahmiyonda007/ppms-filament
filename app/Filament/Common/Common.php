@@ -4,18 +4,21 @@ namespace App\Filament\Common;
 
 use App\Models\CashTransfer;
 use App\Models\GeneralJournal;
+use App\Models\GeneralJournalDetail;
 use App\Models\SysLookup;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Common
 {
-    public static string $depositToko = 'DEPOSIT TOKO';
+    public static string $depositToko = '102';
 
     public static function getDepositToko(): string
     {
         $res = SysLookup::where('group_name', 'DEPOSIT')
-            ->where('name', static::$depositToko)
+            ->where('code', static::$depositToko)
             ->get();
 
         return $res->name;
@@ -40,4 +43,13 @@ class Common
         $len = str_pad($num, 3, '0', STR_PAD_LEFT);
         return $formatCode . $len;
     }
+
+    public static function getViewCoaMasterDetails(?array $condition): Builder
+    {
+        $datas = DB::table('v_coa_master_details')
+            ->where($condition);
+
+        return $datas;
+    }
+
 }

@@ -16,10 +16,6 @@ class CreateVendor extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $sumVendorDeposit = Vendor::sum('deposit') + $data['deposit'];
-        CoaThird::where('name', Common::$depositToko)->update([
-            'balance' => $sumVendorDeposit
-        ]);
         $data['created_by'] = auth()->user()->email;
         return static::getModel()::create($data);
     }

@@ -166,10 +166,10 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 $res = 0;
                                 $coaThird = CoaThird::find($get('coa_id_source1'));
                                 if ($coaThird) {
-                                    if ($coaThird->name == Common::$depositToko && $get('vendor_id') != null) {
+                                    if (Str::startsWith($coaThird->code, Common::$depositToko) && $get('vendor_id') != null) {
                                         $vendor = Vendor::find($get('vendor_id'));
                                         $res = $vendor->deposit;
-                                    } elseif ($coaThird->name != Common::$depositToko) {
+                                    } else {
                                         $res = $coaThird->balance;
                                     }
                                 }
@@ -359,7 +359,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
         $coaThird1 = 0;
         $coaThird = CoaThird::find($get('coa_id_source1'));
         if ($coaThird) {
-            $cond = $coaThird->name == Common::$depositToko && $get('vendor_id') != null;
+            $cond = Str::startsWith($coaThird->code, Common::$depositToko) && $get('vendor_id') != null;
             if ($cond) {
                 $vendor = Vendor::find($get('vendor_id'));
                 $coaThird1 = $vendor->deposit;

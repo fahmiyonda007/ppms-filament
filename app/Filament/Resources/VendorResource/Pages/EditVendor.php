@@ -23,10 +23,6 @@ class EditVendor extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $sumVendorDeposit = Vendor::where('id', '!=', $record->id)->sum('deposit') + $data['deposit'];
-        CoaThird::where('name', Common::$depositToko)->update([
-            'balance' => $sumVendorDeposit
-        ]);
         $data['updated_by'] = auth()->user()->email;
         $record->update($data);
         return $record;

@@ -2,8 +2,12 @@
 
 namespace App\Filament\Resources\CashTransferResource\Pages;
 
+use App\Filament\Common\Common;
 use App\Filament\Resources\CashTransferResource;
 use App\Models\CoaThird;
+use App\Models\GeneralJournal;
+use App\Models\GeneralJournalDetail;
+use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
@@ -47,8 +51,51 @@ class CreateCashTransfer extends CreateRecord
         return static::getModel()::create($data);
     }
 
+    protected function afterCreate()
+    {
+        $this->setJurnal();
+    }
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    protected function setJurnal()
+    {
+        $record = $this->record;
+        $journal = GeneralJournal::create([
+            "project_plan_id" => $record->project_plan_id,
+            'jurnal_id' => Common::getNewJournalId(),
+            'reference_code' => $record->transaction_id,
+            'description' => $record->description,
+            'transaction_date' => Carbon::now(),
+            'created_by' => auth()->user()->email,
+        ]);
+
+        $coaThirdSource = CoaThird::find($record->coa_id_source);
+        $coaThirdDestination = CoaThird::find($record->coa_id_destination);
+
+        //Journal credit from coa source
+        GeneralJournalDetail::create([
+            'jurnal_id' => $journal->id,
+            'no_inc' => 2,
+            'coa_id' => $record->coa_id_source,
+            'coa_code' => $coaThirdSource->code,
+            'debet_amount' => 0,
+            'credit_amount' => $record->amount,
+            'description' => $coaThirdSource->name,
+        ]);
+
+        //Journal credit from coa destination
+        GeneralJournalDetail::create([
+            'jurnal_id' => $journal->id,
+            'no_inc' => 1,
+            'coa_id' => $record->coa_id_destination,
+            'coa_code' => $coaThirdDestination->code,
+            'debet_amount' => $record->amount,
+            'credit_amount' => 0,
+            'description' => $coaThirdDestination->name,
+        ]);
     }
 }

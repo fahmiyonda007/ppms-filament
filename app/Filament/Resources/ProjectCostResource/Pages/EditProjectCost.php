@@ -139,7 +139,7 @@ class EditProjectCost extends EditRecord
                 $this->getSource3($data),
             ];
 
-            $dataJournal = [
+            $journal = GeneralJournal::create([
                 "project_plan_id" => $record->project_plan_id,
                 'jurnal_id' => Common::getNewJournalId(),
                 'reference_code' => $record->transaction_code,
@@ -147,8 +147,7 @@ class EditProjectCost extends EditRecord
                 'transaction_date' => Carbon::now(),
                 'created_by' => auth()->user()->email,
                 // 'updated_by'=> null
-            ];
-            $journal = GeneralJournal::create($dataJournal);
+            ]);
             $countJournalDetails = 1;
 
             $totalAmount = (float)$data['total_amount'];
@@ -158,7 +157,7 @@ class EditProjectCost extends EditRecord
                     $calcAmount = $totalAmount > $paymentAmount ? $paymentAmount : $totalAmount;
                     if ($totalAmount > 0) {
                         if ($value['table'] == 'vendors') {
-                            $coa = CoaThird::where('name', Common::$depositToko)->first();
+                            $coa = CoaThird::where('id', $data['coa_id_source1'])->first();
                             $coa->update(['balance' => (float)$coa->getOriginal('balance') - $calcAmount]);
                             if ($calcAmount > 0) {
                                 GeneralJournalDetail::create([
@@ -231,7 +230,7 @@ class EditProjectCost extends EditRecord
         $coaThird1 = 0;
         $coaThird = CoaThird::find($data['coa_id_source1']);
         if ($coaThird) {
-            $cond = $coaThird->name == Common::$depositToko && $data['vendor_id'] != null;
+            $cond = Str::startsWith($coaThird->code, Common::$depositToko) && $data['vendor_id'] != null;
             if ($cond) {
                 $vendor = Vendor::find($data['vendor_id']);
                 $coaThird1 = $vendor->deposit;
@@ -293,7 +292,7 @@ class EditProjectCost extends EditRecord
         $coaThird1 = 0;
         $coaThird = CoaThird::find($data['coa_id_source1']);
         if ($coaThird) {
-            $cond = $coaThird->name == Common::$depositToko && $data['vendor_id'] != null;
+            $cond = Str::startsWith($coaThird->code, Common::$depositToko) && $data['vendor_id'] != null;
             if ($cond) {
                 $vendor = Vendor::find($data['vendor_id']);
                 $coaThird1 = $vendor->deposit;

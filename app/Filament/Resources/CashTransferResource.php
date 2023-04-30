@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Common\CoaMasterDetails;
 use App\Filament\Common\Common;
 use App\Filament\Resources\CashTransferResource\Pages;
 use App\Filament\Resources\CashTransferResource\RelationManagers;
@@ -21,6 +22,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 
@@ -68,12 +70,13 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                                 ->reactive()
                                 ->preload()
                                 ->searchable()
-                                ->relationship('coaThirdSource', 'name', function (Builder $query) {
-                                    return $query->where([
-                                        ['code', 'like', '1%'],
-                                        ['balance', '>', 0],
-                                        ['name', '!=', Common::$depositToko],
-                                    ]);
+                                ->options(function () {
+                                    $datas = Common::getViewCoaMasterDetails([
+                                        ["level_first_id", "=", 1],
+                                        ["balance", ">", 0],
+                                        ["level_second_code", "=", "01"],
+                                    ])->get();
+                                    return $datas->pluck('level_third_name', 'level_third_id');
                                 }),
                             Forms\Components\Select::make('coa_id_destination')
                                 ->label('Destination')
@@ -81,17 +84,16 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                                 ->preload()
                                 ->reactive()
                                 ->searchable()
-                                ->relationship('coaThirdDestination', 'name', function (Builder $query, callable $get) {
-                                    if ($get('coa_id_source') == null) {
-                                        $query->where('id', 0);
-                                    } else {
-                                        $query->where([
-                                            ['code', 'like', '1%'],
-                                            ['balance', '>', 0],
-                                            ['id', '!=', $get('coa_id_source')],
-                                            ['name', '!=', Common::$depositToko],
-                                        ]);
+                                ->options(function (callable $get) {
+                                    $datas = new Collection();
+                                    if ($get('coa_id_source') != null) {
+                                        $datas = Common::getViewCoaMasterDetails([
+                                            ["level_first_id", "=", 1],
+                                            ["level_second_code", "=", "01"],
+                                            ['level_third_id', '!=', $get('coa_id_source')],
+                                        ])->get();
                                     }
+                                    return $datas->pluck('level_third_name', 'level_third_id');
                                 }),
                         ]),
                     Card::make([
