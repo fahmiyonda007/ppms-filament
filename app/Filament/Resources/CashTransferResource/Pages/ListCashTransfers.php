@@ -5,6 +5,8 @@ namespace App\Filament\Resources\CashTransferResource\Pages;
 use App\Filament\Resources\CashTransferResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListCashTransfers extends ListRecords
 {
@@ -15,5 +17,15 @@ class ListCashTransfers extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [5, 10, 15, 20];
+    }
+
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->fastPaginate($this->getTableRecordsPerPage());
     }
 }

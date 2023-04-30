@@ -18,6 +18,11 @@ class CashTransfer extends Model
         'description',
         'coa_id_source',
         'coa_id_destination',
+        'amount',
+        'source_start_balance',
+        'source_end_balance',
+        'destination_start_balance',
+        'destination_end_balance',
         'created_by',
         'updated_by',
     ];
