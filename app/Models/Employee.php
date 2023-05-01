@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
 {
@@ -25,6 +26,8 @@ class Employee extends Model
         'salary_amount',
         'overtime',
         'total_loan',
+        'support_price',
+        'cor_price',
         'bank_account_id',
         'is_resign',
         'resign_date',
@@ -51,5 +54,10 @@ class Employee extends Model
     public function bankAccount(): BelongsTo
     {
         return $this->belongsTo(BankAccount::class);
+    }
+
+    public function employeeLoans(): HasMany
+    {
+        return $this->hasMany(EmployeeLoan::class, 'employee_id', 'id');
     }
 }

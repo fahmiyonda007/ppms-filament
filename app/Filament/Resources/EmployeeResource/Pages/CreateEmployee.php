@@ -17,8 +17,8 @@ class CreateEmployee extends CreateRecord
         return static::getModel()::create($data);
     }
 
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
+    // protected function getRedirectUrl(): string
+    // {
+    //     return $this->getResource()::getUrl('index');
+    // }
 }

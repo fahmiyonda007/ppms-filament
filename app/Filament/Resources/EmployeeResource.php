@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
+use App\Filament\Resources\EmployeeResource\RelationManagers\EmployeeLoansRelationManager;
 use App\Models\BankAccount;
 use App\Models\Employee;
 use App\Models\SysLookup;
@@ -30,7 +31,7 @@ class EmployeeResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Employee::class;
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-    protected static ?string $slug = 'master/employess';
+    protected static ?string $slug = 'master/employees';
     protected static ?string $navigationGroup = 'Masters';
     protected static ?string $navigationLabel = 'Employees';
     protected static ?string $recordTitleAttribute = 'employee_name';
@@ -124,6 +125,23 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                                     ),
                                 Forms\Components\TextInput::make('total_loan')
                                     ->numeric()
+                                    ->disabled()
+                                    ->mask(
+                                        fn (Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    ),
+                                Forms\Components\TextInput::make('support_price')
+                                    ->label('Support')
+                                    ->numeric()
+                                    ->mask(
+                                        fn (Mask $mask) => $mask
+                                            ->numeric()
+                                            ->thousandsSeparator(',')
+                                    ),
+                                Forms\Components\TextInput::make('cor_price')
+                                    ->label('Cor')
+                                    ->numeric()
                                     ->mask(
                                         fn (Mask $mask) => $mask
                                             ->numeric()
@@ -213,7 +231,7 @@ class EmployeeResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            //
+            EmployeeLoansRelationManager::class
         ];
     }
 

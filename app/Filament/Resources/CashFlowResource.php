@@ -57,6 +57,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                             Forms\Components\TextInput::make('transaction_code')
                                 ->maxLength(20)
                                 ->required()
+                                ->disabled()
                                 ->default(fn () => Common::getNewCashFlowTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required(),
@@ -123,6 +124,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
+                Tables\Columns\BooleanColumn::make('is_jurnal')->label('Post Journal'),
                 Tables\Columns\TextColumn::make('transaction_code'),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
