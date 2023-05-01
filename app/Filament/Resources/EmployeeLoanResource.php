@@ -31,7 +31,7 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $slug = 'cash/employee-loans';
     protected static ?string $navigationGroup = 'Cash';
-    protected static ?string $navigationLabel = 'Employee Loan';
+    // protected static ?string $navigationLabel = 'Employee Loan';
     protected static ?string $recordTitleAttribute = 'transaction_code';
     // protected static ?int $navigationSort = 2;
 
