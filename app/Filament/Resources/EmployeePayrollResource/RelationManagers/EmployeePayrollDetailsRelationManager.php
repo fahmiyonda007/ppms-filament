@@ -339,6 +339,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
