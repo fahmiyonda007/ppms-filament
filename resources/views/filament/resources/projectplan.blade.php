@@ -10,26 +10,57 @@
         integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 
-<body>
-    <h1>{{ $record->code }}</h1>
+<body style="font-size: 10px;">
+    <h1>{{ $record[0]->code }} - {{ $record[0]->name }}</h1>
+    <h2>Journal Details</h2>
     <table class="table table-bordered border-primary">
         <thead>
             <tr class="text-center">
-                <th>Unit Kavling</th>
-                <th>Unit Price</th>
+                <th>No.</th>
+                <th>Journal</th>
+                <th colspan='3'>COA</th>
+                <th>Debet</th>
+                <th>Credit</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($record->projectPlanDetails as $item)
+            {{-- @php dd($record->groupBy('jurnal_code')) @endphp --}}
+            @foreach ($record as $key => $item)
                 <tr>
-                    <td>{{ $item->unit_kavling }}</td>
-                    <td class="text-right">{{ number_format($item->unit_price, 0, ',', '.') }}</td>
-                    @php $total = $total + $item->unit_price; @endphp
+                    {{-- @php dd($items) @endphp --}}
+                    <td>{{ $key + 1 }}</td>
+                    {{-- @foreach ($items as $item) --}}
+                    <td>
+                        {{ $item->jurnal_code }}
+                    </td>
+                    <td colspan="5">
+                        {{ $item->level_first_name }}
+                    </td>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td colspan="5">
+                        {{ $item->level_second_name }}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td colspan="3">
+                        {{ $item->level_thirds_name }}
+                    </td>
+                    <td class="text-right">{{ number_format($item->debet_amount, 0, ',', '.') }}</td>
+                    <td class="text-right">{{ number_format($item->credit_amount, 0, ',', '.') }}</td>
+                </tr>
+
+                {{-- @php $total = $total + $item->unit_price; @endphp --}}
+                {{-- @endforeach --}}
                 </tr>
             @endforeach
-            <tr class="text-right">
-                <td><b>TOTAL</b></td>
-                <td>{{ number_format($total, 0, ',', '.') }}</td>
+            <tr class="text-center">
+                <td colspan="5"><b>TOTAL</b></td>
+                <td><b>{{ number_format($record->sum('debet_amount'), 0, ',', '.') }}</b></td>
+                <td><b>{{ number_format($record->sum('credit_amount'), 0, ',', '.') }}</b></td>
             </tr>
         </tbody>
     </table>
