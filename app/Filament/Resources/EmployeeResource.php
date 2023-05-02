@@ -98,9 +98,9 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                                     ->reactive()
                                     ->options([
                                         'DAILY' => 'Daily',
-                                        'MONTLY' => 'Montly',
+                                        'MONTHLY' => 'Monthly',
                                     ])
-                                    ->default('MONTLY'),
+                                    ->default('MONTHLY'),
                                 Forms\Components\TextInput::make('salary_amount')
                                     ->label(function (callable $get) {
                                         $isMonthly = $get('salary_type');
@@ -110,6 +110,7 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                                             return 'Salary (Monthly)';
                                         }
                                     })
+                                    ->required()
                                     ->numeric()
                                     ->mask(
                                         fn (Mask $mask) => $mask

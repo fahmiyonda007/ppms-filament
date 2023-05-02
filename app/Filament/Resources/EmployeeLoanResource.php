@@ -31,8 +31,8 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $slug = 'cash/employee-loans';
     protected static ?string $navigationGroup = 'Cash';
-    // protected static ?string $navigationLabel = 'Employee Loan';
-    protected static ?string $recordTitleAttribute = 'transaction_code';
+    protected static ?string $navigationLabel = 'Loans';
+    // protected static ?string $recordTitleAttribute = 'transaction_code';
     // protected static ?int $navigationSort = 2;
 
     public static function getPermissionPrefixes(): array
@@ -243,7 +243,7 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
                     }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make()
             ]);
     }
 

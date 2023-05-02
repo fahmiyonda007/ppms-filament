@@ -27,6 +27,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "*",
         "maatwebsite/excel": "^3.1",
+        "malzariey/filament-daterangepicker-filter": "^1.0",
         "pxlrbt/filament-excel": "^1.1",
         "ryangjchandler/filament-progress-column": "^0.3.2",
         "spatie/laravel-permission": "^5.10",

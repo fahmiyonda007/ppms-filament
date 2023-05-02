@@ -33,7 +33,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
     protected static ?string $slug = 'cash/cash-transfer';
     protected static ?string $navigationGroup = 'Cash';
     protected static ?string $navigationLabel = 'Cash Transfers';
-    protected static ?string $recordTitleAttribute = 'transaction_id';
+    // protected static ?string $recordTitleAttribute = 'transaction_id';
     // protected static ?int $navigationSort = 3;
 
     public static function getPermissionPrefixes(): array
@@ -204,7 +204,7 @@ class CashTransferResource extends Resource implements HasShieldPermissions
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
