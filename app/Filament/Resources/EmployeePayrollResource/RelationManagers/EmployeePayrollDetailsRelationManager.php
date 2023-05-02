@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Validation\Rules\Unique;
 use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
+use illuminate\Support\Str;
 
 class EmployeePayrollDetailsRelationManager extends RelationManager
 {
@@ -324,10 +325,8 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
-                        if ($header->is_jurnal) {
-                            return false;
-                        }
-                        return true;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal || $isEdit;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
@@ -343,10 +342,8 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
-                        if ($header->is_jurnal) {
-                            return false;
-                        }
-                        return true;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal || $isEdit;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
@@ -359,10 +356,8 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                 Tables\Actions\DeleteAction::make()
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
-                        if ($header->is_jurnal) {
-                            return false;
-                        }
-                        return true;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal || $isEdit;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
@@ -377,10 +372,8 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                 Tables\Actions\DeleteBulkAction::make()
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
-                        if ($header->is_jurnal) {
-                            return false;
-                        }
-                        return true;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal || $isEdit;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);

@@ -151,41 +151,6 @@ class EmployeePayrollResource extends Resource implements HasShieldPermissions
                             }
                         }),
                     Card::make([
-                        Placeholder::make('source_end_balance')
-                            ->label('Source End Balance')
-                            ->content(function (callable $get) {
-                                $coaThird = CoaThird::find($get('coa_id_source'))->balance ?? 0;
-                                $num = (float)$coaThird - (float)$get('amount');
-                                return 'Rp ' . number_format($num, 0, ',', '.');
-                            }),
-                        Placeholder::make('destination_end_balance')
-                            ->label('Destination End Balance')
-                            ->content(function (callable $get) {
-                                $coaThird = CoaThird::find($get('coa_id_destination'))->balance ?? 0;
-                                $num = (float)$coaThird + (float)$get('amount');
-                                return 'Rp ' . number_format($num, 0, ',', '.');
-                            }),
-                        AlertBox::make()
-                            ->label(label: 'Oops...')
-                            ->helperText(text: 'Source End Balance kurang dari 0.')
-                            ->resolveIconUsing(name: 'heroicon-o-x-circle')
-                            ->warning()
-                            ->hidden(function (callable $get) {
-                                $coaThird = CoaThird::find($get('coa_id_source'))->balance ?? 0;
-                                $num = (float)$coaThird - (float)$get('amount');
-                                return $num >= 0;
-                            })
-                            ->columnSpanFull(),
-                    ])->columns(2)
-                        ->visible(function ($record) {
-                            if ($record) {
-                                if ($record->is_jurnal == 1) {
-                                    return true;
-                                }
-                                return false;
-                            }
-                        }),
-                    Card::make([
                         Placeholder::make('payroll_total')
                             ->content(function ($record) {
                                 $num = $record->payroll_total ?? 0;
