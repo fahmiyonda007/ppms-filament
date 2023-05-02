@@ -24,10 +24,6 @@ return new class extends Migration
             $table->decimal('amount', 10, 0)->nullable();
             $table->integer('coa_id_source')->nullable();
             $table->integer('coa_id_destination')->nullable();
-            $table->decimal('source_start_balance', 10, 0)->nullable();
-            $table->decimal('source_end_balance', 10, 0)->nullable();
-            $table->decimal('destination_start_balance', 10, 0)->nullable();
-            $table->decimal('destination_send_balance', 10, 0)->nullable();
             $table->boolean('is_jurnal')->nullable();
             $table->timestamps();
             $table->string('created_by', 20)->nullable();
