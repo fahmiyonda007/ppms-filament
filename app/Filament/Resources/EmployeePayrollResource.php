@@ -106,7 +106,12 @@ class EmployeePayrollResource extends Resource implements HasShieldPermissions
                                 }),
                             Forms\Components\Select::make('coa_id_loan')
                                 ->label('COA Loan')
-                                ->required()
+                                ->required(function ($record) {
+                                    if ($record) {
+                                        return $record->payment_loan_total > 0;
+                                    }
+                                    return false;
+                                })
                                 ->preload()
                                 ->reactive()
                                 ->searchable()
@@ -214,6 +219,15 @@ class EmployeePayrollResource extends Resource implements HasShieldPermissions
                 DateFilter::make('transaction_date'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->visible(function ($record) {
+                        if ($record) {
+                            if ($record->is_jurnal == 0) {
+                                return false;
+                            }
+                            return true;
+                        }
+                    }),
                 Tables\Actions\EditAction::make()
                     ->visible(function ($record) {
                         if ($record) {

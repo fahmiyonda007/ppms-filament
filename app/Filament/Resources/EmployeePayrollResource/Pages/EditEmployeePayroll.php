@@ -171,7 +171,7 @@ class EditEmployeePayroll extends EditRecord
             // update total loan masing2 employee
             foreach ($record->employeePayrollDetails as $value) {
                 $employee = Employee::find($value->employee_id);
-                $employee->total_loan = $employee->total_loan - $record->loan_payment;
+                $employee->total_loan = (float)$employee->total_loan - (float)$value->loan_payment;
                 $employee->save();
             }
         }

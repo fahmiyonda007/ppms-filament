@@ -65,6 +65,8 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                 $set('outsanding', $employee->total_loan ?? '');
                                 if ($employee->salary_type ?? '' == 'MONTHLY') {
                                     $set('total_days', 1);
+                                    $set('start_date', new Carbon('first day of this month'));
+                                    $set('end_date', new Carbon('last day of this month'));
                                 } else {
                                     $set('total_days', '');
                                 }
@@ -81,6 +83,14 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                         if ($get('end_date')) {
                                             return new Carbon($get('end_date'));
                                         }
+                                    })
+                                    ->afterStateUpdated(function (Closure $set, callable $get, $state) {
+                                        $start = Carbon::parse($state);
+                                        $end = Carbon::parse($get('end_date'));
+                                        $diff = $start->diffInDays($end);
+                                        if ($get('salary_type') == 'DAILY') {
+                                            $set('total_days', $diff);
+                                        }
                                     }),
                                 Forms\Components\DatePicker::make('end_date')
                                     ->reactive()
@@ -89,6 +99,14 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                     ->minDate(function (callable $get) {
                                         if ($get('start_date')) {
                                             return new Carbon($get('start_date'));
+                                        }
+                                    })
+                                    ->afterStateUpdated(function (Closure $set, callable $get, $state) {
+                                        $start = Carbon::parse($get('start_date'));
+                                        $end = Carbon::parse($state);
+                                        $diff = $start->diffInDays($end);
+                                        if ($get('salary_type') == 'DAILY') {
+                                            $set('total_days', $diff);
                                         }
                                     }),
                             ])
@@ -222,7 +240,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                 Forms\Components\TextInput::make('loan_payment')
                                     ->reactive()
                                     ->afterStateUpdated(function (callable $get, Closure $set, $state) {
-                                        $set('outsanding', (float)$get('total_loan') - (float)$state);
+                                        $set('outstanding', (float)$get('total_loan') - (float)$state);
                                     })
                                     ->numeric()
                                     ->mask(
@@ -250,6 +268,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                     ),
                                 Forms\Components\TextInput::make('outstanding')
                                     ->numeric()
+                                    ->required()
                                     ->disabled()
                                     ->columnSpanFull()
                                     ->mask(
@@ -326,7 +345,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                        return $header->is_jurnal || $isEdit;
+                        return $header->is_jurnal == 0 && $isEdit;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
@@ -343,7 +362,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                        return $header->is_jurnal || $isEdit;
+                        return $header->is_jurnal == 0 && $isEdit;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
@@ -357,7 +376,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                        return $header->is_jurnal || $isEdit;
+                        return $header->is_jurnal == 0 && $isEdit;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
@@ -373,7 +392,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                     ->visible(function (RelationManager $livewire) {
                         $header = $livewire->ownerRecord;
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                        return $header->is_jurnal || $isEdit;
+                        return $header->is_jurnal && $isEdit;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
