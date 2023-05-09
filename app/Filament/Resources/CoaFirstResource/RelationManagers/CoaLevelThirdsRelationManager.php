@@ -41,7 +41,7 @@ class CoaLevelThirdsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('first.fullname')->label('level 1'),
                 Tables\Columns\TextColumn::make('second.fullname')->label('level 2'),
-                Tables\Columns\TextColumn::make('fullname')->label('level 3')
+                Tables\Columns\TextColumn::make('fullname')
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query
                             ->where('name', 'like', "%{$search}%");

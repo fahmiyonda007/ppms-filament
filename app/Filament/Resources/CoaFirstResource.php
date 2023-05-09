@@ -36,6 +36,7 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationLabel = 'COA';
     // protected static ?int $navigationSort = 1;
     protected static ?string $label = 'C O A ';
+    // protected static bool $shouldRegisterNavigation = false;
 
 
     public static function getPermissionPrefixes(): array
@@ -77,25 +78,27 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
                 // TextColumn::make('thirds.name'),
                 TextColumn::make('first')
                     ->sortable()
-                    ->searchable(isIndividual: true, query: function (Builder $query, string $search): Builder {
+                    // ->searchable(['coa_level_firsts.code', 'coa_level_firsts.name']),
+                    ->searchable(isGlobal: false, isIndividual: true, query: function (Builder $query, string $search): Builder {
                         return $query
                             ->where('coa_level_firsts.name', 'like', "%{$search}%");
                     }),
                 TextColumn::make('second')
                     ->sortable()
-                    ->searchable(isIndividual: true, query: function (Builder $query, string $search): Builder {
+                    // ->searchable(['coa_level_seconds.code', 'coa_level_seconds.name']),
+                    ->searchable(isGlobal: false, isIndividual: true, query: function (Builder $query, string $search): Builder {
                         return $query
                             ->where('coa_level_seconds.name', 'like', "%{$search}%");
                     }),
                 TextColumn::make('third')
-                    // ->searchable(['coa_level_thirds.code', 'coa_level_thirds.name'])
-                    ->searchable(isIndividual: true, query: function (Builder $query, string $search): Builder {
+                    ->sortable()
+                    ->searchable(isGlobal: false, isIndividual: true, query: function (Builder $query, string $search): Builder {
                         // dd($query->get());
                         $qry = $query->where('coa_level_thirds.name', 'like', "%{$search}%");
                         //  dd($qry->toSql());
                         return $qry;
-                    })
-                    ->sortable(),
+                    }),
+                // ->searchable(['coa_level_thirds.code', 'coa_level_thirds.name'])
             ])
             ->filters([
                 // TextFilter::make('third')->query()
@@ -131,7 +134,7 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCoaFirsts::route('/'),
+            'index' => ListCoaThirds::route('/'),
             'create' => Pages\CreateCoaFirst::route('/create'),
             'edit' => Pages\EditCoaFirst::route('/{record}/edit'),
         ];
