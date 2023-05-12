@@ -27,7 +27,7 @@ class SysLookupResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'System Lookups';
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = -1;
 
 
     public static function getPermissionPrefixes(): array

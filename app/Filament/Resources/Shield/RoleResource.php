@@ -284,10 +284,10 @@ class RoleResource extends Resource implements HasShieldPermissions
                         ->schema(static::getResourceEntityPermissionsSchema($entity)),
                 ])
                 ->columnSpan(1)
-                // ->visible(function () use ($entity) {
-                //     return $entity['resource'] == 'exception' ? false : true;
-                // })
-                ;
+                ->visible(function () use ($entity) {
+                    return count(static::getResourceEntityPermissionsSchema($entity)) > 0;
+                    // return $entity['resource'] == 'exception' ? false : true;
+                });
 
             return $entities;
         }, collect())

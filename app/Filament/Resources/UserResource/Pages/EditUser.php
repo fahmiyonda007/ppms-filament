@@ -18,13 +18,6 @@ class EditUser extends EditRecord
         return [
             DeleteAction::make()
                 ->hidden(fn ($record) => $record->email_verified_at !== null),
-
-            Action::make('Custom Button')
-                ->action('Custom Button')
-                ->requiresConfirmation()
-                ->modalHeading('Delete posts')
-                ->modalSubheading('Are you sure you\'d like to delete these posts? This cannot be undone.')
-                ->modalButton('Yes, delete them')
         ];
     }
 

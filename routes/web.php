@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProjectPlanController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
@@ -25,3 +26,4 @@ Route::get("/profile", function () {
 
 Route::get('/print/{record}', ProjectPlanController::class)->name('plan-pdf')->middleware('verified');
 Route::get('projectplan/export-excel/{record}', [ProjectPlanController::class, 'PrintExcel'])->name('plan-excel')->middleware('verified');
+Route::get('profitloss/pdf/{projectPlanId}/{startDate}/{endDate}', [ReportController::class, 'ProfitLossPdf'])->name('ProfitLossPdf')->middleware('verified');

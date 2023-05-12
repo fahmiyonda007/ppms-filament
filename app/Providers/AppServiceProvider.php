@@ -56,6 +56,14 @@ class AppServiceProvider extends ServiceProvider
                 ->send();
         };
 
+        Filament::registerNavigationGroups([
+            'Projects',
+            'Cash',
+            'Masters',
+            'Reports',
+            'Settings',
+        ]);
+
         // Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
         //     return $builder
         //         ->items([

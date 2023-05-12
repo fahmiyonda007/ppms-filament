@@ -1,6 +1,7 @@
 <?php
 
-use App\Filament\Resources\UserResource\Widgets\UserOverview;
+use App\Filament\Widgets\Announcement;
+use App\Filament\Widgets\StatsOverview;
 use App\Http\Middleware\UserMenuItemMiddleware;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -143,8 +144,9 @@ return [
         'path' => app_path('Filament/Widgets'),
         'register' => [
             Widgets\AccountWidget::class,
+            Announcement::class,
             // Widgets\FilamentInfoWidget::class,
-            // UserOverview::class,
+            StatsOverview::class,
             \Awcodes\Overlook\Overlook::class,
         ],
     ],
