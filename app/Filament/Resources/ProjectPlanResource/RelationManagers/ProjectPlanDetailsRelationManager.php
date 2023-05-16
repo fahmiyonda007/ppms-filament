@@ -44,7 +44,8 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                             ->required()
                             ->numeric()
                             ->reactive()
-                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                            ->afterStateUpdated(function (callable $get, Closure $set, $state) {
+                                $set('deal_price', $state);
                                 static::calculatePrice($get, $set);
                             })
                             ->mask(
@@ -141,36 +142,9 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->required(function (callable $get) {
                                                 return $get('booking_by') != null;
                                             })
-                                            ->mask(
-                                                fn (Mask $mask) => $mask
-                                                    ->numeric()
-                                                    ->decimalPlaces(2)
-                                                    ->decimalSeparator(',')
-                                                    ->thousandsSeparator(',')
-                                            ),
-                                        Forms\Components\TextInput::make('tax_rate')
-                                            ->label('Tax rate (%)')
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->reactive()
                                             ->afterStateUpdated(function (callable $get, Closure $set) {
                                                 static::calculatePrice($get, $set);
-                                            })
-                                            ->mask(
-                                                fn (Mask $mask) => $mask
-                                                    ->numeric()
-                                                    ->minValue(1)
-                                                    ->maxValue(100)
-                                                    ->decimalPlaces(2)
-                                                    ->decimalSeparator('.')
-                                                    ->thousandsSeparator(',')
-                                            ),
-                                        Forms\Components\TextInput::make('tax')
-                                            ->numeric()
-                                            ->disabled()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
                                             })
                                             ->mask(
                                                 fn (Mask $mask) => $mask
@@ -204,8 +178,58 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                     ->decimalSeparator(',')
                                                     ->thousandsSeparator(',')
                                             ),
+                                        Forms\Components\TextInput::make('tax_rate')
+                                            ->label('Tax rate (%)')
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                                                static::calculatePrice($get, $set);
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->minValue(0.01)
+                                                    ->maxValue(100)
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator('.')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('tax')
+                                            ->numeric()
+                                            ->disabled()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('commission_rate')
+                                            ->label('Commission rate (%)')
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                                                static::calculatePrice($get, $set);
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->minValue(0.01)
+                                                    ->maxValue(100)
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator('.')
+                                                    ->thousandsSeparator(',')
+                                            ),
                                         Forms\Components\TextInput::make('commission')
                                             ->numeric()
+                                            ->disabled()
                                             ->required(function (callable $get) {
                                                 return $get('booking_by') != null;
                                             })
@@ -221,6 +245,22 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                     ->thousandsSeparator(',')
                                             ),
                                         Forms\Components\TextInput::make('other_commission')
+                                            ->numeric()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                                                static::calculatePrice($get, $set);
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('added_bonus')
                                             ->numeric()
                                             ->required(function (callable $get) {
                                                 return $get('booking_by') != null;
@@ -381,22 +421,25 @@ class ProjectPlanDetailsRelationManager extends RelationManager
 
     protected static function calculatePrice(callable $get, Closure $set): void
     {
-        $unitPrice = (float)$get('unit_price');
-        // $netPrice = (float)$get('net_price');
-        // $dealPrice = (float)$get('deal_price');
+        $dealPrice = (float)$get('deal_price');
 
         $dp  = (float)$get('down_payment');
 
         $notaryFee = (float)$get('notary_fee');
-        $commission = (float)$get('commission');
         $oth = (float)$get('other_commission');
-        $calc = $unitPrice - ($notaryFee + $commission + $oth);
+        $addBonus = (float)$get('added_bonus');
+        $calc = $dealPrice - ($notaryFee + $addBonus + $oth);
+
+        $commissionRate = (float)$get('commission_rate');
+        $commission = $calc * $commissionRate / 100;
 
         $taxRate = (float)$get('tax_rate');
         $tax = $calc * $taxRate / 100;
-        $calc = $calc - $tax;
+
+        $calc = $calc - $tax - $commission;
 
         $set('tax', (string)$tax);
+        $set('commission', (string)$commission);
         $set('net_price', (string)$calc);
         // $set('deal_price', (string)$calc);
     }

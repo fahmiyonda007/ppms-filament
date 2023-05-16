@@ -27,8 +27,10 @@ return new class extends Migration
             $table->decimal('tax_rate', 5, 2)->nullable();
             $table->decimal('tax', 10, 0)->nullable();
             $table->decimal('notary_fee', 10, 0)->nullable();
+            $table->decimal('commission_rate', 5, 2)->nullable();
             $table->decimal('commission', 10, 0)->nullable();
             $table->decimal('other_commission', 10, 0)->nullable();
+            $table->decimal('added_bonus', 10, 0)->nullable();
             $table->decimal('net_price', 10, 0)->nullable();
             $table->string('no_shm')->nullable();
             $table->string('no_imb')->nullable();
