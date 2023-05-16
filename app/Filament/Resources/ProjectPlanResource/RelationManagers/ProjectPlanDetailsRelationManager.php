@@ -2,9 +2,13 @@
 
 namespace App\Filament\Resources\ProjectPlanResource\RelationManagers;
 
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -39,6 +43,10 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                         Forms\Components\TextInput::make('unit_price')
                             ->required()
                             ->numeric()
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                                static::calculatePrice($get, $set);
+                            })
                             ->mask(
                                 fn (Mask $mask) => $mask
                                     ->numeric()
@@ -49,103 +57,262 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     ]),
                 Grid::make(1)
                     ->schema([
-                        Forms\Components\RichEditor::make('description')
+                        Forms\Components\TextArea::make('description')
                             ->maxLength(2000),
                     ]),
-                Card::make([
-                    Grid::make(2)
-                        ->schema([
-                            Forms\Components\Select::make('booking_by')
-                                ->relationship('customer', 'name')
-                                ->searchable()
-                                ->preload()
-                                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->phone}")
-                                ->label('Booking By'),
-                            Forms\Components\DatePicker::make('booking_date'),
-                            Forms\Components\TextInput::make('deal_price')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\Select::make('payment_type')
-                                ->options([
-                                    'TUNAI' => 'TUNAI',
-                                    'TUNAI BERTAHAP' => 'TUNAI BERTAHAP',
-                                    'KPR' => 'KPR',
-                                ]),
-                            Forms\Components\TextInput::make('down_payment')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\TextInput::make('tax')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\TextInput::make('notary_fee')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\TextInput::make('commission')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\TextInput::make('other_commission')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                            Forms\Components\TextInput::make('net_price')
-                                ->numeric()
-                                ->mask(
-                                    fn (Mask $mask) => $mask
-                                        ->numeric()
-                                        ->decimalPlaces(2)
-                                        ->decimalSeparator(',')
-                                        ->thousandsSeparator(',')
-                                ),
-                        ]),
-                    Forms\Components\Select::make('sales_id')
-                        ->relationship(
-                            'employee',
-                            'employee_name',
-                            fn (Builder $query) => $query
-                                ->where('department', 'SALES')
-                                ->Where('is_resign', 0)
-                        )
-                        ->searchable()
-                        ->preload()
-                        // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->empname} - {$record->phone}")
-                        ->label('Sales'),
-                ])
-
+                Tabs::make('Detail')
+                    ->tabs([
+                        Tabs\Tab::make('INFORMATION')
+                            ->schema([
+                                Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\Select::make('booking_by')
+                                            ->relationship('customer', 'name')
+                                            ->searchable()
+                                            ->preload()
+                                            ->reactive()
+                                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->phone}")
+                                            ->label('Booking By'),
+                                        Forms\Components\DatePicker::make('booking_date')
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            }),
+                                        Forms\Components\TextInput::make('no_shm')
+                                            ->label('No. SHM')
+                                            ->alphaNum()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            }),
+                                        Forms\Components\TextInput::make('no_imb')
+                                            ->label('No. IMB')
+                                            ->alphaNum()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            }),
+                                        Forms\Components\TextInput::make('land_width')
+                                            ->label('Land Width (m2)')
+                                            ->numeric()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            }),
+                                        Forms\Components\TextInput::make('building_width')
+                                            ->label('Building Width (m2)')
+                                            ->numeric()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            }),
+                                        Forms\Components\Select::make('sales_id')
+                                            ->relationship(
+                                                'employee',
+                                                'employee_name',
+                                                fn (Builder $query) => $query
+                                                    ->where('department', 'SALES')
+                                                    ->Where('is_resign', 0)
+                                            )
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->searchable()
+                                            ->preload()
+                                            ->columnSpanFull()
+                                            // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->empname} - {$record->phone}")
+                                            ->label('Sales'),
+                                    ]),
+                            ]),
+                        Tabs\Tab::make('PRICE AND MORE')
+                            ->schema([
+                                Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('net_price')
+                                            ->numeric()
+                                            ->disabled()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('deal_price')
+                                            ->numeric()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('tax_rate')
+                                            ->label('Tax rate (%)')
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                                                static::calculatePrice($get, $set);
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->minValue(1)
+                                                    ->maxValue(100)
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator('.')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('tax')
+                                            ->numeric()
+                                            ->disabled()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('down_payment')
+                                            ->numeric()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('notary_fee')
+                                            ->numeric()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->default(0)
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('commission')
+                                            ->numeric()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                                                static::calculatePrice($get, $set);
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                        Forms\Components\TextInput::make('other_commission')
+                                            ->numeric()
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            })
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                                                static::calculatePrice($get, $set);
+                                            })
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                    ]),
+                            ]),
+                        Tabs\Tab::make('PAYMENT')
+                            ->schema([
+                                Forms\Components\Select::make('payment_type')
+                                    ->required(function (callable $get) {
+                                        return $get('booking_by') != null;
+                                    })
+                                    ->searchable()
+                                    ->reactive()
+                                    ->options([
+                                        'TUNAI' => 'TUNAI',
+                                        'TUNAI BERTAHAP' => 'TUNAI BERTAHAP',
+                                        'KPR' => 'KPR',
+                                    ]),
+                                Forms\Components\Select::make('kpr_type')
+                                    ->label('KPR Type')
+                                    ->required(function (callable $get) {
+                                        return $get('booking_by') != null;
+                                    })
+                                    ->reactive()
+                                    ->dehydrated(false)
+                                    ->searchable()
+                                    ->required(function (callable $get) {
+                                        return $get('payment_type') == 'KPR';
+                                    })
+                                    ->visible(function (callable $get) {
+                                        return $get('payment_type') == 'KPR';
+                                    })
+                                    ->options([
+                                        'PKS' => 'PKS',
+                                        'NON PKS' => 'NON PKS',
+                                    ]),
+                                Forms\Components\TextInput::make('amount')
+                                    ->numeric()
+                                    ->required(function (callable $get) {
+                                        return $get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS';
+                                    })
+                                    ->visible(function (callable $get) {
+                                        return $get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS';
+                                    })
+                                    ->mask(
+                                        fn (Mask $mask) => $mask
+                                            ->numeric()
+                                            ->decimalPlaces(2)
+                                            ->decimalSeparator(',')
+                                            ->thousandsSeparator(',')
+                                    ),
+                                Repeater::make('amounts')
+                                    ->label('Amount Details')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('amount')
+                                            ->numeric()
+                                            ->required()
+                                            ->mask(
+                                                fn (Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->minValue(1)
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                    ])
+                                    ->required(function (callable $get) {
+                                        return $get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS';
+                                    })
+                                    ->visible(function (callable $get) {
+                                        return $get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS';
+                                    })
+                                    ->disableItemMovement()
+                                    ->collapsible()
+                                    ->cloneable()
+                                    ->columnSpanFull()
+                            ])
+                            ->columns(2),
+                    ])
+                    ->columnSpanFull()
             ]);
     }
 
@@ -210,5 +377,27 @@ class ProjectPlanDetailsRelationManager extends RelationManager
     protected function getTableRecordsPerPageSelectOptions(): array
     {
         return [5, 10, 15, 20];
+    }
+
+    protected static function calculatePrice(callable $get, Closure $set): void
+    {
+        $unitPrice = (float)$get('unit_price');
+        // $netPrice = (float)$get('net_price');
+        // $dealPrice = (float)$get('deal_price');
+
+        $dp  = (float)$get('down_payment');
+
+        $notaryFee = (float)$get('notary_fee');
+        $commission = (float)$get('commission');
+        $oth = (float)$get('other_commission');
+        $calc = $unitPrice - ($notaryFee + $commission + $oth);
+
+        $taxRate = (float)$get('tax_rate');
+        $tax = $calc * $taxRate / 100;
+        $calc = $calc - $tax;
+
+        $set('tax', (string)$tax);
+        $set('net_price', (string)$calc);
+        // $set('deal_price', (string)$calc);
     }
 }

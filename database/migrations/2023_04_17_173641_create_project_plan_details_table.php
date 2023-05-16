@@ -24,11 +24,16 @@ return new class extends Migration
             $table->decimal('deal_price', 10, 0)->nullable();
             $table->decimal('down_payment', 10, 0)->nullable();
             $table->string('payment_type', 25)->nullable();
+            $table->decimal('tax_rate', 5, 2)->nullable();
             $table->decimal('tax', 10, 0)->nullable();
             $table->decimal('notary_fee', 10, 0)->nullable();
             $table->decimal('commission', 10, 0)->nullable();
             $table->decimal('other_commission', 10, 0)->nullable();
             $table->decimal('net_price', 10, 0)->nullable();
+            $table->string('no_shm')->nullable();
+            $table->string('no_imb')->nullable();
+            $table->double('land_width')->nullable();
+            $table->double('building_width')->nullable();
             $table->integer('sales_id')->nullable();
             $table->timestamps();
             $table->string('created_by')->nullable();
