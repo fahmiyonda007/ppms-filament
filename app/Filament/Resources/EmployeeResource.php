@@ -157,18 +157,20 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                                 ->preload(),
                             Forms\Components\DatePicker::make('join_date'),
                             Forms\Components\DatePicker::make('resign_date')
+                                ->label('Inactive Date')
                                 ->reactive()
                                 ->required(function (callable $get) {
                                     if ($get('is_resign')) {
-                                        return true;
+                                        return false;
                                     }
-                                    return false;
+                                    return true;
                                 })
                                 ->afterStateUpdated(function (Closure $set, $state) {
-                                    $set('is_resign', $state ? 1 : 0);
+                                    $set('is_resign', $state ? 0 : 1);
                                 }),
                             Forms\Components\Toggle::make('is_resign')
-                                ->reactive(),
+                                ->reactive()
+                                ->label('Is Active'),
                         ]),
                 ]),
             ]);
@@ -209,7 +211,7 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\TextColumn::make('bankAccount.account_name'),
                 Tables\Columns\TextColumn::make('bankAccount.account_number'),
-                Tables\Columns\BooleanColumn::make('is_resign'),
+                Tables\Columns\BooleanColumn::make('is_resign')->label('Is Active'),
                 Tables\Columns\TextColumn::make('resign_date')
                     ->date(),
             ])

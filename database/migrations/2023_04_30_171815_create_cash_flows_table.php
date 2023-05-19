@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('transaction_date')->useCurrentOnUpdate()->useCurrent();
             $table->integer('project_plan_id')->nullable();
             $table->integer('coa_id')->nullable();
-            $table->string('cash_flow_type', 10)->nullable();
+            $table->string('cash_flow_type', 50)->nullable();
             $table->string('description', 500)->nullable();
             $table->boolean('is_jurnal')->nullable();
             $table->timestamps();

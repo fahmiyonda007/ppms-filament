@@ -49,7 +49,7 @@ class ViewCashFlow extends ViewRecord
         $coaThirdHeader = CoaThird::find($record->coa_id);
         $sumDetail = $record->cashFlowDetails->sum('amount');
 
-        if ($record->cash_flow_type == 'CASH_IN') {
+        if ($record->cash_flow_type == 'SETOR_MODAL') {
             $coaThirdHeader->balance = $coaThirdHeader->balance + $sumDetail;
         } else {
             $coaThirdHeader->balance = $coaThirdHeader->balance - $sumDetail;
@@ -78,7 +78,7 @@ class ViewCashFlow extends ViewRecord
             'no_inc' => 1,
             'coa_id' => $record->coa_id,
             'coa_code' => $coaThirdHeader->code,
-            'debet_amount' => $record->cash_flow_type == 'CASH_IN' ? $sumDetail : 0,
+            'debet_amount' => $record->cash_flow_type == 'SETOR_MODAL' ? $sumDetail : 0,
             'credit_amount' => $record->cash_flow_type == 'CASH_OUT' ? $sumDetail : 0,
             'description' => $coaThirdHeader->name,
         ]);
@@ -96,7 +96,7 @@ class ViewCashFlow extends ViewRecord
                 'coa_id' => $value->coa_id,
                 'coa_code' => $coaThirdDetail->code,
                 'debet_amount' => $record->cash_flow_type == 'CASH_OUT' ? $value->amount : 0,
-                'credit_amount' => $record->cash_flow_type == 'CASH_IN' ? $value->amount : 0,
+                'credit_amount' => $record->cash_flow_type == 'SETOR_MODAL' ? $value->amount : 0,
                 'description' => $coaThirdDetail->name,
             ]);
 

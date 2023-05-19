@@ -21,6 +21,7 @@ use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
+use Illuminate\Support\Str;
 
 class CashFlowDetailsRelationManager extends RelationManager
 {
@@ -41,7 +42,7 @@ class CashFlowDetailsRelationManager extends RelationManager
                             ->searchable()
                             ->options(function (RelationManager $livewire) {
                                 $type = $livewire->ownerRecord->cash_flow_type;
-                                if ($type == 'CASH_IN') {
+                                if ($type == 'SETOR_MODAL') {
                                     $datas = Common::getViewCoaMasterDetails([
                                         ["level_first_id", "=", 4],
                                     ])->get();
@@ -63,8 +64,14 @@ class CashFlowDetailsRelationManager extends RelationManager
                                 ->label('COA Header Balance')
                                 ->content(function (callable $get, RelationManager $livewire) {
                                     $coaId = $livewire->ownerRecord->coa_id;
-                                    $num = CoaThird::find($coaId)->balance ?? 0;
-                                    return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
+                                    $coa = CoaThird::find($coaId);
+                                    $num = $coa->balance ?? 0;
+                                    $cond = Str::startsWith($coa->code ?? 0, '301') && !auth()->user()->hasRole(['super_admin', 'admin']);
+                                    if ($cond == true) {
+                                        return 'Rp XXX.XXX.XXX.XXX';
+                                    } else {
+                                        return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
+                                    }
                                 }),
                         ])
                             ->columns(2)

@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
+use Illuminate\Support\Str;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 
 class CashFlowResource extends Resource implements HasShieldPermissions
@@ -63,7 +64,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                                 ->required(),
                             Forms\Components\Radio::make('cash_flow_type')
                                 ->options([
-                                    'CASH_IN' => 'CASH IN',
+                                    'SETOR_MODAL' => 'SETOR MODAL',
                                     'CASH_OUT' => 'CASH OUT',
                                 ])
                                 ->required()
@@ -71,7 +72,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                                 ->afterStateUpdated(function (Closure $set) {
                                     $set('coa_id', null);
                                 })
-                                ->default('CASH_IN')
+                                ->default('CASH_OUT')
                                 ->inline()
                                 ->columnSpanFull(),
                             Forms\Components\Select::make('coa_id')
@@ -81,9 +82,9 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                                 ->reactive()
                                 ->searchable()
                                 ->options(function (callable $get) {
-                                    if ($get('cash_flow_type') == 'CASH_IN') {
+                                    if ($get('cash_flow_type') == 'SETOR_MODAL') {
                                         $datas = Common::getViewCoaMasterDetails([
-                                            ["level_first_id", "=", 1],
+                                            ["level_first_id", "=", 3],
                                             ["level_second_code", "=", "01"],
                                         ])->get();
                                     } else if ($get('cash_flow_type') == 'CASH_OUT') {
@@ -103,8 +104,14 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                     Placeholder::make('coa_balance')
                         ->label('COA Balance')
                         ->content(function (callable $get) {
-                            $num = CoaThird::find($get('coa_id'))->balance ?? 0;
-                            return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
+                            $coa = CoaThird::find($get('coa_id'));
+                            $num = $coa->balance ?? 0;
+                            $cond = Str::startsWith($coa->code ?? 0, '301') && !auth()->user()->hasRole(['super_admin', 'admin']);
+                            if ($cond == true) {
+                                return 'Rp XXX.XXX.XXX.XXX';
+                            } else {
+                                return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
+                            }
                         })
                         ->hidden(function ($record) {
                             if ($record) {
@@ -136,7 +143,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                     ->searchable(['name']),
                 Tables\Columns\TextColumn::make('cash_flow_type')
                     ->enum([
-                        'CASH_IN' => 'CASH IN',
+                        'SETOR_MODAL' => 'SETOR MODAL',
                         'CASH_OUT' => 'CASH OUT',
                     ]),
                 Tables\Columns\TextColumn::make('description'),
@@ -148,7 +155,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                 DateFilter::make('transaction_date'),
                 SelectFilter::make('cash_flow_type')
                     ->options([
-                        'CASH_IN' => 'CASH IN',
+                        'SETOR_MODAL' => 'SETOR MODAL',
                         'CASH_OUT' => 'CASH OUT',
                     ]),
             ])
