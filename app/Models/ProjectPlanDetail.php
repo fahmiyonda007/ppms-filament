@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectPlanDetail extends Model
 {
@@ -22,6 +24,7 @@ class ProjectPlanDetail extends Model
         'deal_price',
         'down_payment',
         'payment_type',
+        'kpr_type',
         'tax_rate',
         'tax',
         'notary_fee',
@@ -59,6 +62,11 @@ class ProjectPlanDetail extends Model
     public function projectPlan(): BelongsTo
     {
         return $this->belongsTo(ProjectPlan::class, 'project_plan_id');
+    }
+
+    public function projectPlanDetailPayments(): HasMany
+    {
+        return $this->hasMany(ProjectPlanDetailPayment::class, 'plan_detail_id', 'id');
     }
 
     public function customer(): BelongsTo

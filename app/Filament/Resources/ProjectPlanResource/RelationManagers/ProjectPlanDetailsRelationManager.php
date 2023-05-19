@@ -297,7 +297,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                         return $get('booking_by') != null;
                                     })
                                     ->reactive()
-                                    ->dehydrated(false)
                                     ->searchable()
                                     ->required(function (callable $get) {
                                         return $get('payment_type') == 'KPR';
@@ -309,23 +308,24 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                         'PKS' => 'PKS',
                                         'NON PKS' => 'NON PKS',
                                     ]),
-                                Forms\Components\TextInput::make('amount')
-                                    ->numeric()
-                                    ->required(function (callable $get) {
-                                        return $get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS';
-                                    })
-                                    ->visible(function (callable $get) {
-                                        return $get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS';
-                                    })
-                                    ->mask(
-                                        fn (Mask $mask) => $mask
-                                            ->numeric()
-                                            ->decimalPlaces(2)
-                                            ->decimalSeparator(',')
-                                            ->thousandsSeparator(',')
-                                    ),
-                                Repeater::make('amounts')
+                                // Forms\Components\TextInput::make('projectPlanDetailPayments.amount')
+                                //     ->numeric()
+                                //     ->required(function (callable $get) {
+                                //         return $get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS';
+                                //     })
+                                //     ->visible(function (callable $get) {
+                                //         return $get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS';
+                                //     })
+                                //     ->mask(
+                                //         fn (Mask $mask) => $mask
+                                //             ->numeric()
+                                //             ->decimalPlaces(2)
+                                //             ->decimalSeparator(',')
+                                //             ->thousandsSeparator(',')
+                                //     ),
+                                Repeater::make('projectPlanDetailPayments')
                                     ->label('Amount Details')
+                                    ->relationship()
                                     ->schema([
                                         Forms\Components\TextInput::make('amount')
                                             ->numeric()
@@ -339,11 +339,21 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                     ->thousandsSeparator(',')
                                             ),
                                     ])
-                                    ->required(function (callable $get) {
-                                        return $get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS';
-                                    })
-                                    ->visible(function (callable $get) {
-                                        return $get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS';
+                                    ->required()
+                                    // ->required(function (callable $get) {
+                                    //     return $get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS';
+                                    // })
+                                    // ->visible(function (callable $get) {
+                                    //     return $get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS';
+                                    // })
+                                    ->maxItems(function (callable $get) {
+                                        $res = 0;
+                                        if ($get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS') {
+                                            $res = 1;
+                                        } else if ($get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS') {
+                                            $res = 1000;
+                                        }
+                                        return $res;
                                     })
                                     ->disableItemMovement()
                                     ->collapsible()
@@ -393,6 +403,9 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     })
                     ->using(function (Model $record, array $data): Model {
                         $data['updated_by'] = auth()->user()->email;
+                        if ($data['payment_type'] != 'KPR') {
+                            $data['kpr_type'] = null;
+                        }
                         $record->update($data);
                         return $record;
                     }),
