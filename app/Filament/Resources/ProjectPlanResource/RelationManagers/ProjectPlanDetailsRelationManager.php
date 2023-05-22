@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProjectPlanResource\RelationManagers;
 
+use App\Models\ProjectPlanDetailPayment;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
@@ -18,6 +19,7 @@ use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use PhpParser\Node\Stmt\Label;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 use Illuminate\Support\Str;
 
@@ -35,49 +37,39 @@ class ProjectPlanDetailsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Grid::make(2)
-                    ->schema([
-                        Forms\Components\TextInput::make('unit_kavling')
-                            ->required()
-                            ->maxLength(20),
-                        Forms\Components\TextInput::make('unit_price')
-                            ->required()
-                            ->numeric()
-                            ->reactive()
-                            ->afterStateUpdated(function (callable $get, Closure $set, $state) {
-                                $set('deal_price', $state);
-                                static::calculatePrice($get, $set);
-                            })
-                            ->mask(
-                                fn (Mask $mask) => $mask
-                                    ->numeric()
-                                    ->decimalPlaces(2)
-                                    ->decimalSeparator(',')
-                                    ->thousandsSeparator(',')
-                            ),
-                    ]),
-                Grid::make(1)
-                    ->schema([
-                        Forms\Components\TextArea::make('description')
-                            ->maxLength(2000),
-                    ]),
+
                 Tabs::make('Detail')
                     ->tabs([
                         Tabs\Tab::make('INFORMATION')
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
-                                        Forms\Components\Select::make('booking_by')
-                                            ->relationship('customer', 'name')
-                                            ->searchable()
-                                            ->preload()
+                                        Forms\Components\TextInput::make('unit_kavling')
+                                            ->required()
+                                            ->maxLength(20),
+                                        Forms\Components\TextInput::make('unit_price')
+                                            ->required()
+                                            ->numeric()
                                             ->reactive()
-                                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->phone}")
-                                            ->label('Booking By'),
-                                        Forms\Components\DatePicker::make('booking_date')
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            }),
+                                            ->afterStateUpdated(function (callable $get, Closure $set, $state) {
+                                                $set('deal_price', $state);
+                                                static::calculatePrice($get, $set);
+                                            })
+                                            ->mask(
+                                                fn(Mask $mask) => $mask
+                                                    ->numeric()
+                                                    ->decimalPlaces(2)
+                                                    ->decimalSeparator(',')
+                                                    ->thousandsSeparator(',')
+                                            ),
+                                    ]),
+                                Grid::make(1)
+                                    ->schema([
+                                        Forms\Components\TextArea::make('description')
+                                            ->maxLength(2000),
+                                    ]),
+                                Grid::make(2)
+                                    ->schema([
                                         Forms\Components\TextInput::make('no_shm')
                                             ->label('No. SHM')
                                             ->alphaNum()
@@ -102,11 +94,29 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->required(function (callable $get) {
                                                 return $get('booking_by') != null;
                                             }),
+
+                                    ]),
+                            ]),
+                        Tabs\Tab::make('PRICE AND MORE')
+                            ->schema([
+                                Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\Select::make('booking_by')
+                                            ->relationship('customer', 'name')
+                                            ->searchable()
+                                            ->preload()
+                                            ->reactive()
+                                            ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->phone}")
+                                            ->label('Booking By'),
+                                        Forms\Components\DatePicker::make('booking_date')
+                                            ->required(function (callable $get) {
+                                                return $get('booking_by') != null;
+                                            }),
                                         Forms\Components\Select::make('sales_id')
                                             ->relationship(
                                                 'employee',
                                                 'employee_name',
-                                                fn (Builder $query) => $query
+                                                fn(Builder $query) => $query
                                                     ->where('department', 'SALES')
                                                     ->Where('is_resign', 0)
                                             )
@@ -118,12 +128,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->columnSpanFull()
                                             // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->empname} - {$record->phone}")
                                             ->label('Sales'),
-                                    ]),
-                            ]),
-                        Tabs\Tab::make('PRICE AND MORE')
-                            ->schema([
-                                Grid::make(2)
-                                    ->schema([
                                         Forms\Components\TextInput::make('net_price')
                                             ->numeric()
                                             ->disabled()
@@ -131,7 +135,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 return $get('booking_by') != null;
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -147,7 +151,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -159,7 +163,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 return $get('booking_by') != null;
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -172,7 +176,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             })
                                             ->default(0)
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -188,7 +192,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->minValue(0.01)
                                                     ->maxValue(100)
@@ -203,7 +207,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 return $get('booking_by') != null;
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -219,7 +223,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->minValue(0.01)
                                                     ->maxValue(100)
@@ -238,7 +242,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -254,7 +258,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -270,7 +274,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -327,25 +331,31 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                     ->label('Amount Details')
                                     ->relationship()
                                     ->schema([
-                                        Forms\Components\TextInput::make('amount')
-                                            ->numeric()
-                                            ->required()
-                                            ->mask(
-                                                fn (Mask $mask) => $mask
-                                                    ->numeric()
-                                                    ->minValue(1)
-                                                    ->decimalPlaces(2)
-                                                    ->decimalSeparator(',')
-                                                    ->thousandsSeparator(',')
-                                            ),
+                                        grid::make(2)->schema([
+                                            Forms\Components\DatePicker::make('transaction_date')
+                                                ->label("Transaction Date")
+                                                ->required(),
+                                            Forms\Components\TextInput::make('amount')
+                                                ->numeric()
+                                                ->required()
+                                                ->mask(
+                                                    fn(Mask $mask) => $mask
+                                                        ->numeric()
+                                                        ->minValue(1)
+                                                        ->decimalPlaces(2)
+                                                        ->decimalSeparator(',')
+                                                        ->thousandsSeparator(',')
+                                                ),
+
+                                        ])
                                     ])
-                                    ->required()
-                                    // ->required(function (callable $get) {
-                                    //     return $get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS';
-                                    // })
-                                    // ->visible(function (callable $get) {
-                                    //     return $get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS';
-                                    // })
+                                    //->required()
+                                    ->required(function (callable $get) {
+                                        return $get('payment_type') != NULL;
+                                    })
+                                    ->visible(function (callable $get) {
+                                        return $get('payment_type') != NULL;
+                                    })
                                     ->maxItems(function (callable $get) {
                                         $res = 0;
                                         if ($get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS') {
@@ -406,6 +416,10 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                         if ($data['payment_type'] != 'KPR') {
                             $data['kpr_type'] = null;
                         }
+                        if ($data['payment_type'] == NULL) {
+                            $payment = ProjectPlanDetailPayment::where('plan_detail_id', $record->id);
+                            $payment->delete();
+                        }
                         $record->update($data);
                         return $record;
                     }),
@@ -434,26 +448,26 @@ class ProjectPlanDetailsRelationManager extends RelationManager
 
     protected static function calculatePrice(callable $get, Closure $set): void
     {
-        $dealPrice = (float)$get('deal_price');
+        $dealPrice = (float) $get('deal_price');
 
-        $dp  = (float)$get('down_payment');
+        $dp = (float) $get('down_payment');
 
-        $notaryFee = (float)$get('notary_fee');
-        $oth = (float)$get('other_commission');
-        $addBonus = (float)$get('added_bonus');
+        $notaryFee = (float) $get('notary_fee');
+        $oth = (float) $get('other_commission');
+        $addBonus = (float) $get('added_bonus');
         $calc = $dealPrice - ($notaryFee + $addBonus + $oth);
 
-        $commissionRate = (float)$get('commission_rate');
+        $commissionRate = (float) $get('commission_rate');
         $commission = $calc * $commissionRate / 100;
 
-        $taxRate = (float)$get('tax_rate');
+        $taxRate = (float) $get('tax_rate');
         $tax = $calc * $taxRate / 100;
 
         $calc = $calc - $tax - $commission;
 
-        $set('tax', (string)$tax);
-        $set('commission', (string)$commission);
-        $set('net_price', (string)$calc);
+        $set('tax', (string) $tax);
+        $set('commission', (string) $commission);
+        $set('net_price', (string) $calc);
         // $set('deal_price', (string)$calc);
     }
 }

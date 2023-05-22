@@ -38,13 +38,13 @@ class CashFlowDetailsRelationManager extends RelationManager
                             ->required()
                             ->label('COA')
                             ->preload()
-                            ->reactive()
                             ->searchable()
                             ->options(function (RelationManager $livewire) {
                                 $type = $livewire->ownerRecord->cash_flow_type;
                                 if ($type == 'SETOR_MODAL') {
                                     $datas = Common::getViewCoaMasterDetails([
-                                        ["level_first_id", "=", 4],
+                                        ["level_first_id", "=", 1],
+                                        ["level_second_code", "=", "01"],
                                     ])->get();
                                 } else if ($type == 'CASH_OUT') {
                                     $datas = Common::getViewCoaMasterDetails([
@@ -53,39 +53,38 @@ class CashFlowDetailsRelationManager extends RelationManager
                                 }
                                 return $datas->pluck('level_third_name', 'level_third_id');
                             }),
-                        Card::make([
-                            // Placeholder::make('coa_detail_balance')
-                            //     ->label('COA Detail Balance')
-                            //     ->content(function (callable $get) {
-                            //         $num = CoaThird::find($get('coa_id'))->balance ?? 0;
-                            //         return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
-                            //     }),
-                            Placeholder::make('coa_header_balance')
-                                ->label('COA Header Balance')
-                                ->content(function (callable $get, RelationManager $livewire) {
-                                    $coaId = $livewire->ownerRecord->coa_id;
-                                    $coa = CoaThird::find($coaId);
-                                    $num = $coa->balance ?? 0;
-                                    $cond = Str::startsWith($coa->code ?? 0, '301') && !auth()->user()->hasRole(['super_admin', 'admin']);
-                                    if ($cond == true) {
-                                        return 'Rp XXX.XXX.XXX.XXX';
-                                    } else {
-                                        return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
-                                    }
-                                }),
-                        ])
-                            ->columns(2)
-                            ->hidden(function (RelationManager $livewire) {
-                                $header = $livewire->ownerRecord;
-                                if ($header->is_jurnal == 1) {
-                                    return true;
-                                }
-                                return false;
-                            }),
+                        // Card::make([
+                        //     // Placeholder::make('coa_detail_balance')
+                        //     //     ->label('COA Detail Balance')
+                        //     //     ->content(function (callable $get) {
+                        //     //         $num = CoaThird::find($get('coa_id'))->balance ?? 0;
+                        //     //         return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
+                        //     //     }),
+                        //     Placeholder::make('coa_header_balance')
+                        //         ->label('COA Header Balance')
+                        //         ->content(function (callable $get, RelationManager $livewire) {
+                        //             $coaId = $livewire->ownerRecord->coa_id;
+                        //             $coa = CoaThird::find($coaId);
+                        //             $num = $coa->balance ?? 0;
+                        //             $cond = Str::startsWith($coa->code ?? 0, '301') && !auth()->user()->hasRole(['super_admin', 'admin']);
+                        //             if ($cond == true) {
+                        //                 return 'Rp XXX.XXX.XXX.XXX';
+                        //             } else {
+                        //                 return 'Rp ' . number_format($num ?? 0, 0, ',', '.');
+                        //             }
+                        //         }),
+                        // ])
+                        //     ->columns(2)
+                        //     ->hidden(function (RelationManager $livewire) {
+                        //         $header = $livewire->ownerRecord;
+                        //         if ($header->is_jurnal == 1) {
+                        //             return true;
+                        //         }
+                        //         return false;
+                        //     }),
                         Forms\Components\TextInput::make('amount')
                             ->numeric()
                             ->required()
-                            ->reactive()
                             ->mask(
                                 fn (Mask $mask) => $mask
                                     ->numeric()

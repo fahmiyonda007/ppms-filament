@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CoaThird;
 use App\Models\ProjectPlan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -21,12 +22,32 @@ class ReportController extends Controller
             'startDate' => Carbon::parse($startDate)->format('d M Y'),
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
-
         $record = DB::select("CALL SP_ProfitLoss ({$projectPlanId}, '{$startDate}', '{$endDate}')");
-
+        
         $pdf = PDF::loadView('report/ProfitLoss/index', compact('reportData', 'record', 'fileName'))
-            ->setPaper('letter', 'landscape');
+            ->setPaper('A4', 'portrait');
 
         return $pdf->stream($fileName);
     }
+
+    public function CashFlowPdf($id, $startDate, $endDate)
+    {
+        $coa = CoaThird::find($id);
+        $invoiceDate = Carbon::now()->format('dmYs');
+        $fileName = "plan_{$coa->code}_{$invoiceDate}.pdf";
+        $ppName = $coa->name;
+
+        $reportData = [
+            'projectName' => $coa->name,
+            'startDate' => Carbon::parse($startDate)->format('d M Y'),
+            'endDate' => Carbon::parse($endDate)->format('d M Y'),
+        ];
+        $record = DB::select("CALL SP_CashFlow ({$id}, '{$startDate}', '{$endDate}')");
+        
+        $pdf = PDF::loadView('report/CashFlow/index', compact('reportData', 'record', 'fileName'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream($fileName);
+    }
+    
 }

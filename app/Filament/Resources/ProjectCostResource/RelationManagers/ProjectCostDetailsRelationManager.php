@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ProjectCostResource\RelationManagers;
 use App\Filament\Resources\ProjectCostResource;
 use App\Models\ProjectCost;
 use App\Models\ProjectCostDetail;
+use App\Models\SysLookup;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -45,34 +46,40 @@ class ProjectCostDetailsRelationManager extends RelationManager
                     )
                     ->searchable()
                     ->preload()
-                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
+                    ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->code} - {$record->name}")
                     ->required()
                     ->columnSpanFull()
-                    ->unique(column: 'coa_id', ignoreRecord: true, callback: function (Unique $rule, RelationManager $livewire) {
-                        return $rule
-                            ->where('project_cost_id', $livewire->ownerRecord->id);
-                    }),
-                Forms\Components\TextInput::make('uom')
-                    ->required(),
+                    ->unique(column: 'coa_id',
+                        ignoreRecord: true,
+                        callback: function (Unique $rule, RelationManager $livewire) {
+                            return $rule
+                                ->where('project_cost_id', $livewire->ownerRecord->id);
+                        }),
+                Forms\Components\Select::make('uom')
+                    ->multiple(false)
+                    ->searchable()
+                    ->required()
+                    ->preload()
+                    ->options(SysLookup::where('group_name', 'UOM')->pluck('name', 'name')),
                 Forms\Components\TextInput::make('qty')
                     ->required()
                     ->numeric()
                     ->mask(
-                        fn (Mask $mask) => $mask
+                        fn(Mask $mask) => $mask
                             ->numeric()
                             ->thousandsSeparator(',')
                     )
                     ->reactive()
                     ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
                         $unit_price = $get('unit_price');
-                        $val = (float)$state * (float)$unit_price;
-                        $set('amount', (string)$val);
+                        $val = (float) $state * (float) $unit_price;
+                        $set('amount', (string) $val);
                     }),
                 Forms\Components\TextInput::make('unit_price')
                     ->required()
                     ->numeric()
                     ->mask(
-                        fn (Mask $mask) => $mask
+                        fn(Mask $mask) => $mask
                             ->numeric()
                             ->decimalPlaces(2)
                             ->decimalSeparator(',')
@@ -81,14 +88,14 @@ class ProjectCostDetailsRelationManager extends RelationManager
                     ->reactive()
                     ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
                         $qty = $get('qty');
-                        $val = (float)$state * (float)$qty;
-                        $set('amount', (string)$val);
+                        $val = (float) $state * (float) $qty;
+                        $set('amount', (string) $val);
                     }),
                 Forms\Components\TextInput::make('amount')
                     ->disabled()
                     ->numeric()
                     ->mask(
-                        fn (Mask $mask) => $mask
+                        fn(Mask $mask) => $mask
                             ->numeric()
                             ->decimalPlaces(2)
                             ->decimalSeparator(',')
@@ -155,7 +162,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
                         $details = ProjectCostDetail::where('project_cost_id', $record->project_cost_id);
                         $header = ProjectCost::find($record->project_cost_id);
                         $header->total_amount = $details->sum('amount');
-                        if ((float)$details->sum('amount') == 0) {
+                        if ((float) $details->sum('amount') == 0) {
                             $header->coa_id_source1 = null;
                             $header->coa_id_source2 = null;
                             $header->coa_id_source3 = null;

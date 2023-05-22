@@ -1,7 +1,7 @@
 <style>
     @font-face {
         font-family: SourceSansPro;
-        src: url(SourceSansPro-Regular.ttf);
+        src: url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");
     }
 
     .clearfix:after {
@@ -16,14 +16,14 @@
     }
 
     body {
+        padding-left : 0px;
         position: relative;
-        width: 21cm;
-        height: 29.7cm;
+        width: auto;
         margin: 0 auto;
         color: #555555;
         background: #FFFFFF;
         font-family: Arial, sans-serif;
-        font-size: 14px;
+        font-size: 10px;
         font-family: SourceSansPro;
     }
 
@@ -131,6 +131,7 @@
     table td.service,
     table td.desc {
         vertical-align: top;
+        text-align: left;
     }
 
     table tr.total {
