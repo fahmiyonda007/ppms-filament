@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\ProjectPlan;
+use App\Models\SysLookup;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
 use Closure;
@@ -39,7 +40,12 @@ class ProfitLoss extends Page
             Grid::make(2)
                 ->schema([
                     Select::make('project_plan_id')
-                        ->options(ProjectPlan::all()->pluck('name', 'id'))
+                        ->options(function () {
+                            $main = ProjectPlan::all()->pluck('name', 'id')->toArray();
+                            $add = SysLookup::where('group_name', 'ADD PROJECT')->get()->pluck('name', 'name')->toArray();
+                            $datas = array_merge($add, $main);
+                            return $datas;
+                        })
                         ->preload()
                         ->reactive()
                         ->required()

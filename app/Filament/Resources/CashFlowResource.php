@@ -8,6 +8,8 @@ use App\Filament\Resources\CashFlowResource\RelationManagers;
 use App\Filament\Resources\CashFlowResource\RelationManagers\CashFlowDetailsRelationManager;
 use App\Models\CashFlow;
 use App\Models\CoaThird;
+use App\Models\ProjectPlan;
+use App\Models\SysLookup;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Closure;
 use Filament\Forms;
@@ -97,7 +99,12 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                                     return $datas->pluck('level_third_name', 'level_third_id');
                                 }),
                             Forms\Components\Select::make('project_plan_id')
-                                ->relationship('projectPlan', 'name')
+                                ->options(function () {
+                                    $main = ProjectPlan::all()->pluck('name', 'id')->toArray();
+                                    $add = SysLookup::where('group_name', 'ADD PROJECT')->get()->pluck('name', 'name')->toArray();
+                                    $datas = array_merge($add, $main);
+                                    return $datas;
+                                })
                                 ->preload()
                                 ->searchable(),
                         ]),

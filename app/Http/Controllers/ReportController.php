@@ -14,16 +14,18 @@ class ReportController extends Controller
     {
         $projectPlan = ProjectPlan::find($projectPlanId);
         $invoiceDate = Carbon::now()->format('dmYs');
-        $fileName = "plan_{$projectPlan->code}_{$invoiceDate}.pdf";
-        $ppName = $projectPlan->name;
+        $code = $projectPlan->code ?? $projectPlanId;
+        $name = $projectPlan->name ?? $projectPlanId;
+        $fileName = "plan_{$code}_{$invoiceDate}.pdf";
+        $ppName = $name;
 
         $reportData = [
-            'projectName' => $projectPlan->name,
+            'projectName' => $ppName,
             'startDate' => Carbon::parse($startDate)->format('d M Y'),
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
-        $record = DB::select("CALL SP_ProfitLoss ({$projectPlanId}, '{$startDate}', '{$endDate}')");
-        
+        $record = DB::select("CALL SP_ProfitLoss ('{$code}', '{$startDate}', '{$endDate}')");
+
         $pdf = PDF::loadView('report/ProfitLoss/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'portrait');
 
@@ -43,11 +45,10 @@ class ReportController extends Controller
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
         $record = DB::select("CALL SP_CashFlow ({$id}, '{$startDate}', '{$endDate}')");
-        
+
         $pdf = PDF::loadView('report/CashFlow/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream($fileName);
     }
-    
 }
