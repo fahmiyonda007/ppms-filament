@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Common\Common;
 use App\Filament\Resources\EmployeeLoanResource\Pages;
 use App\Filament\Resources\EmployeeLoanResource\RelationManagers;
+use App\Filament\Resources\ReceivableResource\RelationManagers\ReceivablesRelationManager;
 use App\Models\CoaThird;
 use App\Models\EmployeeLoan;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
@@ -28,7 +29,7 @@ use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 class EmployeeLoanResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = EmployeeLoan::class;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-hand';
     protected static ?string $slug = 'cash/employee-loans';
     protected static ?string $navigationGroup = 'Cash';
     protected static ?string $navigationLabel = 'Loans';
@@ -181,7 +182,7 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\BooleanColumn::make('is_jurnal')->label('Post Journal'),
+                Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
                 Tables\Columns\TextColumn::make('projectPlan.name')
                     ->sortable(['name'])
                     ->searchable(['name']),
@@ -250,7 +251,7 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            //
+            ReceivablesRelationManager::class
         ];
     }
 

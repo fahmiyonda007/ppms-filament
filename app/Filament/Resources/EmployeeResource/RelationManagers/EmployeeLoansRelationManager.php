@@ -54,4 +54,9 @@ class EmployeeLoansRelationManager extends RelationManager
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [5, 10, 15, 20];
+    }
 }

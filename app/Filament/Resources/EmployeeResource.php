@@ -211,7 +211,7 @@ class EmployeeResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\TextColumn::make('bankAccount.account_name'),
                 Tables\Columns\TextColumn::make('bankAccount.account_number'),
-                Tables\Columns\BooleanColumn::make('is_resign')->label('Is Active'),
+                Tables\Columns\IconColumn::make('is_resign')->label('Is Active')->boolean(),
                 Tables\Columns\TextColumn::make('resign_date')
                     ->date(),
             ])

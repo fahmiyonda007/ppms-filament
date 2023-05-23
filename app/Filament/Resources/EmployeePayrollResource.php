@@ -30,7 +30,7 @@ class EmployeePayrollResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = EmployeePayroll::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     protected static ?string $slug = 'cash/employee-payrolls';
     protected static ?string $navigationGroup = 'Cash';
     protected static ?string $navigationLabel = 'Payrolls';
@@ -178,7 +178,7 @@ class EmployeePayrollResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\BooleanColumn::make('is_jurnal')->label('Post Journal'),
+                Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
                 Tables\Columns\TextColumn::make('projectPlan.name')
                     ->sortable(['name'])
                     ->searchable(['name']),

@@ -97,5 +97,10 @@ class CreateCashTransfer extends CreateRecord
             'credit_amount' => 0,
             'description' => $coaThirdDestination->name,
         ]);
+
+        $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$record->amount;
+        $coaThirdSource->save();
+        $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->amount;
+        $coaThirdDestination->save();
     }
 }

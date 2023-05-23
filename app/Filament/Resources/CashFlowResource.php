@@ -31,7 +31,7 @@ use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 class CashFlowResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = CashFlow::class;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-refresh';
     protected static ?string $slug = 'cash/cash-flow';
     protected static ?string $navigationGroup = 'Cash';
     protected static ?string $navigationLabel = 'Cash Flows';
@@ -138,7 +138,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\BooleanColumn::make('is_jurnal')->label('Post Journal'),
+                Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
                 Tables\Columns\TextColumn::make('transaction_code'),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),

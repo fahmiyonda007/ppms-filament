@@ -62,7 +62,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                 $set('total_loan', $employee->total_loan ?? '');
                                 $set('support_price', $employee->support_price ?? '');
                                 $set('cor_price', $employee->cor_price ?? '');
-                                $set('outsanding', $employee->total_loan ?? '');
+                                $set('outsanding', $employee->total_loan ?? '0');
                                 if ($employee->salary_type ?? '' == 'MONTHLY') {
                                     $set('total_days', 1);
                                     $set('start_date', new Carbon('first day of this month'));
@@ -266,7 +266,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                             ->decimalSeparator(',')
                                             ->thousandsSeparator(',')
                                     ),
-                                Forms\Components\TextInput::make('outstanding')
+                                Forms\Components\TextInput::make('outsanding')
                                     ->numeric()
                                     ->required()
                                     ->disabled()
@@ -403,6 +403,11 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         $livewire->emit('refresh');
                     }),
             ]);
+    }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [5, 10, 15, 20];
     }
 
     public static function getCalcPayroll(callable $get): array
