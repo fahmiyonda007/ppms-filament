@@ -220,6 +220,19 @@ class ProjectCostDetailsRelationManager extends RelationManager
                     ->visible(function (RelationManager $livewire) {
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
                         return $isEdit && $livewire->ownerRecord->payment_status == "NOT PAID";
+                    })
+                    ->after(function (RelationManager $livewire) {
+                        $record = $livewire->ownerRecord;
+                        $details = ProjectCostDetail::where('project_cost_id', $record->id);
+                        $header = ProjectCost::find($record->id);
+                        $header->total_amount = $details->sum('amount');
+                        if ((float) $details->sum('amount') == 0) {
+                            $header->coa_id_source1 = null;
+                            $header->coa_id_source2 = null;
+                            $header->coa_id_source3 = null;
+                        }
+                        $header->save();
+                        $livewire->emit('refresh');
                     }),
             ]);
     }

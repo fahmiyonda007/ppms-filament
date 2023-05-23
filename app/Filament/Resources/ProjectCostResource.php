@@ -88,22 +88,22 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         ->preload()
                         ->required(),
                     Forms\Components\DatePicker::make('order_date')->required(),
-                    Forms\Components\DatePicker::make('payment_date')
-                        ->disabled(function ($record) {
-                            if ($record) {
-                                return $record->total_amount == 0;
-                            }
-                            return false;
-                        })
-                        ->required(function (callable $get, ?Model $record) {
-                            if ($record) {
-                                $payment = static::getSumPaymentSource($get);
-                                $detail = (float) $record->total_amount;
-                                return $detail > 0 && $payment >= $detail;
-                            }
-                            return false;
-                        })
-                        ->reactive(),
+                    // Forms\Components\DatePicker::make('payment_date')
+                    //     ->disabled(function ($record) {
+                    //         if ($record) {
+                    //             return $record->total_amount == 0;
+                    //         }
+                    //         return false;
+                    //     })
+                    //     ->required(function (callable $get, ?Model $record) {
+                    //         if ($record) {
+                    //             $payment = static::getSumPaymentSource($get);
+                    //             $detail = (float) $record->total_amount;
+                    //             return $detail > 0 && $payment >= $detail;
+                    //         }
+                    //         return false;
+                    //     })
+                    //     ->reactive(),
                 ]),
                 Grid::make(1)->schema([Textarea::make('description')->maxLength(500)]),
                 Grid::make(3)->schema([
@@ -336,7 +336,9 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                         }),
                 ]),
             ])
-            ->bulkActions([Tables\Actions\DeleteBulkAction::make()]);
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make()
+            ]);
     }
 
     public static function getRelations(): array

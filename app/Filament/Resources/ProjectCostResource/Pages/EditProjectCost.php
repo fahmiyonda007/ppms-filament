@@ -212,6 +212,7 @@ class EditProjectCost extends EditRecord
 
 
             $data['payment_status'] = 'PAID';
+            $data['payment_date'] = Carbon::now();
             $record->update($data);
 
             $this->redirect($this->getResource()::getUrl('view', ['record' => $record]));
