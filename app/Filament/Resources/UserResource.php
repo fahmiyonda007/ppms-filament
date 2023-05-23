@@ -156,11 +156,6 @@ class UserResource extends Resource implements HasShieldPermissions
         ];
     }
 
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
-
     public static function getWidgets(): array
     {
         return [

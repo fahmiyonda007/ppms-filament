@@ -120,4 +120,9 @@ class CustomerResource extends Resource implements HasShieldPermissions
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
         ];
     }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }

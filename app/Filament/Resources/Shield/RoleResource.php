@@ -230,12 +230,12 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Utils::getResourceSlug();
     }
 
-    protected static function getNavigationBadge(): ?string
-    {
-        return Utils::isResourceNavigationBadgeEnabled()
-            ? static::getModel()::count()
-            : null;
-    }
+    // protected static function getNavigationBadge(): ?string
+    // {
+    //     return Utils::isResourceNavigationBadgeEnabled()
+    //         ? static::getModel()::count()
+    //         : null;
+    // }
 
     public static function canGloballySearch(): bool
     {

@@ -356,6 +356,11 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
         ];
     }
 
+    protected static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     protected static function getSumPaymentSource(callable $get): float
     {
         $coaThird1 = 0;

@@ -246,4 +246,9 @@ class EmployeeResource extends Resource implements HasShieldPermissions
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
         ];
     }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }

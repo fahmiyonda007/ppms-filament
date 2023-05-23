@@ -163,4 +163,9 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
             'edit' => Pages\EditProjectPlan::route('/{record}/edit'),
         ];
     }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }
