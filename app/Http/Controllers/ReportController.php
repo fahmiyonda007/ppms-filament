@@ -25,7 +25,7 @@ class ReportController extends Controller
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
         $record = DB::select("CALL SP_ProfitLoss ('{$code}', '{$startDate}', '{$endDate}')");
-
+        
         $pdf = PDF::loadView('report/ProfitLoss/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'portrait');
 
@@ -48,6 +48,23 @@ class ReportController extends Controller
 
         $pdf = PDF::loadView('report/CashFlow/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'portrait');
+
+        return $pdf->stream($fileName);
+    }
+
+    public function DailyCostReportPdf($periodDate)
+    {        
+        $invoiceDate = Carbon::now()->format('dmYs');
+        $fileName = "plan_daily_cost_report_{$invoiceDate}.pdf";
+        
+
+        $reportData = [
+            'periodDate' => Carbon::parse($periodDate)->format('d M Y'),
+        ];
+        $record = DB::select("CALL SP_DailyCostReport ('{$periodDate}')");
+
+        $pdf = PDF::loadView('report/DailyCostReport/index', compact('reportData', 'record', 'fileName'))
+            ->setPaper('A4', 'landscape');
 
         return $pdf->stream($fileName);
     }

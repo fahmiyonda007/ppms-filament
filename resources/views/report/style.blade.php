@@ -101,12 +101,11 @@
 
     table th,
     table td {
-        text-align: center;
-
+        width: auto;
     }
 
     table th {
-        padding: 5px 20px;
+       
         color: #5D6975;
         border-bottom: 1px solid #C1CED9;
         white-space: nowrap;
@@ -114,17 +113,28 @@
     }
 
     table .service,
-    table .desc {
+    table td.desc {
         text-align: left;
     }
 
-    table .headerdesc {
+    table th.headerdesc {
+        text-align: left;
+    }
+
+    table th.headercenter {
+        text-align: center;
+    }
+
+    table th.headerright {
+        text-align: right;
+    }
+
+    #textcenter {
         text-align: center;
     }
 
     table td {
-        padding: 3px 20px;
-
+        width: auto;
         text-align: right;
     }
 
@@ -132,6 +142,11 @@
     table td.desc {
         vertical-align: top;
         text-align: left;
+    }
+
+    table td.center {
+        vertical-align: top;
+        text-align: center;
     }
 
     table tr.total {

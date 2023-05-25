@@ -93,6 +93,11 @@ class ViewCashFlow extends ViewRecord
         $countInc = 2;
         foreach ($record->cashFlowDetails as $key => $value) {
             $coaThirdDetail = CoaThird::find($value->coa_id);
+            if ($record->cash_flow_type == 'SETOR_MODAL') {
+                $coaThirdHeader_sm = CoaThird::find($value->coa_id);
+                $coaThirdHeader_sm->balance = $coaThirdHeader_sm->balance + $value->amount;
+                $coaThirdHeader_sm->save();
+            }
             //Journal from detail
             GeneralJournalDetail::create([
                 'jurnal_id' => $journal->id,
@@ -106,11 +111,7 @@ class ViewCashFlow extends ViewRecord
 
             // $coaThirdDetail->balance = $coaThirdDetail->balance + $value->amount;
             // $coaThirdDetail->save();
-            if ($record->cash_flow_type == 'SETOR_MODAL') {
-                $coaThirdHeader_sm = CoaThird::find($value->coa_id);
-                $coaThirdHeader_sm->balance = $coaThirdHeader_sm->balance + $value->amount;
-                $coaThirdHeader_sm->save();
-            }
+            
             $countInc = $countInc + 1;
 
         }
