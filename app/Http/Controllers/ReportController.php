@@ -14,7 +14,7 @@ class ReportController extends Controller
     {
         $projectPlan = ProjectPlan::find($projectPlanId);
         $invoiceDate = Carbon::now()->format('dmYs');
-        $code = $projectPlan->code ?? $projectPlanId;
+        $code = $projectPlan->id ?? $projectPlanId;
         $name = $projectPlan->name ?? $projectPlanId;
         $fileName = "plan_{$code}_{$invoiceDate}.pdf";
         $ppName = $name;

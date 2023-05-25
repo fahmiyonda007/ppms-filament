@@ -8,11 +8,13 @@ use App\Models\CoaThird;
 use App\Models\Employee;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
+use App\Models\Receivable;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EditEmployeePayroll extends EditRecord
 {
@@ -74,9 +76,10 @@ class EditEmployeePayroll extends EditRecord
 
     public function postJournal()
     {
+
         $record = $this->record;
 
-        if ((float)$record->employeePayrollDetails->count() == 0) {
+        if ((float) $record->employeePayrollDetails->count() == 0) {
             Notification::make()
                 ->title('Input detail terlebih dahulu.')
                 ->danger()
@@ -84,62 +87,22 @@ class EditEmployeePayroll extends EditRecord
             $this->halt();
         }
 
-        $this->save();
+        DB::transaction(function () {
+            $record = $this->record;
+            $this->save();
 
-        //jurnal penggajian
-        $journal = GeneralJournal::create([
-            "project_plan_id" => $record->project_plan_id,
-            'jurnal_id' => Common::getNewJournalId(),
-            'reference_code' => $record->transaction_code,
-            'description' => 'jurnal penggajian - ' . $record->description,
-            'transaction_date' => Carbon::now(),
-            'created_by' => auth()->user()->email,
-        ]);
-
-        $coaThirdSource = CoaThird::find($record->coa_id_source);
-        $coaThirdDestination = CoaThird::find($record->coa_id_destination);
-
-        //Journal from coa source
-        GeneralJournalDetail::create([
-            'jurnal_id' => $journal->id,
-            'no_inc' => 1,
-            'coa_id' => $record->coa_id_source,
-            'coa_code' => $coaThirdSource->code,
-            'debet_amount' => 0,
-            'credit_amount' => $record->payroll_total,
-            'description' => $coaThirdSource->name,
-        ]);
-
-        //Journal from coa destination
-        GeneralJournalDetail::create([
-            'jurnal_id' => $journal->id,
-            'no_inc' => 2,
-            'coa_id' => $record->coa_id_destination,
-            'coa_code' => $coaThirdDestination->code,
-            'debet_amount' => $record->payroll_total,
-            'credit_amount' => 0,
-            'description' => $coaThirdDestination->name,
-        ]);
-
-        $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$record->payroll_total;
-        $coaThirdSource->save();
-        $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->payroll_total;
-        $coaThirdDestination->save();
-
-        //jurnal pembayaran kas bon
-        if ($record->payment_loan_total > 0) {
-
+            //jurnal penggajian
             $journal = GeneralJournal::create([
                 "project_plan_id" => $record->project_plan_id,
                 'jurnal_id' => Common::getNewJournalId(),
                 'reference_code' => $record->transaction_code,
-                'description' => 'jurnal pembayaran kas bon - ' . $record->description,
+                'description' => 'jurnal penggajian - ' . $record->description,
                 'transaction_date' => Carbon::now(),
                 'created_by' => auth()->user()->email,
             ]);
 
             $coaThirdSource = CoaThird::find($record->coa_id_source);
-            $coaThirdDestination = CoaThird::find($record->coa_id_loan);
+            $coaThirdDestination = CoaThird::find($record->coa_id_destination);
 
             //Journal from coa source
             GeneralJournalDetail::create([
@@ -147,8 +110,8 @@ class EditEmployeePayroll extends EditRecord
                 'no_inc' => 1,
                 'coa_id' => $record->coa_id_source,
                 'coa_code' => $coaThirdSource->code,
-                'debet_amount' => $record->payment_loan_total,
-                'credit_amount' => 0,
+                'debet_amount' => 0,
+                'credit_amount' => $record->payroll_total,
                 'description' => $coaThirdSource->name,
             ]);
 
@@ -158,28 +121,91 @@ class EditEmployeePayroll extends EditRecord
                 'no_inc' => 2,
                 'coa_id' => $record->coa_id_destination,
                 'coa_code' => $coaThirdDestination->code,
-                'debet_amount' => 0,
-                'credit_amount' => $record->payment_loan_total,
+                'debet_amount' => $record->payroll_total,
+                'credit_amount' => 0,
                 'description' => $coaThirdDestination->name,
             ]);
 
-            $coaThirdSource->balance = (float)$coaThirdSource->balance + (float)$record->payment_loan_total;
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->payroll_total;
             $coaThirdSource->save();
-            $coaThirdDestination->balance = (float)$coaThirdDestination->balance - (float)$record->payment_loan_total;
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->payroll_total;
             $coaThirdDestination->save();
 
-            // update total loan masing2 employee
-            foreach ($record->employeePayrollDetails as $value) {
-                $employee = Employee::find($value->employee_id);
-                $employee->total_loan = (float)$employee->total_loan - (float)$value->loan_payment;
-                $employee->save();
-            }
-        }
+            //jurnal pembayaran kas bon
+            if ($record->payment_loan_total > 0) {
 
-        $record->update([
-            'is_jurnal' => 1,
-            'updated_by' => auth()->user()->email
-        ]);
+                $journal = GeneralJournal::create([
+                    "project_plan_id" => $record->project_plan_id,
+                    'jurnal_id' => Common::getNewJournalId(),
+                    'reference_code' => $record->transaction_code,
+                    'description' => 'jurnal pembayaran kas bon - ' . $record->description,
+                    'transaction_date' => Carbon::now(),
+                    'created_by' => auth()->user()->email,
+                ]);
+
+                $coaThirdSource = CoaThird::find($record->coa_id_source);
+                $coaThirdDestination = CoaThird::find($record->coa_id_loan);
+
+                //Journal from coa source
+                GeneralJournalDetail::create([
+                    'jurnal_id' => $journal->id,
+                    'no_inc' => 1,
+                    'coa_id' => $record->coa_id_source,
+                    'coa_code' => $coaThirdSource->code,
+                    'debet_amount' => $record->payment_loan_total,
+                    'credit_amount' => 0,
+                    'description' => $coaThirdSource->name,
+                ]);
+
+                //Journal from coa destination
+                GeneralJournalDetail::create([
+                    'jurnal_id' => $journal->id,
+                    'no_inc' => 2,
+                    'coa_id' => $record->coa_id_destination,
+                    'coa_code' => $coaThirdDestination->code,
+                    'debet_amount' => 0,
+                    'credit_amount' => $record->payment_loan_total,
+                    'description' => $coaThirdDestination->name,
+                ]);
+
+                $coaThirdSource->balance = (float) $coaThirdSource->balance + (float) $record->payment_loan_total;
+                $coaThirdSource->save();
+                $coaThirdDestination->balance = (float) $coaThirdDestination->balance - (float) $record->payment_loan_total;
+                $coaThirdDestination->save();
+
+                // update total loan masing2 employee
+                foreach ($record->employeePayrollDetails as $value) {
+                    $employee = Employee::find($value->employee_id);
+                    $outstanding = (float) $employee->total_loan - (float) $value->loan_payment;
+
+                    if ((float) $value->loan_payment > 0) {
+                        Receivable::create([
+                            'transaction_date' => Carbon::now(),
+                            'employee_id' => $value->employee_id,
+                            'total_loan' => $employee->total_loan,
+                            'payment_amount' => $value->loan_payment,
+                            'is_jurnal' => 1,
+                            'coa_id_source' => $record->coa_id_loan,
+                            'coa_id_destination' => $record->coa_id_source,
+                            'description' => "Pembayaran dari payroll",
+                            'created_by' => auth()->user()->email,
+                            'updated_by' => auth()->user()->email,
+                        ]);
+
+                    }
+
+                    $employee->total_loan = (float) $employee->total_loan - (float) $value->loan_payment;
+                    $employee->save();
+                }
+            }
+
+            $record->update([
+                'is_jurnal' => 1,
+                'updated_by' => auth()->user()->email
+            ]);
+
+
+        });
 
         $this->redirect($this->getResource()::getUrl('index'));
     }

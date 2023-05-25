@@ -27,4 +27,8 @@ class ListProjectPlans extends ListRecords
     {
         return $query->fastPaginate($this->getTableRecordsPerPage());
     }
+    protected function getTableQuery(): Builder
+    {
+        return static::getResource()::getEloquentQuery()->whereNotIn('id', [1, 2]);
+    }
 }

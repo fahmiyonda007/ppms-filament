@@ -240,7 +240,8 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                 Forms\Components\TextInput::make('loan_payment')
                                     ->reactive()
                                     ->afterStateUpdated(function (callable $get, Closure $set, $state) {
-                                        $set('outstanding', (float)$get('total_loan') - (float)$state);
+                                        $outstanding = (float)$get('total_loan') - (float)$state;
+                                        $set('outstanding', (string)$outstanding);
                                     })
                                     ->numeric()
                                     ->mask(
@@ -267,6 +268,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                             ->thousandsSeparator(',')
                                     ),
                                 Forms\Components\TextInput::make('outstanding')
+                                    ->dehydrated(false)
                                     ->numeric()
                                     ->required()
                                     ->disabled()

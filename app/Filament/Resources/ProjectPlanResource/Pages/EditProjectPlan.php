@@ -36,5 +36,8 @@ class EditProjectPlan extends EditRecord
         if ($this->record->progress == 100) {
             $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record]));
         }
+        if ($this->record->id == 1 || $this->record->id == 2) {
+            $this->redirect($this->getResource()::getUrl('index'));
+        }
     }
 }

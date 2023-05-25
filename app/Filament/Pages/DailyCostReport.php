@@ -17,7 +17,7 @@ use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 use illuminate\Support\Str;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 
-class ProfitLoss extends Page
+class DailyCostReport extends Page
 {
     use HasPageShield;
 

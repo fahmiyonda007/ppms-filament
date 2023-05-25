@@ -42,9 +42,11 @@ class ProfitLoss extends Page
                     Select::make('project_plan_id')
                         ->options(function () {
                             $main = ProjectPlan::all()->pluck('name', 'id')->toArray();
-                            $add = SysLookup::where('group_name', 'ADD PROJECT')->get()->pluck('name', 'name')->toArray();
-                            $datas = array_merge($add, $main);
-                            return $datas;
+                           // $add = SysLookup::where('group_name', 'ADD PROJECT')->get()->pluck('name', 'name')->toArray();
+                            //$datas = array_merge($add, $main);
+                          
+                            //dd($main);
+                            return $main;
                         })
                         ->preload()
                         ->reactive()
@@ -52,6 +54,7 @@ class ProfitLoss extends Page
                         ->afterStateUpdated(function ($state, callable $get, Closure $set) {
                             $period = explode(' - ', $get('period'));
                             if ($period[0] != '' && $state) {
+                                //dd($state);
                                 $startDate = Carbon::parse(Str::replace('/', '-', $period[0]))->format('Y-m-d');
                                 $endDate = Carbon::parse(Str::replace('/', '-', $period[1]))->format('Y-m-d');
                                 $this->frameSrc = env('APP_URL') . "/profitloss/pdf/{$state}/{$startDate}/{$endDate}";
@@ -64,7 +67,9 @@ class ProfitLoss extends Page
                         ->reactive()
                         ->required()
                         ->afterStateUpdated(function ($state, callable $get, Closure $set) {
+                            
                             if ($get('project_plan_id') && $state) {
+                               
                                 $period = explode(' - ', $state);
                                 $startDate = Carbon::parse(Str::replace('/', '-', $period[0]))->format('Y-m-d');
                                 $endDate = Carbon::parse(Str::replace('/', '-', $period[1]))->format('Y-m-d');

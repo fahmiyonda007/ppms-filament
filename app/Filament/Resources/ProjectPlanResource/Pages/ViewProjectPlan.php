@@ -26,4 +26,10 @@ class ViewProjectPlan extends ViewRecord
                 }),
         ];
     }
+    protected function beforeFill(): void
+    {
+        if ($this->record->id == 1 || $this->record->id == 2) {
+            $this->redirect($this->getResource()::getUrl('index'));
+        }
+    }
 }
