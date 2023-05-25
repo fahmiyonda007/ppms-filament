@@ -41,7 +41,11 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                     Grid::make(2)
                         ->schema([
                             Forms\Components\Select::make('project_plan_id')
-                                ->relationship('projectPlan', 'name')
+                                ->relationship(
+                                    'projectPlan',
+                                    'name',
+                                    fn (Builder $query) => $query->whereNotIn('id', [1, 2])
+                                )
                                 ->reactive()
                                 ->preload()
                                 ->searchable()
