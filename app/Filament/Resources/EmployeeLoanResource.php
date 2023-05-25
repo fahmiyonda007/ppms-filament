@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Common\Common;
 use App\Filament\Resources\EmployeeLoanResource\Pages;
 use App\Filament\Resources\EmployeeLoanResource\RelationManagers;
-use App\Filament\Resources\ReceivableResource\RelationManagers\ReceivablesRelationManager;
 use App\Models\CoaThird;
 use App\Models\EmployeeLoan;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
@@ -250,9 +249,7 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
 
     public static function getRelations(): array
     {
-        return [
-            ReceivablesRelationManager::class
-        ];
+        return [];
     }
 
     public static function getPages(): array

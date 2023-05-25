@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Filament\Resources\EmployeeResource\RelationManagers\EmployeeLoansRelationManager;
+use App\Filament\Resources\EmployeeResource\RelationManagers\ReceivablesRelationManager;
+;
 use App\Models\BankAccount;
 use App\Models\Employee;
 use App\Models\SysLookup;
@@ -234,7 +236,9 @@ class EmployeeResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            EmployeeLoansRelationManager::class
+            EmployeeLoansRelationManager::class,
+            ReceivablesRelationManager::class
+
         ];
     }
 

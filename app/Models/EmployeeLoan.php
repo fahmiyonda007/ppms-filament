@@ -66,9 +66,4 @@ class EmployeeLoan extends Model
     {
         return $this->belongsTo(CoaThird::class, 'coa_id_destination');
     }
-
-    public function receivables(): HasMany
-    {
-        return $this->hasMany(Receivable::class, 'loan_id', 'id');
-    }
 }

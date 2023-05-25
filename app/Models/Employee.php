@@ -60,4 +60,9 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeLoan::class, 'employee_id', 'id');
     }
+
+    public function receivables(): HasMany
+    {
+        return $this->hasMany(Receivable::class, 'employee_id', 'id');
+    }
 }

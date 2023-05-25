@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ReceivableResource\RelationManagers;
+namespace App\Filament\Resources\EmployeeResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -20,11 +20,7 @@ class ReceivablesRelationManager extends RelationManager
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('loan_id')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema([]);
     }
 
     public static function table(Table $table): Table
