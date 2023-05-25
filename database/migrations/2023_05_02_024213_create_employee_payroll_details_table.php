@@ -31,7 +31,7 @@ return new class extends Migration
             $table->decimal('cor_price', 10, 0)->nullable();
             $table->decimal('total_loan', 10, 0)->nullable();
             $table->decimal('loan_payment', 10, 0)->nullable();
-            $table->decimal('outsanding', 10, 0)->nullable()->virtualAs('(`total_loan` - `loan_payment`)');
+            $table->decimal('outstanding', 10, 0)->nullable()->virtualAs('(`total_loan` - `loan_payment`)');
             $table->decimal('total_gross_salary', 10, 0)->nullable()->virtualAs('((((`total_days` * `unit_price`) + (`total_days_overtime` * `overtime`)) + (`total_days_support` * `support_price`)) + (`total_days_cor` * `cor_price`))');
             $table->decimal('total_net_salary', 10, 0)->nullable()->virtualAs('(((((`total_days` * `unit_price`) + (`total_days_overtime` * `overtime`)) + (`total_days_support` * `support_price`)) + (`total_days_cor` * `cor_price`)) - `loan_payment`)');
             $table->string('description', 500)->nullable();

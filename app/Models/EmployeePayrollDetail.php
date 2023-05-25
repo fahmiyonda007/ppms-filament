@@ -30,7 +30,7 @@ class EmployeePayrollDetail extends Model
         'cor_price',
         'total_loan',
         'loan_payment',
-        'outsanding',
+        'outstanding',
         'total_gross_salary',
         'total_net_salary',
         'description',

@@ -62,7 +62,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                 $set('total_loan', $employee->total_loan ?? '');
                                 $set('support_price', $employee->support_price ?? '');
                                 $set('cor_price', $employee->cor_price ?? '');
-                                $set('outsanding', $employee->total_loan ?? '0');
+                                $set('outstanding', $employee->total_loan ?? '0');
                                 if ($employee->salary_type ?? '' == 'MONTHLY') {
                                     $set('total_days', 1);
                                     $set('start_date', new Carbon('first day of this month'));
@@ -266,7 +266,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                             ->decimalSeparator(',')
                                             ->thousandsSeparator(',')
                                     ),
-                                Forms\Components\TextInput::make('outsanding')
+                                Forms\Components\TextInput::make('outstanding')
                                     ->numeric()
                                     ->required()
                                     ->disabled()
@@ -332,7 +332,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('cor_price')->money('idr', true),
                 Tables\Columns\TextColumn::make('total_loan')->money('idr', true),
                 Tables\Columns\TextColumn::make('loan_payment')->money('idr', true),
-                Tables\Columns\TextColumn::make('outsanding')->money('idr', true),
+                Tables\Columns\TextColumn::make('outstanding')->money('idr', true),
                 Tables\Columns\TextColumn::make('total_gross_salary')->money('idr', true),
                 Tables\Columns\TextColumn::make('total_net_salary')->money('idr', true),
                 Tables\Columns\TextColumn::make('description'),
