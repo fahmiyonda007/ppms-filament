@@ -36,8 +36,6 @@ class EditReceivable extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $loan = EmployeeLoan::find($data['loan_id']);
-        $data['employee_name'] = $loan->employee->employee_name;
         return $data;
     }
 

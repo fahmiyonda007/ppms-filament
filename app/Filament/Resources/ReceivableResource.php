@@ -6,7 +6,7 @@ use App\Filament\Common\Common;
 use App\Filament\Resources\ReceivableResource\Pages;
 use App\Filament\Resources\ReceivableResource\RelationManagers;
 use App\Models\CoaThird;
-use App\Models\EmployeeLoan;
+use App\Models\Employee;
 use App\Models\Receivable;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Carbon\Carbon;
@@ -49,33 +49,27 @@ class ReceivableResource extends Resource implements HasShieldPermissions
                         ->schema([
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required()
+                                ->columnSpanFull()
                                 ->default(Carbon::now()),
-                            Forms\Components\Select::make('loan_id')
-                                ->relationship('loan', 'id')
-                                ->getOptionLabelFromRecordUsing(function (Model $record) {
-                                    // $format = 'Rp ' . number_format($record->employee->total_loan ?? 0, 0, ',', '.');
-                                    return "{$record->transaction_code}";
+                            Forms\Components\Select::make('employee_id')
+                                ->relationship('employee', 'employee_name', function (Builder $query) {
+                                    return $query->where('total_loan', '>', 0);
                                 })
                                 ->required()
                                 ->reactive()
                                 ->afterStateUpdated(function (Closure $set, callable $get, $state) {
-                                    $loan = EmployeeLoan::find($state);
-                                    if ($loan) {
-                                        $calc = (float)$loan->employee->total_loan - (float)$get('payment_amount');
+                                    $employee = Employee::find($state);
+                                    if ($employee) {
+                                        $calc = (float)$employee->total_loan - (float)$get('payment_amount');
                                         $set('outstanding', (string)$calc);
-                                        $set('employee_name', $loan->employee->employee_name);
-                                        $set('total_loan', $loan->employee->total_loan);
+                                        $set('total_loan', $employee->total_loan);
                                     } else {
-                                        $set('employee_name', null);
                                         $set('total_loan', null);
                                         $set('outstanding', null);
                                     }
                                 })
                                 ->searchable()
                                 ->preload(),
-                            Forms\Components\TextInput::make('employee_name')
-                                ->disabled()
-                                ->dehydrated(false),
                             Forms\Components\TextInput::make('total_loan')
                                 ->numeric()
                                 ->disabled()
@@ -169,7 +163,7 @@ class ReceivableResource extends Resource implements HasShieldPermissions
                 Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('loan.transaction_code')
+                Tables\Columns\TextColumn::make('employee.employee_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('total_loan')->money('idr', true),
                 Tables\Columns\TextColumn::make('payment_amount')->money('idr', true),

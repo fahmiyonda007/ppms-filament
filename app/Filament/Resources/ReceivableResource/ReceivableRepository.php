@@ -16,7 +16,7 @@ class ReceivableRepository
         $journal = GeneralJournal::create([
             // "project_plan_id" => $record->project_plan_id,
             'jurnal_id' => Common::getNewJournalId(),
-            'reference_code' => $record->loan->transaction_code,
+            'reference_code' => $record->employee->nik,
             'description' => '[jurnal penerimaan] ' . $record->description,
             'transaction_date' => Carbon::now(),
             'created_by' => auth()->user()->email,
@@ -52,7 +52,7 @@ class ReceivableRepository
         $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->payment_amount;
         $coaThirdDestination->save();
 
-        $employee = Employee::find($record->loan->employee_id);
+        $employee = Employee::find($record->employee_id);
         $employee->total_loan = $record->outstanding;
         $employee->save();
 

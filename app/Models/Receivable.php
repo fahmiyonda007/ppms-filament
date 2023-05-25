@@ -14,7 +14,7 @@ class Receivable extends Model
 
     protected $fillable = [
         'transaction_date',
-        'loan_id',
+        'employee_id',
         'total_loan',
         'payment_amount',
         'outstanding',
@@ -43,9 +43,9 @@ class Receivable extends Model
         'updated_by',
     ];
 
-    public function loan(): BelongsTo
+    public function employee(): BelongsTo
     {
-        return $this->belongsTo(EmployeeLoan::class, 'loan_id');
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 
     public function coaThirdSource(): BelongsTo
