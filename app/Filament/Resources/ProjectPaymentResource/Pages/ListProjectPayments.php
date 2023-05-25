@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Filament\Resources\ProjectPlanResource\Pages;
+namespace App\Filament\Resources\ProjectPaymentResource\Pages;
 
-use App\Filament\Resources\ProjectPlanResource;
+use App\Filament\Resources\ProjectPaymentResource;
+use Closure;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListProjectPlans extends ListRecords
+class ListProjectPayments extends ListRecords
 {
-    protected static string $resource = ProjectPlanResource::class;
+    protected static string $resource = ProjectPaymentResource::class;
 
     protected function getActions(): array
     {
@@ -18,6 +19,12 @@ class ListProjectPlans extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getTableRecordUrlUsing(): ?Closure
+    {
+        return fn ($record) => $this->getResource()::getUrl('edit', ['record' => $record]);
+    }
+
     protected function getTableRecordsPerPageSelectOptions(): array
     {
         return [5, 10, 15, 20];
@@ -26,10 +33,5 @@ class ListProjectPlans extends ListRecords
     protected function paginateTableQuery(Builder $query): Paginator
     {
         return $query->fastPaginate($this->getTableRecordsPerPage());
-    }
-
-    protected function getTableQuery(): Builder
-    {
-        return static::getResource()::getEloquentQuery()->whereNotIn('id', [1, 2]);
     }
 }

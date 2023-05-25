@@ -56,7 +56,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -101,33 +101,33 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
-                                        Forms\Components\Select::make('booking_by')
-                                            ->relationship('customer', 'name')
-                                            ->searchable()
-                                            ->preload()
-                                            ->reactive()
-                                            ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->phone}")
-                                            ->label('Booking By'),
-                                        Forms\Components\DatePicker::make('booking_date')
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            }),
-                                        Forms\Components\Select::make('sales_id')
-                                            ->relationship(
-                                                'employee',
-                                                'employee_name',
-                                                fn(Builder $query) => $query
-                                                    ->where('department', 'SALES')
-                                                    ->Where('is_resign', 0)
-                                            )
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
-                                            ->searchable()
-                                            ->preload()
-                                            ->columnSpanFull()
-                                            // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->empname} - {$record->phone}")
-                                            ->label('Sales'),
+                                        // Forms\Components\Select::make('booking_by')
+                                        //     ->relationship('customer', 'name')
+                                        //     ->searchable()
+                                        //     ->preload()
+                                        //     ->reactive()
+                                        //     ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->phone}")
+                                        //     ->label('Booking By'),
+                                        // Forms\Components\DatePicker::make('booking_date')
+                                        //     ->required(function (callable $get) {
+                                        //         return $get('booking_by') != null;
+                                        //     }),
+                                        // Forms\Components\Select::make('sales_id')
+                                        //     ->relationship(
+                                        //         'employee',
+                                        //         'employee_name',
+                                        //         fn(Builder $query) => $query
+                                        //             ->where('department', 'SALES')
+                                        //             ->Where('is_resign', 0)
+                                        //     )
+                                        //     ->required(function (callable $get) {
+                                        //         return $get('booking_by') != null;
+                                        //     })
+                                        //     ->searchable()
+                                        //     ->preload()
+                                        //     ->columnSpanFull()
+                                        //     // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->empname} - {$record->phone}")
+                                        //     ->label('Sales'),
                                         Forms\Components\TextInput::make('net_price')
                                             ->numeric()
                                             ->disabled()
@@ -135,7 +135,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 return $get('booking_by') != null;
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -151,7 +151,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -163,7 +163,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 return $get('booking_by') != null;
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -176,7 +176,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             })
                                             ->default(0)
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -192,7 +192,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->minValue(0.01)
                                                     ->maxValue(100)
@@ -207,7 +207,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 return $get('booking_by') != null;
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -223,7 +223,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->minValue(0.01)
                                                     ->maxValue(100)
@@ -242,7 +242,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -258,7 +258,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -274,7 +274,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -282,95 +282,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ),
                                     ]),
                             ]),
-                        Tabs\Tab::make('PAYMENT')
-                            ->schema([
-                                Forms\Components\Select::make('payment_type')
-                                    ->required(function (callable $get) {
-                                        return $get('booking_by') != null;
-                                    })
-                                    ->searchable()
-                                    ->reactive()
-                                    ->options([
-                                        'TUNAI' => 'TUNAI',
-                                        'TUNAI BERTAHAP' => 'TUNAI BERTAHAP',
-                                        'KPR' => 'KPR',
-                                    ]),
-                                Forms\Components\Select::make('kpr_type')
-                                    ->label('KPR Type')
-                                    ->required(function (callable $get) {
-                                        return $get('booking_by') != null;
-                                    })
-                                    ->reactive()
-                                    ->searchable()
-                                    ->required(function (callable $get) {
-                                        return $get('payment_type') == 'KPR';
-                                    })
-                                    ->visible(function (callable $get) {
-                                        return $get('payment_type') == 'KPR';
-                                    })
-                                    ->options([
-                                        'PKS' => 'PKS',
-                                        'NON PKS' => 'NON PKS',
-                                    ]),
-                                // Forms\Components\TextInput::make('projectPlanDetailPayments.amount')
-                                //     ->numeric()
-                                //     ->required(function (callable $get) {
-                                //         return $get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS';
-                                //     })
-                                //     ->visible(function (callable $get) {
-                                //         return $get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS';
-                                //     })
-                                //     ->mask(
-                                //         fn (Mask $mask) => $mask
-                                //             ->numeric()
-                                //             ->decimalPlaces(2)
-                                //             ->decimalSeparator(',')
-                                //             ->thousandsSeparator(',')
-                                //     ),
-                                Repeater::make('projectPlanDetailPayments')
-                                    ->label('Amount Details')
-                                    ->relationship()
-                                    ->schema([
-                                        grid::make(2)->schema([
-                                            Forms\Components\DatePicker::make('transaction_date')
-                                                ->label("Transaction Date")
-                                                ->required(),
-                                            Forms\Components\TextInput::make('amount')
-                                                ->numeric()
-                                                ->required()
-                                                ->mask(
-                                                    fn(Mask $mask) => $mask
-                                                        ->numeric()
-                                                        ->minValue(1)
-                                                        ->decimalPlaces(2)
-                                                        ->decimalSeparator(',')
-                                                        ->thousandsSeparator(',')
-                                                ),
-
-                                        ])
-                                    ])
-                                    //->required()
-                                    ->required(function (callable $get) {
-                                        return $get('payment_type') != NULL;
-                                    })
-                                    ->visible(function (callable $get) {
-                                        return $get('payment_type') != NULL;
-                                    })
-                                    ->maxItems(function (callable $get) {
-                                        $res = 0;
-                                        if ($get('payment_type') == 'TUNAI' || $get('kpr_type') == 'NON PKS') {
-                                            $res = 1;
-                                        } else if ($get('payment_type') == 'TUNAI BERTAHAP' || $get('kpr_type') == 'PKS') {
-                                            $res = 1000;
-                                        }
-                                        return $res;
-                                    })
-                                    ->disableItemMovement()
-                                    ->collapsible()
-                                    ->cloneable()
-                                    ->columnSpanFull()
-                            ])
-                            ->columns(2),
                     ])
                     ->columnSpanFull()
             ]);
