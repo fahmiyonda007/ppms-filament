@@ -30,7 +30,7 @@ class ReceivablesRelationManager extends RelationManager
                 Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('loan.transaction_code')
+                Tables\Columns\TextColumn::make('employee.employee_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('total_loan')->money('idr', true),
                 Tables\Columns\TextColumn::make('payment_amount')->money('idr', true),
