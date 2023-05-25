@@ -192,7 +192,7 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('employee.name')
+                Tables\Columns\TextColumn::make('employee.employee_name')
                     ->sortable(['employee_name'])
                     ->searchable(['employee_name']),
                 Tables\Columns\TextColumn::make('nik')
