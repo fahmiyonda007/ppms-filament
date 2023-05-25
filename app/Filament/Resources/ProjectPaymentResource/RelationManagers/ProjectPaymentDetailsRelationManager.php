@@ -63,7 +63,6 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('amount')
                     ->numeric()
                     ->required()
-                    ->reactive()
                     ->mask(
                         fn (Mask $mask) => $mask
                             ->numeric()
