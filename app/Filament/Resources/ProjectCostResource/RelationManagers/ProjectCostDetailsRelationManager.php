@@ -137,7 +137,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
                         $header = $livewire->ownerRecord;
                         $hist = static::getLatestHistory($header->vendor_id, $get('coa_id'), $get('uom'));
                         if ($hist) {
-                            return (float)$get('unit_price') < (float)$hist->unit_price;
+                            return (float)$get('unit_price') > (float)$hist->unit_price;
                         } else {
                             return false;
                         }

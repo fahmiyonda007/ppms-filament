@@ -22,10 +22,10 @@ class CreateCashTransfer extends CreateRecord
     {
         $data = $this->data;
 
-        $coaSource = (float)CoaThird::find($data['coa_id_source'])->balance;
-        $data['source_end_balance'] = $coaSource - (float)$data['amount'];
+        $coaSource = (float) CoaThird::find($data['coa_id_source'])->balance;
+        $data['source_end_balance'] = $coaSource - (float) $data['amount'];
 
-        if ((float)$data['source_end_balance'] < 0) {
+        if ((float) $data['source_end_balance'] < 0) {
             Notification::make()
                 ->title('Source End Balance tidak boleh < 0.')
                 ->danger()
@@ -38,15 +38,11 @@ class CreateCashTransfer extends CreateRecord
     {
         $coaSource = CoaThird::find($data['coa_id_source']);
         $coaDestination = CoaThird::find($data['coa_id_destination']);
-        $data['source_start_balance'] = (float)$coaSource->balance;
-        $data['source_end_balance'] = (float)$coaSource->balance - (float)$data['amount'];
-        $data['destination_start_balance'] = (float)$coaDestination->balance;
-        $data['destination_end_balance'] = (float)$coaDestination->balance + (float)$data['amount'];
+        $data['source_start_balance'] = (float) $coaSource->balance;
+        $data['source_end_balance'] = (float) $coaSource->balance - (float) $data['amount'];
+        $data['destination_start_balance'] = (float) $coaDestination->balance;
+        $data['destination_end_balance'] = (float) $coaDestination->balance + (float) $data['amount'];
 
-        $coaSource->balance = (float)$coaSource->balance - (float)$data['amount'];
-        $coaSource->save();
-        $coaDestination->balance = (float)$coaDestination->balance + (float)$data['amount'];
-        $coaDestination->save();
 
         $data['created_by'] = auth()->user()->email;
         return static::getModel()::create($data);

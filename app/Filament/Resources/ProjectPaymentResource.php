@@ -125,7 +125,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->searchable()
                                 ->preload()
                                 ->columnSpanFull()
-                                ->label('Sales'),
+                                ->label('marketing'),
                             Forms\Components\Textarea::make('description')
                                 ->columnSpanFull()
                                 ->maxLength(2000),
