@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\ProjectPaymenteResource\RelationManagers;
 
 use App\Filament\Common\Common;
+use App\Models\ProjectPayment;
+use App\Models\ProjectPaymentDetail;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput\Mask;
@@ -11,8 +13,10 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class ProjectPaymentDetailsRelationManager extends RelationManager
 {
@@ -101,18 +105,45 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('amount')->money('idr', true),
 
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        $header = $livewire->ownerRecord;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal == 0 && $isEdit;
+                    })
+                    ->using(function (RelationManager $livewire, array $data): Model {
+                        $header = $livewire->ownerRecord;
+                        $lastInc = ProjectPaymentDetail::where([
+                            ['project_payment_id', '=', $header->id],
+                            ['category', '=', $data['category']],
+                        ])->max('inc') + 1;
+                        $data['inc'] = $lastInc;
+                        return $livewire->getRelationship()->create($data);
+                    }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        $header = $livewire->ownerRecord;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal == 0 && $isEdit;
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        $header = $livewire->ownerRecord;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal == 0 && $isEdit;
+                    }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        $header = $livewire->ownerRecord;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal == 0 && $isEdit;
+                    }),
             ]);
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\ReceivableResource\Pages;
 
 use App\Filament\Common\Common;
+use App\Filament\Resources\Common\JournalRepository;
 use App\Filament\Resources\ReceivableResource;
-use App\Filament\Resources\ReceivableResource\ReceivableRepository;
 use App\Models\CoaThird;
 use App\Models\Employee;
 use App\Models\EmployeeLoan;
@@ -43,7 +43,7 @@ class ViewReceivable extends ViewRecord
 
     public function postJournal()
     {
-        ReceivableRepository::postJournal($this->record);
+        JournalRepository::ReceivablePostJournal($this->record);
         $this->redirect($this->getResource()::getUrl('index'));
     }
 }

@@ -131,92 +131,93 @@ class EditProjectCost extends EditRecord
         }
 
 
+        DB::transaction(function () use ($record, $totAmount, $totPayment, $data) {
+            if ($totPayment >= $totAmount) {
+                $sources = [
+                    $this->getSource1($data),
+                    $this->getSource2($data),
+                    $this->getSource3($data),
+                ];
 
-        if ($totPayment >= $totAmount) {
-            $sources = [
-                $this->getSource1($data),
-                $this->getSource2($data),
-                $this->getSource3($data),
-            ];
+                $journal = GeneralJournal::create([
+                    "project_plan_id" => $record->project_plan_id,
+                    'jurnal_id' => Common::getNewJournalId(),
+                    'reference_code' => $record->transaction_code,
+                    'description' => '[jurnal cost] ' . $record->description,
+                    'transaction_date' => Carbon::now(),
+                    'created_by' => auth()->user()->email,
+                    // 'updated_by'=> null
+                ]);
+                $countJournalDetails = 1;
 
-            $journal = GeneralJournal::create([
-                "project_plan_id" => $record->project_plan_id,
-                'jurnal_id' => Common::getNewJournalId(),
-                'reference_code' => $record->transaction_code,
-                'description' => $record->description,
-                'transaction_date' => Carbon::now(),
-                'created_by' => auth()->user()->email,
-                // 'updated_by'=> null
-            ]);
-            $countJournalDetails = 1;
-
-            $totalAmount = (float)$data['total_amount'];
-            foreach ($sources as $key => $value) {
-                if ($value['id'] != 0) {
-                    $paymentAmount = (float)$value['amount'];
-                    $calcAmount = $totalAmount > $paymentAmount ? $paymentAmount : $totalAmount;
-                    if ($totalAmount > 0) {
-                        if ($value['table'] == 'vendors') {
-                            $coa = CoaThird::where('id', $data['coa_id_source1'])->first();
-                            $coa->update(['balance' => (float)$coa->getOriginal('balance') - $calcAmount]);
-                            if ($calcAmount > 0) {
-                                GeneralJournalDetail::create([
-                                    'jurnal_id' => $journal->id,
-                                    'no_inc' => $countJournalDetails,
-                                    'coa_id' => $coa->id,
-                                    'coa_code' => $coa->code,
-                                    'debet_amount' => 0,
-                                    'credit_amount' => $calcAmount,
-                                    'description' => $coa->name,
-                                ]);
+                $totalAmount = (float)$data['total_amount'];
+                foreach ($sources as $key => $value) {
+                    if ($value['id'] != 0) {
+                        $paymentAmount = (float)$value['amount'];
+                        $calcAmount = $totalAmount > $paymentAmount ? $paymentAmount : $totalAmount;
+                        if ($totalAmount > 0) {
+                            if ($value['table'] == 'vendors') {
+                                $coa = CoaThird::where('id', $data['coa_id_source1'])->first();
+                                $coa->update(['balance' => (float)$coa->getOriginal('balance') - $calcAmount]);
+                                if ($calcAmount > 0) {
+                                    GeneralJournalDetail::create([
+                                        'jurnal_id' => $journal->id,
+                                        'no_inc' => $countJournalDetails,
+                                        'coa_id' => $coa->id,
+                                        'coa_code' => $coa->code,
+                                        'debet_amount' => 0,
+                                        'credit_amount' => $calcAmount,
+                                        'description' => $coa->name,
+                                    ]);
+                                }
                             }
-                        }
-                        $qry = "update {$value['table']} set {$value['column']} = `{$value['column']}` - {$calcAmount} where id = {$value['id']}";
-                        DB::statement((string)$qry);
-                        $totalAmount = $totalAmount - $calcAmount;
+                            $qry = "update {$value['table']} set {$value['column']} = `{$value['column']}` - {$calcAmount} where id = {$value['id']}";
+                            DB::statement((string)$qry);
+                            $totalAmount = $totalAmount - $calcAmount;
 
-                        if ($value['table'] != 'vendors') {
-                            $coaForJournal = CoaThird::find($value['id']);
-                            if ($calcAmount > 0) {
-                                GeneralJournalDetail::create([
-                                    'jurnal_id' => $journal->id,
-                                    'no_inc' => $countJournalDetails,
-                                    'coa_id' => $coaForJournal->id,
-                                    'coa_code' => $coaForJournal->code,
-                                    'debet_amount' => 0,
-                                    'credit_amount' => $calcAmount,
-                                    'description' => $coaForJournal->name,
-                                ]);
-                                $countJournalDetails = $countJournalDetails + 1;
+                            if ($value['table'] != 'vendors') {
+                                $coaForJournal = CoaThird::find($value['id']);
+                                if ($calcAmount > 0) {
+                                    GeneralJournalDetail::create([
+                                        'jurnal_id' => $journal->id,
+                                        'no_inc' => $countJournalDetails,
+                                        'coa_id' => $coaForJournal->id,
+                                        'coa_code' => $coaForJournal->code,
+                                        'debet_amount' => 0,
+                                        'credit_amount' => $calcAmount,
+                                        'description' => $coaForJournal->name,
+                                    ]);
+                                    $countJournalDetails = $countJournalDetails + 1;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            foreach ($record->projectCostDetails as $key => $value) {
-                $coaForJournal = CoaThird::find($value->coa_id);
-                if ($value->amount > 0) {
-                    GeneralJournalDetail::create([
-                        'jurnal_id' => $journal->id,
-                        'no_inc' => $countJournalDetails,
-                        'coa_id' => $coaForJournal->id,
-                        'coa_code' => $coaForJournal->code,
-                        'debet_amount' => $value->amount,
-                        'credit_amount' => 0,
-                        'description' => $coaForJournal->name,
-                    ]);
-                    $countJournalDetails = $countJournalDetails + 1;
+                foreach ($record->projectCostDetails as $key => $value) {
+                    $coaForJournal = CoaThird::find($value->coa_id);
+                    if ($value->amount > 0) {
+                        GeneralJournalDetail::create([
+                            'jurnal_id' => $journal->id,
+                            'no_inc' => $countJournalDetails,
+                            'coa_id' => $coaForJournal->id,
+                            'coa_code' => $coaForJournal->code,
+                            'debet_amount' => $value->amount,
+                            'credit_amount' => 0,
+                            'description' => $coaForJournal->name,
+                        ]);
+                        $countJournalDetails = $countJournalDetails + 1;
+                    }
                 }
+
+
+                $data['payment_status'] = 'PAID';
+                $data['payment_date'] = Carbon::now();
+                $record->update($data);
+
+                $this->redirect($this->getResource()::getUrl('view', ['record' => $record]));
             }
-
-
-            $data['payment_status'] = 'PAID';
-            $data['payment_date'] = Carbon::now();
-            $record->update($data);
-
-            $this->redirect($this->getResource()::getUrl('view', ['record' => $record]));
-        }
+        });
     }
 
     protected function getSource1(array $data): array

@@ -159,8 +159,24 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->visible(function ($record) {
+                            if ($record) {
+                                if ($record->is_jurnal == 1) {
+                                    return false;
+                                }
+                                return true;
+                            }
+                        }),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(function ($record) {
+                            if ($record) {
+                                if ($record->is_jurnal == 1) {
+                                    return false;
+                                }
+                                return true;
+                            }
+                        }),
                 ]),
             ])
             ->bulkActions([

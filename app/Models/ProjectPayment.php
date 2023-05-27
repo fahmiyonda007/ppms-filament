@@ -24,6 +24,7 @@ class ProjectPayment extends Model
         'kpr_type',
         'sales_id',
         'description',
+        'is_jurnal',
         'created_by',
         'updated_by',
     ];
@@ -35,7 +36,9 @@ class ProjectPayment extends Model
         'updated_at',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'is_jurnal' => 'boolean',
+    ];
 
     protected $hidden = [
         'created_at',
