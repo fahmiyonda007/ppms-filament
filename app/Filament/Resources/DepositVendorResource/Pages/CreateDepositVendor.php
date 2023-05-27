@@ -44,24 +44,18 @@ class CreateDepositVendor extends CreateRecord
         $data['destination_start_balance'] = (float)$coaDestination->balance;
         $data['destination_end_balance'] = (float)$coaDestination->balance + (float)$data['amount'];
 
-        $coaSource->balance = (float)$coaSource->balance - (float)$data['amount'];
-        $coaSource->save();
-        $coaDestination->balance = (float)$coaDestination->balance + (float)$data['amount'];
-        $coaDestination->save();
-
         $data['created_by'] = auth()->user()->email;
         return static::getModel()::create($data);
     }
 
     protected function afterCreate()
     {
-        $this->postJurnal();
         $this->setDepositVendor();
     }
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
     }
 
     protected function setDepositVendor()
@@ -72,8 +66,4 @@ class CreateDepositVendor extends CreateRecord
         $vendor->save();
     }
 
-    protected function postJurnal()
-    {
-        JournalRepository::DepositVendorJournal($this->record);
-    }
 }

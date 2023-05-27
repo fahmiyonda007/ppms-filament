@@ -26,6 +26,7 @@ return new class extends Migration
             $table->decimal('destination_start_balance', 10, 0)->nullable();
             $table->decimal('destination_end_balance', 10, 0)->nullable();
             $table->string('description', 500)->nullable();
+            $table->tinyInteger('is_jurnal')->nullable()->default(0);
             $table->timestamps();
             $table->string('created_by', 20)->nullable();
             $table->string('updated_by', 20)->nullable();

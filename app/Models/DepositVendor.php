@@ -25,6 +25,7 @@ class DepositVendor extends Model
         'destination_start_balance',
         'destination_end_balance',
         'description',
+        'is_jurnal',
         'created_by',
         'updated_by',
     ];
@@ -35,7 +36,9 @@ class DepositVendor extends Model
         'updated_at',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'is_jurnal' => 'boolean'
+    ];
 
     protected $hidden = [
         'created_at',

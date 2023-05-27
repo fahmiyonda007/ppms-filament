@@ -43,23 +43,12 @@ class CreateCashTransfer extends CreateRecord
         $data['destination_start_balance'] = (float) $coaDestination->balance;
         $data['destination_end_balance'] = (float) $coaDestination->balance + (float) $data['amount'];
 
-
         $data['created_by'] = auth()->user()->email;
         return static::getModel()::create($data);
     }
 
-    protected function afterCreate()
-    {
-        $this->postJurnal();
-    }
-
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
-    }
-
-    protected function postJurnal()
-    {
-        JournalRepository::CashTransferJournal($this->record);
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
     }
 }

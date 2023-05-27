@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\DepositVendorResource\Pages;
 
 use App\Filament\Resources\DepositVendorResource;
+use Closure;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -17,6 +18,11 @@ class ListDepositVendors extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    protected function getTableRecordUrlUsing(): ?Closure
+    {
+        return fn ($record) => $this->getResource()::getUrl('edit', ['record' => $record]);
     }
 
     protected function getTableRecordsPerPageSelectOptions(): array

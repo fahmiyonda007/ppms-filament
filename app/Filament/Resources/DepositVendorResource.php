@@ -20,6 +20,7 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
@@ -60,7 +61,8 @@ class DepositVendorResource extends Resource implements HasShieldPermissions
                                 ->maxLength(20)
                                 ->default(fn () => Common::getNewDepositVendorTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
-                                ->required(),
+                                ->required()
+                                ->default(Carbon::now()),
                             Forms\Components\Select::make('vendor_id')
                                 ->label('vendor')
                                 ->required()
@@ -176,6 +178,7 @@ class DepositVendorResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
+                Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
                 Tables\Columns\TextColumn::make('transaction_code')
                     ->label('Transaction Code')
                     ->sortable()
@@ -207,7 +210,27 @@ class DepositVendorResource extends Resource implements HasShieldPermissions
                 TextFilter::make('transaction_code'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->visible(function ($record) {
+                            if ($record) {
+                                if ($record->is_jurnal == 1) {
+                                    return false;
+                                }
+                                return true;
+                            }
+                        }),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(function ($record) {
+                            if ($record) {
+                                if ($record->is_jurnal == 1) {
+                                    return false;
+                                }
+                                return true;
+                            }
+                        }),
+                ])
             ])
             ->bulkActions([
                 // Tables\Actions\DeleteBulkAction::make(),
@@ -227,7 +250,7 @@ class DepositVendorResource extends Resource implements HasShieldPermissions
             'index' => Pages\ListDepositVendors::route('/'),
             'create' => Pages\CreateDepositVendor::route('/create'),
             'view' => Pages\ViewDepositVendor::route('/{record}'),
-            // 'edit' => Pages\EditDepositVendor::route('/{record}/edit'),
+            'edit' => Pages\EditDepositVendor::route('/{record}/edit'),
         ];
     }
 }

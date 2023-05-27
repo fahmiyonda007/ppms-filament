@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('coa_id')->nullable();
             $table->string('cash_flow_type', 50)->nullable();
             $table->string('description', 500)->nullable();
-            $table->boolean('is_jurnal')->nullable();
+            $table->tinyInteger('is_jurnal')->nullable()->default(0);
             $table->timestamps();
             $table->string('created_by', 20)->nullable();
             $table->string('updated_by', 20)->nullable();

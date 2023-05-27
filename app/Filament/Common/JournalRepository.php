@@ -224,6 +224,11 @@ class JournalRepository
             $coaThirdSource->save();
             $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->amount;
             $coaThirdDestination->save();
+
+            $record->update([
+                'is_jurnal' => 1,
+                'updated_by' => auth()->user()->email
+            ]);
         });
     }
 
@@ -262,6 +267,16 @@ class JournalRepository
                 'debet_amount' => $record->amount,
                 'credit_amount' => 0,
                 'description' => $coaThirdDestination->name,
+            ]);
+
+            $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$record->amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->amount;
+            $coaThirdDestination->save();
+
+            $record->update([
+                'is_jurnal' => 1,
+                'updated_by' => auth()->user()->email
             ]);
         });
     }
