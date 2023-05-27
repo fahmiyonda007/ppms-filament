@@ -3,6 +3,9 @@
 namespace App\Filament\Resources\ProjectPaymenteResource\RelationManagers;
 
 use App\Filament\Common\Common;
+use App\Models\ProjectPayment;
+use App\Models\ProjectPaymentDetail;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
@@ -10,8 +13,10 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class ProjectPaymentDetailsRelationManager extends RelationManager
 {
@@ -24,8 +29,12 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\DatePicker::make('transaction_date'),
+                Forms\Components\DatePicker::make('transaction_date')
+                    ->required()
+                    ->default(Carbon::now()),
                 Forms\Components\Select::make('category')
+                    ->required()
+                    ->searchable()
                     ->options([
                         "DP" => "DP",
                         "BOOKING_FEE" => 'BOOKING FEE',
@@ -63,7 +72,6 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('amount')
                     ->numeric()
                     ->required()
-                    ->reactive()
                     ->mask(
                         fn (Mask $mask) => $mask
                             ->numeric()
@@ -80,7 +88,12 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('transaction_date')->date(),
-                Tables\Columns\TextColumn::make('category'),
+                Tables\Columns\TextColumn::make('category')
+                    ->enum([
+                        "DP" => "DP",
+                        "BOOKING_FEE" => 'BOOKING FEE',
+                        "PAYMENT" => 'PAYMENT',
+                    ]),
                 Tables\Columns\TextColumn::make('coaThirdSource.fullname')
                     ->label('COA Source')
                     ->sortable(['name'])
@@ -92,18 +105,45 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('amount')->money('idr', true),
 
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        $header = $livewire->ownerRecord;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal == 0 && $isEdit;
+                    })
+                    ->using(function (RelationManager $livewire, array $data): Model {
+                        $header = $livewire->ownerRecord;
+                        $lastInc = ProjectPaymentDetail::where([
+                            ['project_payment_id', '=', $header->id],
+                            ['category', '=', $data['category']],
+                        ])->max('inc') + 1;
+                        $data['inc'] = $lastInc;
+                        return $livewire->getRelationship()->create($data);
+                    }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        $header = $livewire->ownerRecord;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal == 0 && $isEdit;
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        $header = $livewire->ownerRecord;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal == 0 && $isEdit;
+                    }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->visible(function (RelationManager $livewire) {
+                        $header = $livewire->ownerRecord;
+                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                        return $header->is_jurnal == 0 && $isEdit;
+                    }),
             ]);
     }
 }

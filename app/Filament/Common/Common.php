@@ -9,6 +9,8 @@ use App\Models\EmployeeLoan;
 use App\Models\EmployeePayroll;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
+use App\Models\ProjectPayment;
+use App\Models\Receivable;
 use App\Models\SysLookup;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
@@ -62,6 +64,26 @@ class Common
     {
         $journal = CashFlow::whereDate('created_at', Carbon::today())->max('transaction_code');
         $formatCode = 'CF-' . Carbon::today()->format('Ymd');
+        $lastCode = $journal ?? $formatCode . '000';
+        $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
+        $len = str_pad($num, 3, '0', STR_PAD_LEFT);
+        return $formatCode . $len;
+    }
+
+    public static function getNewReceivableTransactionId(): string
+    {
+        $journal = Receivable::whereDate('created_at', Carbon::today())->max('transaction_code');
+        $formatCode = 'RC-' . Carbon::today()->format('Ymd');
+        $lastCode = $journal ?? $formatCode . '000';
+        $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
+        $len = str_pad($num, 3, '0', STR_PAD_LEFT);
+        return $formatCode . $len;
+    }
+
+    public static function getNewProjectPaymentTransactionId(): string
+    {
+        $journal = ProjectPayment::whereDate('created_at', Carbon::today())->max('transaction_code');
+        $formatCode = 'PAY-' . Carbon::today()->format('Ymd');
         $lastCode = $journal ?? $formatCode . '000';
         $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
         $len = str_pad($num, 3, '0', STR_PAD_LEFT);

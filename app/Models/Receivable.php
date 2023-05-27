@@ -13,6 +13,7 @@ class Receivable extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'transaction_code',
         'transaction_date',
         'employee_id',
         'total_loan',

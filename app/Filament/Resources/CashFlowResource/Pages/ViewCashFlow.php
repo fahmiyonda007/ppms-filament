@@ -4,6 +4,7 @@ namespace App\Filament\Resources\CashFlowResource\Pages;
 
 use App\Filament\Common\Common;
 use App\Filament\Resources\CashFlowResource;
+use App\Filament\Resources\Common\JournalRepository;
 use App\Models\CoaThird;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
@@ -52,7 +53,6 @@ class ViewCashFlow extends ViewRecord
 
         if ($record->cash_flow_type == 'SETOR_MODAL') {
             $coaThirdHeader->balance = $coaThirdHeader->balance + $sumDetail;
-
         } else {
             $coaThirdHeader->balance = $coaThirdHeader->balance - $sumDetail;
 

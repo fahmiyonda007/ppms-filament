@@ -14,8 +14,9 @@ class ProjectPayment extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'project_plan_id',
         'transaction_code',
+        'transaction_date',
+        'project_plan_id',
         'project_plan_detail_id',
         'booking_by',
         'booking_date',
@@ -23,17 +24,21 @@ class ProjectPayment extends Model
         'kpr_type',
         'sales_id',
         'description',
+        'is_jurnal',
         'created_by',
         'updated_by',
     ];
 
     protected $dates = [
+        'transaction_date',
         'booking_date',
         'created_at',
         'updated_at',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'is_jurnal' => 'boolean',
+    ];
 
     protected $hidden = [
         'created_at',

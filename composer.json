@@ -14,6 +14,7 @@
         "barryvdh/laravel-snappy": "^1.0",
         "bezhansalleh/filament-addons": "^1.0",
         "bezhansalleh/filament-exceptions": "^1.1",
+        "bezhansalleh/filament-language-switch": "^1.0",
         "bezhansalleh/filament-shield": "^2.4",
         "filament/filament": "^2.17",
         "filament/spatie-laravel-media-library-plugin": "^2.17",
