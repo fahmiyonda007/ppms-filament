@@ -71,7 +71,7 @@
 
     #invoice {
         float: center;
-        text-align: center;
+        text-align: left;
     }
 
     #invoice h1 {
@@ -105,7 +105,7 @@
     }
 
     table th {
-       
+
         color: #5D6975;
         border-bottom: 1px solid #C1CED9;
         white-space: nowrap;

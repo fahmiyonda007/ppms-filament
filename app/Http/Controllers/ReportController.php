@@ -6,6 +6,8 @@ use App\Models\CoaThird;
 use App\Models\ProjectPlan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
@@ -25,26 +27,47 @@ class ReportController extends Controller
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
         $record = DB::select("CALL SP_ProfitLoss ('{$code}', '{$startDate}', '{$endDate}')");
-        
+
         $pdf = PDF::loadView('report/ProfitLoss/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream($fileName);
     }
 
-    public function CashFlowPdf($id, $startDate, $endDate)
+    private function generateDateRange(Carbon $start_date, Carbon $end_date)
     {
-        $coa = CoaThird::find($id);
+        $dates = [];
+
+        for ($date = $start_date->copy(); $date->lte($end_date); $date->addDay()) {
+            $dates[] = $date->format('Y-m-d');
+        }
+
+        return $dates;
+    }
+
+    public function CashFlowPdf($startDate, $endDate)
+    {
         $invoiceDate = Carbon::now()->format('dmYs');
-        $fileName = "plan_{$coa->code}_{$invoiceDate}.pdf";
-        $ppName = $coa->name;
+        $fileName = "plan_CashFlow_{$invoiceDate}.pdf";
+
+        //$period = CarbonPeriod::create($startDate, $endDate);
+
+        // Iterate over the period
+        //foreach ($period as $date) {
+        //    echo $date->format('Y-m-d');
+        //}
+
+        // Convert the period to an array of dates
+        $dates = $this->generateDateRange(Carbon::parse($startDate),Carbon::parse($endDate));
 
         $reportData = [
-            'projectName' => $coa->name,
+            'dateArray' => $dates,
             'startDate' => Carbon::parse($startDate)->format('d M Y'),
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
-        $record = DB::select("CALL SP_CashFlow ({$id}, '{$startDate}', '{$endDate}')");
+        $data = DB::select("CALL SP_CashFlow ('{$startDate}', '{$endDate}')");
+        //dd($data);
+        $record = Collect(DB::select("CALL SP_CashFlow ('{$startDate}', '{$endDate}')"))->groupBy('name') ;
 
         $pdf = PDF::loadView('report/CashFlow/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'portrait');
@@ -53,10 +76,10 @@ class ReportController extends Controller
     }
 
     public function DailyCostReportPdf($periodDate)
-    {        
+    {
         $invoiceDate = Carbon::now()->format('dmYs');
         $fileName = "plan_daily_cost_report_{$invoiceDate}.pdf";
-        
+
 
         $reportData = [
             'periodDate' => Carbon::parse($periodDate)->format('d M Y'),

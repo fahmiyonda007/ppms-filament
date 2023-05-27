@@ -39,39 +39,16 @@ class CashFlow extends Page
         return [
             Grid::make(2)
                 ->schema([
-                    Select::make('coa_id_source')
-                        ->label('Cash Flow Source')
-                        ->required()
-                        ->reactive()
-                        ->preload()
-                        ->searchable()
-                        ->options(function () {
-                            $datas = Common::getViewCoaMasterDetails([
-                                ["level_first_id", "=", 1],
-                                ["level_second_code", "=", "01"],
-                            ])->get();
-                            return $datas->pluck('level_third_name', 'level_third_id');
-                        })
-
-                        ->afterStateUpdated(function ($state, callable $get, Closure $set) {
-                            $period = explode(' - ', $get('period'));
-                            if ($period[0] != '' && $state) {
-                                $startDate = Carbon::parse(Str::replace('/', '-', $period[0]))->format('Y-m-d');
-                                $endDate = Carbon::parse(Str::replace('/', '-', $period[1]))->format('Y-m-d');
-                                $this->frameSrc = env('APP_URL') . "/cashflow/pdf/{$state}/{$startDate}/{$endDate}";
-                            } else {
-                                $this->frameSrc = "";
-                            }
-                        }),
                     DateRangePicker::make('period')
                         ->reactive()
                         ->required()
                         ->afterStateUpdated(function ($state, callable $get, Closure $set) {
-                            if ($get('coa_id_source') && $state) {
+                            if ($state) {
                                 $period = explode(' - ', $state);
                                 $startDate = Carbon::parse(Str::replace('/', '-', $period[0]))->format('Y-m-d');
                                 $endDate = Carbon::parse(Str::replace('/', '-', $period[1]))->format('Y-m-d');
-                                $this->frameSrc = env('APP_URL') . "/cashflow/pdf/{$get('coa_id_source')}/{$startDate}/{$endDate}";
+                                $this->frameSrc = env('APP_URL') . "/cashflow/pdf/{$startDate}/{$endDate}";
+
                             } else {
                                 $this->frameSrc = "";
                             }

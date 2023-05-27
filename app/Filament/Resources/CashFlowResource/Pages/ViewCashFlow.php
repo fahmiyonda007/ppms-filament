@@ -111,7 +111,7 @@ class ViewCashFlow extends ViewRecord
 
             // $coaThirdDetail->balance = $coaThirdDetail->balance + $value->amount;
             // $coaThirdDetail->save();
-            
+
             $countInc = $countInc + 1;
 
         }

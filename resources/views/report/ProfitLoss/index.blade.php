@@ -218,7 +218,7 @@
                         </tr>
                     @elseif ($item->rowcode == 'total')
                         <tr class="total">
-                            <td class="desc" style="padding-left: 74px;"><b>&emsp;&emsp;{{ $item->description }}</td>
+                            <td class="desc" style="padding-left: 40px;"><b>&emsp;&emsp;{{ $item->description }}</td>
                             <td></td>
                             <td>{{ $item->total }}</td>
                         </tr>

@@ -44,7 +44,7 @@ class ProfitLoss extends Page
                             $main = ProjectPlan::all()->pluck('name', 'id')->toArray();
                            // $add = SysLookup::where('group_name', 'ADD PROJECT')->get()->pluck('name', 'name')->toArray();
                             //$datas = array_merge($add, $main);
-                          
+
                             //dd($main);
                             return $main;
                         })
@@ -67,13 +67,14 @@ class ProfitLoss extends Page
                         ->reactive()
                         ->required()
                         ->afterStateUpdated(function ($state, callable $get, Closure $set) {
-                            
+
                             if ($get('project_plan_id') && $state) {
-                               
+
                                 $period = explode(' - ', $state);
                                 $startDate = Carbon::parse(Str::replace('/', '-', $period[0]))->format('Y-m-d');
                                 $endDate = Carbon::parse(Str::replace('/', '-', $period[1]))->format('Y-m-d');
                                 $this->frameSrc = env('APP_URL') . "/profitloss/pdf/{$get('project_plan_id')}/{$startDate}/{$endDate}";
+
                             } else {
                                 $this->frameSrc = "";
                             }
