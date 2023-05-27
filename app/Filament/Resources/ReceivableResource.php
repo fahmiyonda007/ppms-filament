@@ -47,9 +47,13 @@ class ReceivableResource extends Resource implements HasShieldPermissions
                 Card::make([
                     Grid::make(2)
                         ->schema([
+                            Forms\Components\TextInput::make('transaction_code')
+                                ->maxLength(20)
+                                ->required()
+                                ->disabled()
+                                ->default(fn () => Common::getNewReceivableTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required()
-                                ->columnSpanFull()
                                 ->default(Carbon::now()),
                             Forms\Components\Select::make('employee_id')
                                 ->relationship('employee', 'employee_name', function (Builder $query) {
@@ -161,6 +165,7 @@ class ReceivableResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
+                Tables\Columns\TextColumn::make('transaction_code'),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
                 Tables\Columns\TextColumn::make('employee.employee_name')

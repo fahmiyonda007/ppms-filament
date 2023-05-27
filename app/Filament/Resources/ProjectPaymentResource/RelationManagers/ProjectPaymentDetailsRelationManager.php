@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProjectPaymenteResource\RelationManagers;
 
 use App\Filament\Common\Common;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
@@ -24,8 +25,12 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\DatePicker::make('transaction_date'),
+                Forms\Components\DatePicker::make('transaction_date')
+                    ->required()
+                    ->default(Carbon::now()),
                 Forms\Components\Select::make('category')
+                    ->required()
+                    ->searchable()
                     ->options([
                         "DP" => "DP",
                         "BOOKING_FEE" => 'BOOKING FEE',
@@ -79,7 +84,12 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('transaction_date')->date(),
-                Tables\Columns\TextColumn::make('category'),
+                Tables\Columns\TextColumn::make('category')
+                    ->enum([
+                        "DP" => "DP",
+                        "BOOKING_FEE" => 'BOOKING FEE',
+                        "PAYMENT" => 'PAYMENT',
+                    ]),
                 Tables\Columns\TextColumn::make('coaThirdSource.fullname')
                     ->label('COA Source')
                     ->sortable(['name'])

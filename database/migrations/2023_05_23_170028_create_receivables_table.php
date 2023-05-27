@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('receivables', function (Blueprint $table) {
             $table->integer('id', true);
+            $table->string('transaction_code', 20)->nullable();
             $table->timestamp('transaction_date')->nullable();
             $table->integer('employee_id')->nullable();
             $table->decimal('total_loan', 10, 0)->nullable();

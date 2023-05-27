@@ -16,7 +16,7 @@ class ReceivableRepository
         $journal = GeneralJournal::create([
             // "project_plan_id" => $record->project_plan_id,
             'jurnal_id' => Common::getNewJournalId(),
-            'reference_code' => $record->employee->nik,
+            'reference_code' => $record->transaction_code,
             'description' => '[jurnal penerimaan] ' . $record->description,
             'transaction_date' => Carbon::now(),
             'created_by' => auth()->user()->email,
