@@ -13,13 +13,15 @@ class ProjectPaymentDetail extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'transaction_code',
+        'transaction_date',
         'inc',
         'project_payment_id',
         'category',
         'coa_id_source',
         'coa_id_destination',
         'amount',
-        'transaction_date',
+        'is_jurnal',
         'created_by',
         'updated_by',
     ];
@@ -30,7 +32,9 @@ class ProjectPaymentDetail extends Model
         'updated_at',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'is_jurnal' => 'boolean',
+    ];
 
     protected $hidden = [
         'created_at',

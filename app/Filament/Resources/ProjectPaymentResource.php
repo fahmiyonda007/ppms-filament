@@ -42,11 +42,11 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                 Card::make([
                     Grid::make(2)
                         ->schema([
-                            Forms\Components\TextInput::make('transaction_code')
-                                ->maxLength(20)
-                                ->required()
-                                ->disabled()
-                                ->default(fn () => Common::getNewProjectPaymentTransactionId()),
+                            // Forms\Components\TextInput::make('transaction_code')
+                            //     ->maxLength(20)
+                            //     ->required()
+                            //     ->disabled()
+                            //     ->default(fn () => Common::getNewProjectPaymentTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required()
                                 ->default(Carbon::now()),
@@ -138,8 +138,8 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
-                Tables\Columns\TextColumn::make('transaction_code'),
+                // Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
+                // Tables\Columns\TextColumn::make('transaction_code'),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
                 Tables\Columns\TextColumn::make('projectPlan.name')

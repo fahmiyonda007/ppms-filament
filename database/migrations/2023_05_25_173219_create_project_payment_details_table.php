@@ -15,13 +15,15 @@ return new class extends Migration
     {
         Schema::create('project_payment_details', function (Blueprint $table) {
             $table->integer('id', true);
+            $table->string('transaction_code', 20)->nullable();
+            $table->timestamp('transaction_date')->useCurrentOnUpdate()->useCurrent();
             $table->integer('inc')->nullable();
             $table->integer('project_payment_id')->nullable();
             $table->string('category', 50)->nullable();
             $table->integer('coa_id_source')->nullable();
             $table->integer('coa_id_destination')->nullable();
             $table->decimal('amount', 10, 0)->nullable();
-            $table->timestamp('transaction_date')->useCurrentOnUpdate()->useCurrent();
+            $table->tinyInteger('is_jurnal')->nullable()->default(0);
             $table->timestamps();
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();

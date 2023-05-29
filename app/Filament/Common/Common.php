@@ -10,6 +10,7 @@ use App\Models\EmployeePayroll;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
 use App\Models\ProjectPayment;
+use App\Models\ProjectPaymentDetail;
 use App\Models\Receivable;
 use App\Models\SysLookup;
 use Carbon\Carbon;
@@ -82,7 +83,7 @@ class Common
 
     public static function getNewProjectPaymentTransactionId(): string
     {
-        $journal = ProjectPayment::whereDate('created_at', Carbon::today())->max('transaction_code');
+        $journal = ProjectPaymentDetail::whereDate('created_at', Carbon::today())->max('transaction_code');
         $formatCode = 'PAY-' . Carbon::today()->format('Ymd');
         $lastCode = $journal ?? $formatCode . '000';
         $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
