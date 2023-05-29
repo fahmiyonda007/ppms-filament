@@ -151,6 +151,7 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                         ->after(fn ($livewire) => redirect(ProjectPaymentResource::getUrl('edit', ['record' => $livewire->ownerRecord]))),
                 ]),
                 Tables\Actions\Action::make('post_jurnal')
+                    ->button()
                     ->label('Post Journal')
                     ->icon('heroicon-s-cash')
                     ->action(fn ($record, $livewire) => static::postJournal($record, $livewire->ownerRecord))
