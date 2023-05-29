@@ -48,7 +48,7 @@ class ReportController extends Controller
     public function CashFlowPdf($startDate, $endDate)
     {
         $invoiceDate = Carbon::now()->format('dmYs');
-        $fileName = "plan_CashFlow_{$invoiceDate}.pdf";
+        $fileName = "plan_CashFlowDetail_{$invoiceDate}.pdf";
 
         //$period = CarbonPeriod::create($startDate, $endDate);
 
@@ -65,12 +65,11 @@ class ReportController extends Controller
             'startDate' => Carbon::parse($startDate)->format('d M Y'),
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
-        $data = DB::select("CALL SP_CashFlow ('{$startDate}', '{$endDate}')");
         //dd($data);
         $record = Collect(DB::select("CALL SP_CashFlow ('{$startDate}', '{$endDate}')"))->groupBy('name') ;
 
         $pdf = PDF::loadView('report/CashFlow/index', compact('reportData', 'record', 'fileName'))
-            ->setPaper('A4', 'portrait');
+            ->setPaper('A4', 'landscape');
 
         return $pdf->stream($fileName);
     }
@@ -87,6 +86,35 @@ class ReportController extends Controller
         $record = DB::select("CALL SP_DailyCostReport ('{$periodDate}')");
 
         $pdf = PDF::loadView('report/DailyCostReport/index', compact('reportData', 'record', 'fileName'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->stream($fileName);
+    }
+
+    public function CashFlowLevel2Pdf($startDate, $endDate)
+    {
+        $invoiceDate = Carbon::now()->format('dmYs');
+        $fileName = "plan_CashFlowSummary_{$invoiceDate}.pdf";
+
+        //$period = CarbonPeriod::create($startDate, $endDate);
+
+        // Iterate over the period
+        //foreach ($period as $date) {
+        //    echo $date->format('Y-m-d');
+        //}
+
+        // Convert the period to an array of dates
+        $dates = $this->generateDateRange(Carbon::parse($startDate),Carbon::parse($endDate));
+
+        $reportData = [
+            'dateArray' => $dates,
+            'startDate' => Carbon::parse($startDate)->format('d M Y'),
+            'endDate' => Carbon::parse($endDate)->format('d M Y'),
+        ];
+        //dd($data);
+        $record = Collect(DB::select("CALL SP_CashFlow_Level2 ('{$startDate}', '{$endDate}')"))->groupBy('name') ;
+
+        $pdf = PDF::loadView('report/CashFlowLevel2/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'landscape');
 
         return $pdf->stream($fileName);

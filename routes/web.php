@@ -28,4 +28,5 @@ Route::get('/print/{record}', ProjectPlanController::class)->name('plan-pdf')->m
 Route::get('projectplan/export-excel/{record}', [ProjectPlanController::class, 'PrintExcel'])->name('plan-excel')->middleware('verified');
 Route::get('profitloss/pdf/{projectPlanId}/{startDate}/{endDate}', [ReportController::class, 'ProfitLossPdf'])->name('ProfitLossPdf')->middleware('verified');
 Route::get('cashflow/pdf/{startDate}/{endDate}', [ReportController::class, 'CashFLowPdf'])->name('CashFLowPdf')->middleware('verified');
+Route::get('cashflowlevel2/pdf/{startDate}/{endDate}', [ReportController::class, 'CashFLowLevel2Pdf'])->name('CashFLowLevel2Pdf')->middleware('verified');
 Route::get('dailycostreport/pdf/{periodDate}', [ReportController::class, 'DailyCostReportPdf'])->name('DailyCostReportPdf')->middleware('verified');

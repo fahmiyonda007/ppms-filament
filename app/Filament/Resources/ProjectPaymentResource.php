@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Common\Common;
 use App\Filament\Resources\ProjectPaymenteResource\RelationManagers\ProjectPaymentDetailsRelationManager;
 use App\Filament\Resources\ProjectPaymentResource\Pages;
@@ -17,9 +18,14 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\BooleanFilter;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\NumberFilter;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\TextFilter;
 
 class ProjectPaymentResource extends Resource implements HasShieldPermissions
 {
@@ -27,7 +33,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-cash';
     protected static ?string $slug = 'project/payments';
     protected static ?string $navigationGroup = 'Projects';
-    protected static ?string $navigationLabel = 'Payments';
+    protected static ?string $navigationLabel = 'Payment Income';
     protected static ?int $navigationSort = 2;
 
     public static function getPermissionPrefixes(): array
@@ -46,7 +52,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->maxLength(20)
                                 ->required()
                                 ->disabled()
-                                ->default(fn () => Common::getNewProjectPaymentTransactionId()),
+                                ->default(fn() => Common::getNewProjectPaymentTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required()
                                 ->default(Carbon::now()),
@@ -54,7 +60,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'projectPlan',
                                     'name',
-                                    fn (Builder $query) => $query->whereNotIn('id', [1, 2])
+                                    fn(Builder $query) => $query->whereNotIn('id', [1, 2])
                                 )
                                 ->reactive()
                                 ->required()
@@ -67,7 +73,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'projectPlanDetail',
                                     'unit_kavling',
-                                    fn (Builder $query, callable $get) => $query->where('project_plan_id', $get('project_plan_id'))
+                                    fn(Builder $query, callable $get) => $query->where('project_plan_id', $get('project_plan_id'))
                                 )
                                 ->preload()
                                 ->required()
@@ -77,7 +83,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->searchable()
                                 ->preload()
                                 ->reactive()
-                                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->phone}")
+                                ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->phone}")
                                 ->label('Booking By'),
                             Forms\Components\DatePicker::make('booking_date')
                                 ->required(function (callable $get) {
@@ -115,7 +121,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'employee',
                                     'employee_name',
-                                    fn (Builder $query) => $query
+                                    fn(Builder $query) => $query
                                         ->where('department', 'MARKETING')
                                         ->Where('is_resign', 1)
                                 )
@@ -153,8 +159,26 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                     ->label('Sales'),
                 Tables\Columns\TextColumn::make('description')
             ])
+            ->headerActions([
+                FilamentExportHeaderAction::make('export')
+                    // ->extraViewData(fn ($action) => [
+                    //     'recordCount' => $action->getRecords()->count()
+                    // ])
+                    // ->withColumns([
+                    //     TextColumn::make('id')
+                    //     ])
+                    ->withHiddenColumns()
+                    ->snappy()
+            ])
             ->filters([
-                //
+                DateFilter::make('transaction_date'),
+                SelectFilter::make('payment_type')
+                    ->options([
+                        'TUNAI' => 'TUNAI',
+                        'TUNAI BERTAHAP' => 'TUNAI BERTAHAP',
+                        'KPR' => 'KPR',
+                    ]),
+                BooleanFilter::make('is_jurnal'),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

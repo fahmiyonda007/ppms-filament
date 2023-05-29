@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Cash Flow Detail</title>
+    <title>Cash Flow Summary</title>
 
     {{-- <link href="css/report.css" rel="stylesheet"> --}}
     @include('report/style')
@@ -30,7 +30,7 @@
     <main>
         <div id="details">
             <div id="invoice">
-                <h1>CASH FLOW DETAIL</h1>
+                <h1>CASH FLOW LEVEL SUMMARY</h1>
                 <div>{{ "Periode : {$reportData['startDate']} - {$reportData['endDate']}" }}</div>
             </div>
         </div>
