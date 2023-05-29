@@ -50,18 +50,18 @@
                 @foreach ($record as $key => $item)
                     <tr>
                         @if ($key == 'DATA KAS' || $key == 'TOTAL PENGELUARAN')
-                        <td colspan="10" style="background-color : #fc8d59;" class="center">{{ $key }}</td>
+                        <td colspan="10" style="background-color : #feb24c;" class="center">{{ $key }}</td>
                         @else
-                        <td colspan="10" style="background-color : #fee090;" class="center">{{ $key }}</td>
+                        <td colspan="10" style="background-color : #ffeda0;" class="center">{{ $key }}</td>
                         @endif
                     </tr>
 
                     @for ($i = 0; $i < $item->count(); $i++)
-                        @if ($item[$i]->coa_name == 'TOTAL INFLOWS' || $item[$i]->coa_name == 'TOTAL OUTFLOWS')
-                        <tr class="total">
-                            <td class="desc"> {{ $item[$i]->coa_name }}</td>
+                        @if ($item[$i]->coa_name == 'TOTAL INFLOWS' || $item[$i]->coa_name == 'TOTAL OUTFLOWS' || $item[$i]->coa_name == 'SISA KAS' || $item[$i]->coa_name == 'KAS MASUK')
+                        <tr class="total" >
+                            <td class="desc" style="background-color : #feb24c;"> {{ $item[$i]->coa_name }}</td>
                             @foreach ($reportData['dateArray'] as $detail)
-                                <td> {{ $item[$i]->$detail }}</td>
+                                <td style="background-color : #feb24c;"> {{ $item[$i]->$detail }}</td>
                             @endforeach
 
                         </tr>

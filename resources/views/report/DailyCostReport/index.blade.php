@@ -65,9 +65,9 @@
                             <td>{{ $item->total_price }}</td>
                         </tr>
                     @elseif ($item->rowcode == 'total')
-                        <tr  class="total">
-                            <td colspan="9" class="desc">{{ $item->item }}</td>
-                            <td>{{ $item->total_price }}</td>
+                        <tr  class="total" >
+                            <td colspan="9" class="desc"  style="background-color : #feb24c;">{{ $item->item }}</td>
+                            <td  style="background-color : #feb24c;">{{ $item->total_price }}</td>
                         </tr>
                     @endif
                 @endforeach

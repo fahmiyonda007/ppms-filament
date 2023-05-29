@@ -57,7 +57,7 @@
                             <td>{{ $item->total }}</td>
                         </tr>
                     @elseif ($item->name == 'TOTAL')
-                        <tr class="total">
+                        <tr class="total" style="background-color : #feb24c;">
                             <td class="desc">{{ $item->name }}</td>
                             <td>{{ $item->total_gajian }}</td>
                             <td>{{ $item->total_kasbon_tukang }}</td>

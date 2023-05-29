@@ -218,9 +218,9 @@
                         </tr>
                     @elseif ($item->rowcode == 'total')
                         <tr class="total">
-                            <td class="desc" style="padding-left: 40px;"><b>&emsp;&emsp;{{ $item->description }}</td>
-                            <td></td>
-                            <td>{{ $item->total }}</td>
+                            <td class="desc" style="padding-left: 40px;background-color : #feb24c;"><b>&emsp;&emsp;{{ $item->description }}</td>
+                            <td style="background-color : #feb24c;"></td>
+                            <td style="background-color : #feb24c;">{{ $item->total }}</td>
                         </tr>
                     @endif
                 @endforeach
@@ -229,10 +229,10 @@
         </table>
 
 
-        <div id="notices">
+        <!-- <div id="notices">
             <div>Note:</div>
             <div class="notice">Mau dikasih kata2 gak?</div>
-        </div>
+        </div> -->
     </main>
     <footer>
         Invoice was created on a computer and is valid without the signature and seal.
