@@ -47,24 +47,27 @@ class VendorLiabilityResource extends Resource implements HasShieldPermissions
                 Card::make([
                     Grid::make(2)
                         ->schema([
+                            Forms\Components\Select::make('project_plan_id')
+                                ->relationship('projectPlan', 'name')
+                                ->preload()
+                                ->searchable(),
                             Forms\Components\TextInput::make('transaction_code')
                                 ->maxLength(20)
                                 ->required()
                                 ->disabled()
-                                ->default(fn () => Common::getNewVendorLiabilityTransactionId()),
+                                ->default(fn() => Common::getNewVendorLiabilityTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required()
                                 ->default(Carbon::now()),
                             Forms\Components\TextInput::make('scope_of_work')
                                 ->required()
-                                ->columnSpanFull()
                                 ->maxLength(255),
                             Forms\Components\TextInput::make('est_price')
                                 ->numeric()
                                 ->required()
                                 ->reactive()
                                 ->mask(
-                                    fn (Mask $mask) => $mask
+                                    fn(Mask $mask) => $mask
                                         ->numeric()
                                         ->decimalPlaces(2)
                                         ->decimalSeparator(',')
@@ -74,17 +77,17 @@ class VendorLiabilityResource extends Resource implements HasShieldPermissions
                                     $set('deal_price', $state);
                                     $amtDet = 0;
                                     if ($record) {
-                                        $amtDet = (float)$record->vendorLiabilityPayments->sum('amount');
+                                        $amtDet = (float) $record->vendorLiabilityPayments->sum('amount');
                                     }
-                                    $calc = (float)$state - $amtDet;
-                                    $set('outstanding', (string)$calc);
+                                    $calc = (float) $state - $amtDet;
+                                    $set('outstanding', (string) $calc);
                                 }),
                             Forms\Components\TextInput::make('deal_price')
                                 ->numeric()
                                 ->reactive()
                                 ->required()
                                 ->mask(
-                                    fn (Mask $mask) => $mask
+                                    fn(Mask $mask) => $mask
                                         ->numeric()
                                         ->decimalPlaces(2)
                                         ->decimalSeparator(',')
@@ -93,10 +96,10 @@ class VendorLiabilityResource extends Resource implements HasShieldPermissions
                                 ->afterStateUpdated(function (Closure $set, $state, $record) {
                                     $amtDet = 0;
                                     if ($record) {
-                                        $amtDet = (float)$record->vendorLiabilityPayments->sum('amount');
+                                        $amtDet = (float) $record->vendorLiabilityPayments->sum('amount');
                                     }
-                                    $calc = (float)$state - $amtDet;
-                                    $set('outstanding', (string)$calc);
+                                    $calc = (float) $state - $amtDet;
+                                    $set('outstanding', (string) $calc);
                                 }),
                             Forms\Components\DatePicker::make('start_date')
                                 ->reactive()
@@ -138,7 +141,7 @@ class VendorLiabilityResource extends Resource implements HasShieldPermissions
                                 ->required()
                                 ->disabled()
                                 ->mask(
-                                    fn (Mask $mask) => $mask
+                                    fn(Mask $mask) => $mask
                                         ->numeric()
                                         ->decimalPlaces(2)
                                         ->decimalSeparator(',')
@@ -166,15 +169,19 @@ class VendorLiabilityResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
+
                 Tables\Columns\BadgeColumn::make('project_status')
                     ->formatStateUsing(function (string $state): string {
-                        $type =  $state == '0' ? 'NOT DONE' : 'DONE';
+                        $type = $state == '0' ? 'NOT DONE' : 'DONE';
                         return $type;
                     })
                     ->color(function (string $state): string {
-                        $type =  $state == '0' ? 'danger' : 'success';
+                        $type = $state == '0' ? 'danger' : 'success';
                         return $type;
                     }),
+                Tables\Columns\TextColumn::make('projectPlan.name')
+                    ->sortable(['name'])
+                    ->searchable(['name']),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
                 Tables\Columns\TextColumn::make('transaction_code')

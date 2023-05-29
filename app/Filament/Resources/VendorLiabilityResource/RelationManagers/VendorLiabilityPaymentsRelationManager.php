@@ -75,7 +75,7 @@ class VendorLiabilityPaymentsRelationManager extends RelationManager
                         if ($get('coa_id_source') != null) {
                             $datas = Common::getViewCoaMasterDetails([
                                 ["level_first_id", "=", 5],
-                                ["level_second_code", "=", "01"],
+                                ["level_second_code", "=", "04"],
                             ])->get();
                         }
                         return $datas->pluck('level_third_name', 'level_third_id');

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VendorLiability extends Model
 {
@@ -49,5 +50,9 @@ class VendorLiability extends Model
     public function vendorLiabilityPayments(): HasMany
     {
         return $this->hasMany(VendorLiabilityPayment::class, 'vendor_liabilities_id', 'id');
+    }
+    public function projectPlan(): BelongsTo
+    {
+        return $this->belongsTo(ProjectPlan::class, 'project_plan_id');
     }
 }

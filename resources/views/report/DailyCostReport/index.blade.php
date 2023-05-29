@@ -11,20 +11,20 @@
     @include('report/style')
     @livewireStyles
     {{-- <style>
-        
+
     </style> --}}
 </head>
 
 <body>
     <header class="clearfix">
         <div id="logo">
-            <img src="logo.png">
+            <img src="logo.jpeg">
         </div>
         <div id="company">
             <h2 class="name">54 Property</h2>
-            <div>Jln. Tomang Raya Kav. 21-23</div>
-            <div>(021) 519-0450</div>
-        </div>
+            <div>Jln. Pepaya Raya No 7 Rt. 3 Rw. 5</div>
+            <div>Kel. Jagakarsa, Kec. Jagakarsa</div>
+            <div>Jakarta Selatan, DKI Jakarta 12620</div>
         </div>
     </header>
     <main>
@@ -73,8 +73,8 @@
                 @endforeach
 
             </tbody>
-        </table>       
-    </main>    
+        </table>
+    </main>
 </body>
 
 <!-- Mirrored from s3-eu-west-1.amazonaws.com/htmlpdfapi.production/free_html5_invoice_templates/example2/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 10 May 2023 02:36:40 GMT -->

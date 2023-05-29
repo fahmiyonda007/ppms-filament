@@ -58,7 +58,7 @@ class ReportController extends Controller
         //}
 
         // Convert the period to an array of dates
-        $dates = $this->generateDateRange(Carbon::parse($startDate),Carbon::parse($endDate));
+        $dates = $this->generateDateRange(Carbon::parse($startDate), Carbon::parse($endDate));
 
         $reportData = [
             'dateArray' => $dates,
@@ -66,7 +66,7 @@ class ReportController extends Controller
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
         //dd($data);
-        $record = Collect(DB::select("CALL SP_CashFlow ('{$startDate}', '{$endDate}')"))->groupBy('name') ;
+        $record = Collect(DB::select("CALL SP_CashFlow ('{$startDate}', '{$endDate}')"))->groupBy('name');
 
         $pdf = PDF::loadView('report/CashFlow/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'landscape');
@@ -104,7 +104,7 @@ class ReportController extends Controller
         //}
 
         // Convert the period to an array of dates
-        $dates = $this->generateDateRange(Carbon::parse($startDate),Carbon::parse($endDate));
+        $dates = $this->generateDateRange(Carbon::parse($startDate), Carbon::parse($endDate));
 
         $reportData = [
             'dateArray' => $dates,
@@ -112,10 +112,30 @@ class ReportController extends Controller
             'endDate' => Carbon::parse($endDate)->format('d M Y'),
         ];
         //dd($data);
-        $record = Collect(DB::select("CALL SP_CashFlow_Level2 ('{$startDate}', '{$endDate}')"))->groupBy('name') ;
+        $record = Collect(DB::select("CALL SP_CashFlow_Level2 ('{$startDate}', '{$endDate}')"))->groupBy('name');
 
         $pdf = PDF::loadView('report/CashFlowLevel2/index', compact('reportData', 'record', 'fileName'))
             ->setPaper('A4', 'landscape');
+
+        return $pdf->stream($fileName);
+    }
+
+    public function ReportSummarySalaryPdf($startDate, $endDate)
+    {
+        $invoiceDate = Carbon::now()->format('dmYs');
+        $fileName = "plan_ReportSummarySalary_{$invoiceDate}.pdf";
+
+        $dates = $this->generateDateRange(Carbon::parse($startDate), Carbon::parse($endDate));
+
+        $reportData = [
+            'dateArray' => $dates,
+            'startDate' => Carbon::parse($startDate)->format('d M Y'),
+            'endDate' => Carbon::parse($endDate)->format('d M Y'),
+        ];
+        $record = DB::select("CALL SP_ReportSummarySalary ( '{$startDate}', '{$endDate}')");
+
+        $pdf = PDF::loadView('report/ReportSummarySalary/index', compact('reportData', 'record', 'fileName'))
+            ->setPaper('A4', 'portrait');
 
         return $pdf->stream($fileName);
     }
