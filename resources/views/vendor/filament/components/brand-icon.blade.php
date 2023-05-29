@@ -1,5 +1,5 @@
 @if (filled($brand = config('filament.brand')))
-    <div @class([
+    {{-- <div @class([
         'filament-brand text-xl font-bold tracking-tight',
         'dark:text-white' => config('filament.dark_mode'),
     ])>
@@ -12,5 +12,10 @@
                 ->take(2)
                 ->implode('')
         }}
+    </div> --}}
+    <div>
+        <img src="{{ asset('/logo.png') }}" alt="Icon" class="h-full w-full object-contain dark:hidden" />
+        <img src="{{ asset('/logo-dark.png') }}" alt="Icon"
+            class="hidden h-full w-full object-contain dark:block" />
     </div>
 @endif

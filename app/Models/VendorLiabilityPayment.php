@@ -6,21 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProjectPaymentDetail extends Model
+class VendorLiabilityPayment extends Model
 {
     use HasFactory;
 
     public $timestamps = true;
 
     protected $fillable = [
+        'vendor_liabilities_id',
         'transaction_code',
         'transaction_date',
         'inc',
-        'project_payment_id',
         'category',
         'coa_id_source',
         'coa_id_destination',
         'amount',
+        'description',
         'is_jurnal',
         'created_by',
         'updated_by',
@@ -43,9 +44,9 @@ class ProjectPaymentDetail extends Model
         'updated_by',
     ];
 
-    public function projectCost(): BelongsTo
+    public function vendorLiability(): BelongsTo
     {
-        return $this->belongsTo(ProjectPayment::class, 'project_payment_id');
+        return $this->belongsTo(VendorLiability::class, 'vendor_liabilities_id');
     }
 
     public function coaThirdSource(): BelongsTo

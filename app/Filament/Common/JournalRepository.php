@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
 use App\Models\Receivable;
+use App\Models\VendorLiabilityPayment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -119,6 +120,117 @@ class JournalRepository
                 'is_jurnal' => 1,
                 'updated_by' => auth()->user()->email
             ]);
+        });
+    }
+
+    public static function ProjectPaymentDetailPostJournal($record, $header)
+    {
+        DB::transaction(function () use ($record, $header) {
+            //jurnal payment
+            $journal = GeneralJournal::create([
+                "project_plan_id" => $header->project_plan_id,
+                'jurnal_id' => Common::getNewJournalId(),
+                'reference_code' => $record->transaction_code,
+                'description' => "[jurnal payment] - [{$record->category} {$record->inc}] {$header->description}",
+                'transaction_date' => Carbon::now(),
+                'created_by' => auth()->user()->email,
+            ]);
+
+            $coaThirdSource = CoaThird::find($record->coa_id_source);
+            $coaThirdDestination = CoaThird::find($record->coa_id_destination);
+
+            //Journal from coa source
+            GeneralJournalDetail::create([
+                'jurnal_id' => $journal->id,
+                'no_inc' => 1,
+                'coa_id' => $record->coa_id_source,
+                'coa_code' => $coaThirdSource->code,
+                'debet_amount' => 0,
+                'credit_amount' => $record->amount,
+                'description' => $coaThirdSource->name,
+            ]);
+
+            //Journal from coa destination
+            GeneralJournalDetail::create([
+                'jurnal_id' => $journal->id,
+                'no_inc' => 2,
+                'coa_id' => $record->coa_id_destination,
+                'coa_code' => $coaThirdDestination->code,
+                'debet_amount' => $record->amount,
+                'credit_amount' => 0,
+                'description' => $coaThirdDestination->name,
+            ]);
+
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            $coaThirdDestination->save();
+
+            $record->update([
+                'is_jurnal' => 1,
+                'updated_by' => auth()->user()->email
+            ]);
+        });
+    }
+
+    public static function VendorLiabilityPaymentPostJournal($record, $header)
+    {
+        DB::transaction(function () use ($record, $header) {
+            //jurnal payment
+            $journal = GeneralJournal::create([
+                "project_plan_id" => $header->project_plan_id,
+                'jurnal_id' => Common::getNewJournalId(),
+                'reference_code' => $record->transaction_code,
+                'description' => "[jurnal vendor liability] - [{$record->category} {$record->inc}] {$header->description}",
+                'transaction_date' => Carbon::now(),
+                'created_by' => auth()->user()->email,
+            ]);
+
+            $coaThirdSource = CoaThird::find($record->coa_id_source);
+            $coaThirdDestination = CoaThird::find($record->coa_id_destination);
+
+            //Journal from coa source
+            GeneralJournalDetail::create([
+                'jurnal_id' => $journal->id,
+                'no_inc' => 1,
+                'coa_id' => $record->coa_id_source,
+                'coa_code' => $coaThirdSource->code,
+                'debet_amount' => 0,
+                'credit_amount' => $record->amount,
+                'description' => $coaThirdSource->name,
+            ]);
+
+            //Journal from coa destination
+            GeneralJournalDetail::create([
+                'jurnal_id' => $journal->id,
+                'no_inc' => 2,
+                'coa_id' => $record->coa_id_destination,
+                'coa_code' => $coaThirdDestination->code,
+                'debet_amount' => $record->amount,
+                'credit_amount' => 0,
+                'description' => $coaThirdDestination->name,
+            ]);
+
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            $coaThirdDestination->save();
+
+            $record->update([
+                'is_jurnal' => 1,
+                'updated_by' => auth()->user()->email
+            ]);
+
+            $checkDetail = VendorLiabilityPayment::where([
+                ['vendor_liabilities_id', '=', $header->id],
+                ['is_jurnal', '=', 0],
+            ])->get();
+
+            if ($checkDetail->count() == 0 &&(float)$header->outstanding == 0) {
+                $header->update([
+                    'project_status' => 1
+                ]);
+            }
         });
     }
 
@@ -336,7 +448,7 @@ class JournalRepository
 
     public static function PayrollJournal($record)
     {
-        DB::transaction(function () use($record) {
+        DB::transaction(function () use ($record) {
             //jurnal penggajian
             $journal = GeneralJournal::create([
                 "project_plan_id" => $record->project_plan_id,

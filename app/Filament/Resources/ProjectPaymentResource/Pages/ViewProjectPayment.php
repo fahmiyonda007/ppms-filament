@@ -15,18 +15,18 @@ class ViewProjectPayment extends ViewRecord
     protected function getActions(): array
     {
         return [
-            Actions\Action::make('post_jurnal')
-                ->label('Post Journal')
-                ->icon('heroicon-s-cash')
-                ->action('postJournal')
-                ->visible(function () {
-                    return $this->record->is_jurnal == 0;
-                })
-                ->requiresConfirmation(),
+            // Actions\Action::make('post_jurnal')
+            //     ->label('Post Journal')
+            //     ->icon('heroicon-s-cash')
+            //     ->action('postJournal')
+            //     ->visible(function () {
+            //         return $this->record->is_jurnal == 0;
+            //     })
+            // ->requiresConfirmation(),
             Actions\EditAction::make()
                 ->visible(function ($record) {
-                    return $record->is_jurnal == 0;
-                }),
+                    return $record->projectPaymentDetails->count() == 0;
+                })
         ];
     }
 

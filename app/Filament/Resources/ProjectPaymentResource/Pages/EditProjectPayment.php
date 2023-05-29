@@ -22,24 +22,24 @@ class EditProjectPayment extends EditRecord
     protected function getActions(): array
     {
         return [
-            Actions\Action::make('post_jurnal')
-                ->label('Post Journal')
-                ->icon('heroicon-s-cash')
-                ->action('postJournal')
-                ->visible(function () {
-                    return $this->record->is_jurnal == 0;
-                })
-                ->requiresConfirmation(),
+            // Actions\Action::make('post_jurnal')
+            //     ->label('Post Journal')
+            //     ->icon('heroicon-s-cash')
+            //     ->action('postJournal')
+            //     ->visible(function () {
+            //         return $this->record->is_jurnal == 0;
+            //     })
+            //     ->requiresConfirmation(),
             Actions\DeleteAction::make()
-                ->visible(function ($record) {
-                    return $record->is_jurnal == 0;
-                }),
+                // ->visible(function ($record) {
+                //     return $record->is_jurnal == 0;
+                // }),
         ];
     }
 
     protected function beforeFill(): void
     {
-        if ($this->record->is_jurnal == 1) {
+        if ($this->record->is_jurnal == 1 || $this->record->projectPaymentDetails->count() > 0) {
             $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record]));
         }
     }

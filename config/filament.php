@@ -244,7 +244,7 @@ return [
             'have_inline_labels' => false,
         ],
         'footer' => [
-            'should_show_logo' => false,
+            'should_show_logo' => true,
         ],
         'max_content_width' => null,
         'notifications' => [

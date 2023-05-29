@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_liabilitie_payments', function (Blueprint $table) {
+        Schema::create('vendor_liability_payments', function (Blueprint $table) {
             $table->integer('id', true);
             $table->integer('vendor_liabilities_id')->nullable();
             $table->timestamp('transaction_date')->nullable();
             $table->string('transaction_code')->nullable();
             $table->string('transaction_type', 50)->nullable();
             $table->integer('inc')->nullable();
+            $table->string('category', 50)->nullable();
             $table->integer('coa_id_source')->nullable();
             $table->integer('coa_id_destination')->nullable();
             $table->decimal('amount', 10, 0)->nullable();
@@ -38,6 +39,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vendor_liabilitie_payments');
+        Schema::dropIfExists('vendor_liability_payments');
     }
 };
