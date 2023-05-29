@@ -13,6 +13,8 @@ use App\Models\ProjectPayment;
 use App\Models\ProjectPaymentDetail;
 use App\Models\Receivable;
 use App\Models\SysLookup;
+use App\Models\VendorLiability;
+use App\Models\VendorLiabilityPayment;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +87,26 @@ class Common
     {
         $journal = ProjectPaymentDetail::whereDate('created_at', Carbon::today())->max('transaction_code');
         $formatCode = 'PAY-' . Carbon::today()->format('Ymd');
+        $lastCode = $journal ?? $formatCode . '000';
+        $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
+        $len = str_pad($num, 3, '0', STR_PAD_LEFT);
+        return $formatCode . $len;
+    }
+
+    public static function getNewVendorLiabilityTransactionId(): string
+    {
+        $journal = VendorLiability::whereDate('created_at', Carbon::today())->max('transaction_code');
+        $formatCode = 'VL-' . Carbon::today()->format('Ymd');
+        $lastCode = $journal ?? $formatCode . '000';
+        $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
+        $len = str_pad($num, 3, '0', STR_PAD_LEFT);
+        return $formatCode . $len;
+    }
+
+    public static function getNewVendorLiabilityPaymentTransactionId(): string
+    {
+        $journal = VendorLiabilityPayment::whereDate('created_at', Carbon::today())->max('transaction_code');
+        $formatCode = 'VLP-' . Carbon::today()->format('Ymd');
         $lastCode = $journal ?? $formatCode . '000';
         $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
         $len = str_pad($num, 3, '0', STR_PAD_LEFT);

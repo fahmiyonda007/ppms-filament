@@ -31,9 +31,9 @@ class EditProjectPayment extends EditRecord
             //     })
             //     ->requiresConfirmation(),
             Actions\DeleteAction::make()
-                ->visible(function ($record) {
-                    return $record->is_jurnal == 0;
-                }),
+                // ->visible(function ($record) {
+                //     return $record->is_jurnal == 0;
+                // }),
         ];
     }
 

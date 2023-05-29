@@ -1,35 +1,34 @@
 <?php
 
-namespace App\Filament\Resources\ProjectPaymenteResource\RelationManagers;
+namespace App\Filament\Resources\VendorLiabilityResource\RelationManagers;
 
 use App\Filament\Common\Common;
 use App\Filament\Resources\Common\JournalRepository;
-use App\Filament\Resources\ProjectPaymentResource;
-use App\Models\ProjectPayment;
-use App\Models\ProjectPaymentDetail;
+use App\Filament\Resources\VendorLiabilityResource;
+use App\Models\VendorLiability;
+use App\Models\VendorLiabilityPayment;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput\Mask;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\Position;
-use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Str;
+use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 
-class ProjectPaymentDetailsRelationManager extends RelationManager
+class VendorLiabilityPaymentsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'projectPaymentDetails';
+    protected static string $relationship = 'vendorLiabilityPayments';
     protected static ?string $title = 'Detail';
     protected static ?string $label = 'Detail';
-    // protected static ?string $recordTitleAttribute = 'project_payment_id';
 
     public static function form(Form $form): Form
     {
@@ -40,7 +39,7 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                     ->required()
                     ->disabled()
                     ->columnSpanFull()
-                    ->default(fn () => Common::getNewProjectPaymentTransactionId()),
+                    ->default(fn () => Common::getNewVendorLiabilityPaymentTransactionId()),
                 Forms\Components\DatePicker::make('transaction_date')
                     ->required()
                     ->default(Carbon::now()),
@@ -49,7 +48,6 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                     ->searchable()
                     ->options([
                         "DP" => "DP",
-                        "BOOKING_FEE" => 'BOOKING FEE',
                         "PAYMENT" => 'PAYMENT',
                     ]),
                 Forms\Components\Select::make('coa_id_source')
@@ -60,7 +58,8 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                     ->searchable()
                     ->options(function () {
                         $datas = Common::getViewCoaMasterDetails([
-                            ["level_first_id", "=", 4],
+                            ["level_first_id", "=", 1],
+                            ["balance", ">", 0],
                             ["level_second_code", "=", "01"],
                         ])->get();
                         return $datas->pluck('level_third_name', 'level_third_id');
@@ -75,7 +74,7 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                         $datas = new Collection();
                         if ($get('coa_id_source') != null) {
                             $datas = Common::getViewCoaMasterDetails([
-                                ["level_first_id", "=", 1],
+                                ["level_first_id", "=", 5],
                                 ["level_second_code", "=", "01"],
                             ])->get();
                         }
@@ -83,6 +82,7 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                     }),
                 Forms\Components\TextInput::make('amount')
                     ->numeric()
+                    ->reactive()
                     ->required()
                     ->mask(
                         fn (Mask $mask) => $mask
@@ -91,6 +91,19 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                             ->decimalSeparator(',')
                             ->thousandsSeparator(',')
                     )
+                    ->columnSpanFull(),
+                AlertBox::make()
+                    ->label(label: 'ERROR')
+                    ->helperText(text: 'Amount tidak boleh melebihi outstanding.')
+                    ->resolveIconUsing(name: 'heroicon-o-x-circle')
+                    ->danger()
+                    ->visible(function ($livewire, $get) {
+                        $outstanding = (float)$livewire->ownerRecord->outstanding - (float)$get('amount');
+                        return $outstanding < 0;
+                    })
+                    ->columnSpanFull(),
+                Forms\Components\Textarea::make('description')
+                    ->maxLength(500)
                     ->columnSpanFull(),
             ]);
     }
@@ -105,7 +118,6 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('category')
                     ->enum([
                         "DP" => "DP",
-                        "BOOKING_FEE" => 'BOOKING FEE',
                         "PAYMENT" => 'PAYMENT',
                     ]),
                 Tables\Columns\TextColumn::make('coaThirdSource.fullname')
@@ -117,27 +129,42 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                     ->sortable(['name'])
                     ->searchable(['coa_level_thirds.name'], isIndividual: true),
                 Tables\Columns\TextColumn::make('amount')->money('idr', true),
-
+                Tables\Columns\TextColumn::make('description'),
             ])
-            ->filters([])
+            ->filters([
+                //
+            ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    // ->visible(function (RelationManager $livewire) {
-                    //     dd($livewire->getRelationship()->get());
-                    //     $header = $livewire->ownerRecord;
-                    //     $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                    //     return $header->is_jurnal == 0;
-                    // })
-                    ->using(function (RelationManager $livewire, array $data): Model {
+                    ->visible(function ($livewire) {
+                        $outstanding = (float)$livewire->ownerRecord->outstanding;
+                        return $outstanding > 0;
+                    })
+                    ->using(function (RelationManager $livewire, array $data, CreateAction $action): Model {
                         $header = $livewire->ownerRecord;
-                        $lastInc = ProjectPaymentDetail::where([
-                            ['project_payment_id', '=', $header->id],
+                        $lastInc = VendorLiabilityPayment::where([
+                            ['vendor_liabilities_id', '=', $header->id],
                             ['category', '=', $data['category']],
                         ])->max('inc') + 1;
                         $data['inc'] = $lastInc;
+
+                        $outstanding = (float)$header->outstanding - (float)$data['amount'];
+
+                        if ($outstanding < 0) {
+                            Notification::make()
+                                ->title('Amount melebihi outstanding')
+                                ->danger()
+                                ->send();
+                            $action->halt();
+                        }
+
+                        $header->update([
+                            'outstanding' => $outstanding
+                        ]);
+
                         return $livewire->getRelationship()->create($data);
                     })
-                    ->after(fn ($livewire) => redirect(ProjectPaymentResource::getUrl('edit', ['record' => $livewire->ownerRecord]))),
+                    ->after(fn ($livewire) => redirect(VendorLiabilityResource::getUrl('edit', ['record' => $livewire->ownerRecord]))),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -149,7 +176,14 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                         ->visible(function (Model $record) {
                             return $record->is_jurnal == 0;
                         })
-                        ->after(fn ($livewire) => redirect(ProjectPaymentResource::getUrl('edit', ['record' => $livewire->ownerRecord]))),
+                        ->after(function ($livewire) {
+                            $header = $livewire->ownerRecord;
+                            $outstanding = (float)$header->deal_price - (float)$livewire->getRelationship()->sum('amount');
+                            $header->update([
+                                'outstanding' => $outstanding
+                            ]);
+                            redirect(VendorLiabilityResource::getUrl('edit', ['record' => $livewire->ownerRecord]));
+                        })
                 ]),
                 Tables\Actions\Action::make('post_jurnal')
                     ->button()
@@ -162,10 +196,7 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
                     }),
             ])
             ->bulkActions([
-                // Tables\Actions\DeleteBulkAction::make()
-                //     ->visible(function (Model $record) {
-                //         return $record->is_jurnal == 0;
-                //     }),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -186,7 +217,7 @@ class ProjectPaymentDetailsRelationManager extends RelationManager
 
     protected static function postJournal($record, $header)
     {
-        JournalRepository::ProjectPaymentDetailPostJournal($record, $header);
-        redirect(ProjectPaymentResource::getUrl('edit', ['record' => $header]));
+        JournalRepository::VendorLiabilityPaymentPostJournal($record, $header);
+        redirect(VendorLiabilityResource::getUrl('edit', ['record' => $header]));
     }
 }

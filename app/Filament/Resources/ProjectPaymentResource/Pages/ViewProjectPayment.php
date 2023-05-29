@@ -25,8 +25,8 @@ class ViewProjectPayment extends ViewRecord
             // ->requiresConfirmation(),
             Actions\EditAction::make()
                 ->visible(function ($record) {
-                    return $record->is_jurnal == 0 && $this->record->projectPaymentDetails->count() == 0;
-                }),
+                    return $record->projectPaymentDetails->count() == 0;
+                })
         ];
     }
 
