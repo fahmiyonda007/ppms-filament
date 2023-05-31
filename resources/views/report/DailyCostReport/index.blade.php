@@ -74,6 +74,21 @@
 
             </tbody>
         </table>
+        <div style="width : 350px;">
+            <table>
+                <tbody>
+                    @foreach ($record as $item)
+                        @if ($item->rowcode == 'FOOTER')
+                            <tr class="total">
+                                <td class="desc" style="background-color : #feb24c;">{{ $item->item }}</td>
+                                <td class="desc" style="background-color : #feb24c;">{{ $item->payment_date }}</td>
+                                <td>{{ $item->total_price }}</td>
+                            </tr>
+                        @endif
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </main>
 </body>
 

@@ -35,11 +35,12 @@
 
     #logo {
         float: left;
-        margin-top: 8px;
+        margin-top: -10px;
     }
 
     #logo img {
         height: 70px;
+        width: 80px;
     }
 
     #company {
@@ -79,7 +80,7 @@
         font-size: 1.5em;
         line-height: 0em;
         font-weight: normal;
-        margin: 0 0 15px 0;
+        margin: 0 0 5px 0;
         font-weight: bold;
     }
 
@@ -90,6 +91,13 @@
 
     table {
         width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-bottom: 20px;
+    }
+
+    table .footer{
+        width: 40%;
         border-collapse: collapse;
         border-spacing: 0;
         margin-bottom: 20px;
