@@ -38,10 +38,11 @@
             <thead>
                 <tr>
                     <th class="headerdesc"><b>Project</b></th>
-                    <th style="width : 130px;" class="headerright"><b>Total Gajian</b></th>
-                    <th style="width : 130px;" class="headerright"><b>Total Kasbon Tukang</b></th>
-                    <th style="width : 130px;" class="headerright"><b>Total Kasbon Vendor</b></th>
-                    <th style="width : 130px;" class="headerright"><b>Total</b></th>
+                    <th style="width : 110px;" class="headerright"><b>Total Tukang</b></th>
+                    <th style="width : 110px;" class="headerright"><b>Total Gajian</b></th>
+                    <th style="width : 110px;" class="headerright"><b>Total Kasbon Tukang</b></th>
+                    <th style="width : 110px;" class="headerright"><b>Total Payment Vendor</b></th>
+                    <th style="width : 110px;" class="headerright"><b>Total</b></th>
 
                 </tr>
 
@@ -51,6 +52,7 @@
                     @if ($item->name != 'TOTAL')
                         <tr>
                             <td class="desc">{{ $item->name }}</td>
+                            <td>{{ $item->total_tukang }}</td>
                             <td>{{ $item->total_gajian }}</td>
                             <td>{{ $item->total_kasbon_tukang }}</td>
                             <td>{{ $item->total_kasbon_vendor }}</td>
@@ -59,6 +61,7 @@
                     @elseif ($item->name == 'TOTAL')
                         <tr class="total" style="background-color : #feb24c;">
                             <td class="desc">{{ $item->name }}</td>
+                            <td>{{ $item->total_tukang }}</td>
                             <td>{{ $item->total_gajian }}</td>
                             <td>{{ $item->total_kasbon_tukang }}</td>
                             <td>{{ $item->total_kasbon_vendor }}</td>

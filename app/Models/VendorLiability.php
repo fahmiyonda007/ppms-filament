@@ -46,6 +46,10 @@ class VendorLiability extends Model
         'created_by',
         'updated_by',
     ];
+    public function vendor(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class, 'vendor_id');
+    }
 
     public function vendorLiabilityPayments(): HasMany
     {

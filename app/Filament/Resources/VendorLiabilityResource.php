@@ -50,6 +50,7 @@ class VendorLiabilityResource extends Resource implements HasShieldPermissions
                             Forms\Components\Select::make('project_plan_id')
                                 ->relationship('projectPlan', 'name')
                                 ->preload()
+                                ->required()
                                 ->searchable(),
                             Forms\Components\TextInput::make('transaction_code')
                                 ->maxLength(20)
@@ -59,6 +60,11 @@ class VendorLiabilityResource extends Resource implements HasShieldPermissions
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required()
                                 ->default(Carbon::now()),
+                            Forms\Components\Select::make('vendor_id')
+                                ->relationship('vendor', 'name')
+                                ->searchable()
+                                ->preload()
+                                ->required(),
                             Forms\Components\TextInput::make('scope_of_work')
                                 ->required()
                                 ->maxLength(255),
@@ -182,6 +188,7 @@ class VendorLiabilityResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('projectPlan.name')
                     ->sortable(['name'])
                     ->searchable(['name']),
+                Tables\Columns\TextColumn::make('vendor.name')->sortable(),
                 Tables\Columns\TextColumn::make('transaction_date')
                     ->date(),
                 Tables\Columns\TextColumn::make('transaction_code')
