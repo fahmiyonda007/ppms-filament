@@ -139,4 +139,23 @@ class ReportController extends Controller
 
         return $pdf->stream($fileName);
     }
+
+    public function VendorLiabilitiesPdf($status, $startDate, $endDate)
+    {
+
+        //dd($status);
+        $invoiceDate = Carbon::now()->format('dmYs');
+        $fileName = "plan_VendorLiabilities_{$invoiceDate}.pdf";
+        $reportData = [
+            'startDate' => Carbon::parse($startDate)->format('d M Y'),
+            'endDate' => Carbon::parse($endDate)->format('d M Y'),
+        ];
+        $record = DB::select("CALL SP_VendorLiabilities ('{$status}', '{$startDate}', '{$endDate}')");
+
+        $pdf = PDF::loadView('report/VendorLiabilities/index', compact('reportData', 'record', 'fileName'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->stream($fileName);
+    }
+
 }

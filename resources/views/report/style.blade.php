@@ -123,6 +123,7 @@
     table .service,
     table td.desc {
         text-align: left;
+        margin: auto;
     }
 
     table th.headerdesc {
@@ -148,12 +149,12 @@
 
     table td.service,
     table td.desc {
-        vertical-align: top;
+        vertical-align: middle;
         text-align: left;
     }
 
     table td.center {
-        vertical-align: top;
+        vertical-align: middle;
         text-align: center;
     }
 

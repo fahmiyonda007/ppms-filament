@@ -234,9 +234,9 @@
             <div class="notice">Mau dikasih kata2 gak?</div>
         </div> -->
     </main>
-    <footer>
+    <!-- <footer>
         Invoice was created on a computer and is valid without the signature and seal.
-    </footer>
+    </footer> -->
 </body>
 
 <!-- Mirrored from s3-eu-west-1.amazonaws.com/htmlpdfapi.production/free_html5_invoice_templates/example2/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 10 May 2023 02:36:40 GMT -->

@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Cash Flow</title>
+    <title>Daily Cost Report</title>
 
     {{-- <link href="css/report.css" rel="stylesheet"> --}}
     @include('report/style')
