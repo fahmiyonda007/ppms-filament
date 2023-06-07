@@ -77,6 +77,7 @@ class EditEmployeePayroll extends EditRecord
 
     public function postJournal()
     {
+        $this->save(false);
         $record = $this->record;
 
         if ((float) $record->employeePayrollDetails->count() == 0) {
