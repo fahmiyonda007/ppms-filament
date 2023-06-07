@@ -252,7 +252,8 @@ class RoleResource extends Resource implements HasShieldPermissions
             static::$permissionsCollection = Utils::getPermissionModel()::all();
         }
 
-        $collect = collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
+        $filamentShield = new FilamentShield();
+        $collect = collect($filamentShield->getResources())->sortKeys()->reduce(function ($entities, $entity) {
             $entities[] = Forms\Components\Card::make()
                 ->extraAttributes(['class' => 'border-0 shadow-lg'])
                 ->schema([
@@ -338,7 +339,8 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function refreshSelectAllStateViaEntities(Closure $set, Closure $get): void
     {
-        $entitiesStates = collect(FilamentShield::getResources())
+        $filamentShield = new FilamentShield();
+        $entitiesStates = collect($filamentShield->getResources())
             ->when(Utils::isPageEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getPages()))
             ->when(Utils::isWidgetEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getWidgets()))
             ->when(Utils::isCustomPermissionEntityEnabled(), fn ($entities) => $entities->merge(static::getCustomEntities()))
@@ -361,7 +363,8 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function refreshEntitiesStatesViaSelectAll(Closure $set, $state): void
     {
-        collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
+        $filamentShield = new FilamentShield();
+        collect($filamentShield->getResources())->each(function ($entity) use ($set, $state) {
             $set($entity['resource'], $state);
             collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->each(function ($permission) use ($entity, $set, $state) {
                 $set($permission . '_' . $entity['resource'], $state);
@@ -523,7 +526,9 @@ class RoleResource extends Resource implements HasShieldPermissions
     protected static function getCustomEntities(): ?Collection
     {
         $resourcePermissions = collect();
-        collect(FilamentShield::getResources())->each(function ($entity) use ($resourcePermissions) {
+        $filamentShield = new FilamentShield();
+
+        collect($filamentShield->getResources())->each(function ($entity) use ($resourcePermissions) {
             collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->map(function ($permission) use ($resourcePermissions, $entity) {
                 $resourcePermissions->push((string) Str::of($permission . '_' . $entity['resource']));
             });

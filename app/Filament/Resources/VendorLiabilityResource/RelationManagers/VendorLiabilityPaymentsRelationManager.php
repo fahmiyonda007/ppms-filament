@@ -5,6 +5,7 @@ namespace App\Filament\Resources\VendorLiabilityResource\RelationManagers;
 use App\Filament\Common\Common;
 use App\Filament\Resources\Common\JournalRepository;
 use App\Filament\Resources\VendorLiabilityResource;
+use App\Models\CoaThird;
 use App\Models\VendorLiability;
 use App\Models\VendorLiabilityPayment;
 use Carbon\Carbon;
@@ -38,7 +39,6 @@ class VendorLiabilityPaymentsRelationManager extends RelationManager
                     ->maxLength(20)
                     ->required()
                     ->disabled()
-                    ->columnSpanFull()
                     ->default(fn () => Common::getNewVendorLiabilityPaymentTransactionId()),
                 Forms\Components\DatePicker::make('transaction_date')
                     ->required()
@@ -64,22 +64,22 @@ class VendorLiabilityPaymentsRelationManager extends RelationManager
                         ])->get();
                         return $datas->pluck('level_third_name', 'level_third_id');
                     }),
-                Forms\Components\Select::make('coa_id_destination')
-                    ->label('Destination')
-                    ->required()
-                    ->preload()
-                    ->reactive()
-                    ->searchable()
-                    ->options(function (callable $get) {
-                        $datas = new Collection();
-                        if ($get('coa_id_source') != null) {
-                            $datas = Common::getViewCoaMasterDetails([
-                                ["level_first_id", "=", 5],
-                                ["level_second_code", "=", "04"],
-                            ])->get();
-                        }
-                        return $datas->pluck('level_third_name', 'level_third_id');
-                    }),
+                // Forms\Components\Select::make('coa_id_destination')
+                //     ->label('Destination')
+                //     ->required()
+                //     ->preload()
+                //     ->reactive()
+                //     ->searchable()
+                //     ->options(function (callable $get) {
+                //         $datas = new Collection();
+                //         if ($get('coa_id_source') != null) {
+                //             $datas = Common::getViewCoaMasterDetails([
+                //                 ["level_first_id", "=", 5],
+                //                 ["level_second_code", "=", "04"],
+                //             ])->get();
+                //         }
+                //         return $datas->pluck('level_third_name', 'level_third_id');
+                //     }),
                 Forms\Components\TextInput::make('amount')
                     ->numeric()
                     ->reactive()
@@ -162,6 +162,9 @@ class VendorLiabilityPaymentsRelationManager extends RelationManager
                             'outstanding' => $outstanding
                         ]);
 
+                        $coaThirdDestination = CoaThird::where('code', '504007')->first();
+
+                        $data['coa_id_destination'] = $coaThirdDestination->id;
                         return $livewire->getRelationship()->create($data);
                     })
                     ->after(fn ($livewire) => redirect(VendorLiabilityResource::getUrl('edit', ['record' => $livewire->ownerRecord]))),
