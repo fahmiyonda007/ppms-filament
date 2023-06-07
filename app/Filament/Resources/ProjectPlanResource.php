@@ -32,7 +32,7 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-map';
     protected static ?string $slug = 'project/plans';
     protected static ?string $navigationGroup = 'Projects';
-    protected static ?string $navigationLabel = 'Plans';
+    protected static ?string $navigationLabel = 'Project Plans';
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 1;
 
