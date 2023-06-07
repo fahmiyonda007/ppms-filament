@@ -134,15 +134,15 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
                         ->visible(function (Model $record) {
                             return $record->progress < 100.0;
                         }),
-                    Tables\Actions\DeleteAction::make()
-                        ->visible(function (Model $record) {
-                            return $record->progress < 100.0;
-                        }),
+                    // Tables\Actions\DeleteAction::make()
+                    //     ->visible(function (Model $record) {
+                    //         return $record->progress < 100.0;
+                    //     }),
                 ]),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
             ]);
+            // ->bulkActions([
+            //     Tables\Actions\DeleteBulkAction::make(),
+            // ]);
     }
 
     public static function getRelations(): array
@@ -150,7 +150,7 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
         return [
             ProjectPlanDetailsRelationManager::class,
             ProjectCostRelationManager::class,
-            CashFlowsRelationManager::class,
+            //CashFlowsRelationManager::class,
         ];
     }
 

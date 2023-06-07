@@ -20,7 +20,7 @@ class EditProjectPlan extends EditRecord
         //     Actions\Action::make('Export Excel')->button()
         //         ->url(fn () => route('plan-excel', ['record' => $this->record]))
         //         ->openUrlInNewTab(),
-            Actions\DeleteAction::make(),
+            //Actions\DeleteAction::make(),
         ];
     }
 

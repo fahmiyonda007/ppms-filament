@@ -63,7 +63,11 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                 ]),
                 Grid::make(2)->schema([
                     Forms\Components\Select::make('project_plan_id')
-                        ->relationship('projectPlan', 'name')
+                        ->relationship(
+                            'projectPlan',
+                            'name',
+                            fn(Builder $query) => $query->whereNotIn('id', [1, 2, 3])
+                        )
                         ->required()
                         ->searchable()
                         ->reactive()
@@ -119,7 +123,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 $query->where('id', 0);
                             }
                         })
-                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
+                        ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->code} - {$record->name}")
                         ->searchable()
                         ->preload()
                         ->label('Payment Source 1')
@@ -136,7 +140,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 $query->where([['code', 'like', '1%'], ['id', '!=', $get('coa_id_source1')]]);
                             }
                         })
-                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
+                        ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->code} - {$record->name}")
                         ->searchable()
                         ->preload()
                         ->label('Payment Source 2')
@@ -152,7 +156,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                                 $query->where([['code', 'like', '1%'], ['id', '!=', $get('coa_id_source1')], ['id', '!=', $get('coa_id_source2')]]);
                             }
                         })
-                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
+                        ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->code} - {$record->name}")
                         ->searchable()
                         ->preload()
                         ->reactive()
@@ -266,7 +270,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                     ->enableDownload()
                     ->image()
                     ->maxSize(1024)
-                    ->collection(fn ($record) => 'project-costs\\' . $record->transaction_code)
+                    ->collection(fn($record) => 'project-costs\\' . $record->transaction_code)
                     // ->collection('project-costs')
                     ->imagePreviewHeight(100)
                     // ->panelAspectRatio('2:1')
@@ -302,13 +306,13 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                     ->date()
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('payment_status')
-                    ->color(fn (Model $record) => $record->payment_status == 'PAID' ? 'success' : 'danger')
+                    ->color(fn(Model $record) => $record->payment_status == 'PAID' ? 'success' : 'danger')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('vendor.name')->sortable(),
                 Tables\Columns\TextColumn::make('total_payment')
                     ->money('idr', true)
                     ->sortable()
-                    ->color(fn ($record) => $record->total_amount > $record->total_payment ? 'danger' : 'success'),
+                    ->color(fn($record) => $record->total_amount > $record->total_payment ? 'danger' : 'success'),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->money('idr', true)
                     ->sortable(),
@@ -386,7 +390,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
     {
         $projectCosts = ProjectCost::where('project_plan_id', $state)->max('transaction_code');
         $lastCode = $projectCosts ?? 'TRX-' . $state . '-000';
-        $num = (int)Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
+        $num = (int) Str::substr($lastCode, Str::length($lastCode) - 3, 3) + 1;
         $len = str_pad($num, 3, '0', STR_PAD_LEFT);
         return 'TRX-' . $state . '-' . $len;
     }
