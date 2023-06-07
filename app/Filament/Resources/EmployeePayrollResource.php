@@ -61,11 +61,15 @@ class EmployeePayrollResource extends Resource implements HasShieldPermissions
                                 ->required()
                                 ->disabled()
                                 ->columnSpanFull()
-                                ->default(fn () => Common::getNewEmployeePayrollTransactionId()),
+                                ->default(fn() => Common::getNewEmployeePayrollTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required(),
                             Forms\Components\Select::make('project_plan_id')
-                                ->relationship('projectPlan', 'name')
+                                ->relationship(
+                                    'projectPlan',
+                                    'name',
+                                    fn(Builder $query) => $query->whereNotIn('id', [1, 3])
+                                )
                                 ->preload()
                                 ->searchable(),
 
@@ -193,20 +197,23 @@ class EmployeePayrollResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('coaThirdSource.fullname')
                     ->label('COA Source')
                     ->sortable(['name'])
-                    ->searchable(['coa_level_thirds.name'], isIndividual: true),
+                    ->searchable(['coa_level_thirds.name'],
+                        isIndividual: true),
                 Tables\Columns\TextColumn::make('source_start_balance')->money('idr', true),
                 Tables\Columns\TextColumn::make('source_end_balance')->money('idr', true),
                 Tables\Columns\TextColumn::make('coaThirdDestination.fullname')
                     ->label('COA Destination')
                     ->sortable(['name'])
-                    ->searchable(['coa_level_thirds.name'], isIndividual: true),
+                    ->searchable(['coa_level_thirds.name'],
+                        isIndividual: true),
 
                 Tables\Columns\TextColumn::make('destination_start_balance')->money('idr', true),
                 Tables\Columns\TextColumn::make('destination_end_balance')->money('idr', true),
                 Tables\Columns\TextColumn::make('coaThirdLoan.fullname')
                     ->label('COA Loan')
                     ->sortable(['name'])
-                    ->searchable(['coa_level_thirds.name'], isIndividual: true),
+                    ->searchable(['coa_level_thirds.name'],
+                        isIndividual: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
                     ->dateTime(),

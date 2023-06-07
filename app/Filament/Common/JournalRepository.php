@@ -18,6 +18,14 @@ class JournalRepository
     {
         DB::transaction(function () use ($record) {
 
+            $coaThirdSource = CoaThird::find($record->coa_id_source);
+            $coaThirdDestination = CoaThird::find($record->coa_id_destination);
+
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->payment_amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->payment_amount;
+            $coaThirdDestination->save();
+
             $journal = GeneralJournal::create([
                 // "project_plan_id" => $record->project_plan_id,
                 'jurnal_id' => Common::getNewJournalId(),
@@ -27,8 +35,8 @@ class JournalRepository
                 'created_by' => auth()->user()->email,
             ]);
 
-            $coaThirdSource = CoaThird::find($record->coa_id_source);
-            $coaThirdDestination = CoaThird::find($record->coa_id_destination);
+            // $coaThirdSource = CoaThird::find($record->coa_id_source);
+            // $coaThirdDestination = CoaThird::find($record->coa_id_destination);
 
             //Journal credit from coa source
             GeneralJournalDetail::create([
@@ -52,10 +60,10 @@ class JournalRepository
                 'description' => $coaThirdDestination->name,
             ]);
 
-            $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$record->payment_amount;
-            $coaThirdSource->save();
-            $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->payment_amount;
-            $coaThirdDestination->save();
+            // $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$record->payment_amount;
+            // $coaThirdSource->save();
+            // $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->payment_amount;
+            // $coaThirdDestination->save();
 
             $employee = Employee::find($record->employee_id);
             $employee->total_loan = $record->outstanding;
@@ -86,6 +94,11 @@ class JournalRepository
                 $coaThirdSource = CoaThird::find($value->coa_id_source);
                 $coaThirdDestination = CoaThird::find($value->coa_id_destination);
 
+                $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $value->amount;
+                $coaThirdSource->save();
+                $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $value->amount;
+                $coaThirdDestination->save();
+
                 $countLoop = $countLoop + 1;
                 //Journal from coa source
                 GeneralJournalDetail::create([
@@ -110,10 +123,10 @@ class JournalRepository
                     'description' => $coaThirdDestination->name,
                 ]);
 
-                $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $value->amount;
-                $coaThirdSource->save();
-                $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $value->amount;
-                $coaThirdDestination->save();
+                // $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $value->amount;
+                // $coaThirdSource->save();
+                // $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $value->amount;
+                // $coaThirdDestination->save();
             };
 
             $record->update([
@@ -139,6 +152,11 @@ class JournalRepository
             $coaThirdSource = CoaThird::find($record->coa_id_source);
             $coaThirdDestination = CoaThird::find($record->coa_id_destination);
 
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            $coaThirdDestination->save();
+
             //Journal from coa source
             GeneralJournalDetail::create([
                 'jurnal_id' => $journal->id,
@@ -161,10 +179,10 @@ class JournalRepository
                 'description' => $coaThirdDestination->name,
             ]);
 
-            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
-            $coaThirdSource->save();
-            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
-            $coaThirdDestination->save();
+            // $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            // $coaThirdSource->save();
+            // $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            // $coaThirdDestination->save();
 
             $record->update([
                 'is_jurnal' => 1,
@@ -189,6 +207,11 @@ class JournalRepository
             $coaThirdSource = CoaThird::find($record->coa_id_source);
             $coaThirdDestination = CoaThird::find($record->coa_id_destination);
 
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            $coaThirdDestination->save();
+
             //Journal from coa source
             GeneralJournalDetail::create([
                 'jurnal_id' => $journal->id,
@@ -211,10 +234,10 @@ class JournalRepository
                 'description' => $coaThirdDestination->name,
             ]);
 
-            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
-            $coaThirdSource->save();
-            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
-            $coaThirdDestination->save();
+            // $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            // $coaThirdSource->save();
+            // $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            // $coaThirdDestination->save();
 
             $record->update([
                 'is_jurnal' => 1,
@@ -226,7 +249,7 @@ class JournalRepository
                 ['is_jurnal', '=', 0],
             ])->get();
 
-            if ($checkDetail->count() == 0 && (float)$header->outstanding == 0) {
+            if ($checkDetail->count() == 0 && (float) $header->outstanding == 0) {
                 $header->update([
                     'project_status' => 1
                 ]);
@@ -238,11 +261,13 @@ class JournalRepository
     {
         DB::transaction(function () use ($record, $coaThirdHeader, $sumDetail) {
 
+            $coaThirdHeader->save();
+
             $journal = GeneralJournal::create([
                 "project_plan_id" => $record->project_plan_id,
                 'jurnal_id' => Common::getNewJournalId(),
                 'reference_code' => $record->transaction_code,
-                'description' => '[jurnal cash flow] ' . $record->description,
+                'description' => $record->description,
                 'transaction_date' => Carbon::now(),
                 'created_by' => auth()->user()->email,
             ]);
@@ -260,7 +285,7 @@ class JournalRepository
                 'description' => $coaThirdHeader->name,
             ]);
 
-            $coaThirdHeader->save();
+
 
 
             $countInc = 2;
@@ -286,6 +311,7 @@ class JournalRepository
                 // $coaThirdDetail->save();
 
                 $countInc = $countInc + 1;
+
             }
 
             $record->update([
@@ -310,6 +336,10 @@ class JournalRepository
             $coaThirdSource = CoaThird::find($record->coa_id_source);
             $coaThirdDestination = CoaThird::find($record->coa_id_destination);
 
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            $coaThirdDestination->save();
             //Journal credit from coa source
             GeneralJournalDetail::create([
                 'jurnal_id' => $journal->id,
@@ -332,10 +362,10 @@ class JournalRepository
                 'description' => $coaThirdDestination->name,
             ]);
 
-            $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$record->amount;
-            $coaThirdSource->save();
-            $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->amount;
-            $coaThirdDestination->save();
+            // $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            // $coaThirdSource->save();
+            // $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            // $coaThirdDestination->save();
 
             $record->update([
                 'is_jurnal' => 1,
@@ -348,8 +378,8 @@ class JournalRepository
     {
         $mapping = [
             ['code' => '501003', 'amount' => $record->notary_fee, 'desc' => 'BIAYA NOTARIS'],
-            ['code' => '501004',  'amount' => $record->tax, 'desc' => 'BIAYA PAJAK'],
-            ['code' => '505006',  'amount' => $record->commission, 'desc' => 'BIAYA KOMISI AGENT'],
+            ['code' => '501004', 'amount' => $record->tax, 'desc' => 'BIAYA PAJAK'],
+            ['code' => '505006', 'amount' => $record->commission, 'desc' => 'BIAYA KOMISI AGENT'],
             ['code' => '505007', 'amount' => $record->other_commission, 'desc' => 'BIAYA KOMISI AGENT LAINNYA'],
         ];
 
@@ -366,6 +396,11 @@ class JournalRepository
 
                 $coaThirdSource = CoaThird::find($record->coa_id_source);
                 $coaThirdDestination = CoaThird::where('code', $value['code'])->first();
+
+                $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $value['amount'];
+                $coaThirdSource->save();
+                $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $value['amount'];
+                $coaThirdDestination->save();
 
                 //Journal credit from coa source
                 GeneralJournalDetail::create([
@@ -389,10 +424,10 @@ class JournalRepository
                     'description' => $coaThirdDestination->name,
                 ]);
 
-                $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$value['amount'];
-                $coaThirdSource->save();
-                $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$value['amount'];
-                $coaThirdDestination->save();
+                // $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $value['amount'];
+                // $coaThirdSource->save();
+                // $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $value['amount'];
+                // $coaThirdDestination->save();
             }
 
             $record->update([
@@ -417,6 +452,11 @@ class JournalRepository
             $coaThirdSource = CoaThird::find($record->coa_id_source);
             $coaThirdDestination = CoaThird::find($record->coa_id_destination);
 
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            $coaThirdDestination->save();
+
             //Journal credit from coa source
             GeneralJournalDetail::create([
                 'jurnal_id' => $journal->id,
@@ -439,10 +479,10 @@ class JournalRepository
                 'description' => $coaThirdDestination->name,
             ]);
 
-            $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$record->amount;
-            $coaThirdSource->save();
-            $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->amount;
-            $coaThirdDestination->save();
+            // $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            // $coaThirdSource->save();
+            // $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            // $coaThirdDestination->save();
 
             $record->update([
                 'is_jurnal' => 1,
@@ -466,6 +506,11 @@ class JournalRepository
             $coaThirdSource = CoaThird::find($record->coa_id_source);
             $coaThirdDestination = CoaThird::find($record->coa_id_destination);
 
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            $coaThirdDestination->save();
+
             //Journal credit from coa source
             GeneralJournalDetail::create([
                 'jurnal_id' => $journal->id,
@@ -488,10 +533,10 @@ class JournalRepository
                 'description' => $coaThirdDestination->name,
             ]);
 
-            $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$record->amount;
-            $coaThirdSource->save();
-            $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->amount;
-            $coaThirdDestination->save();
+            // $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->amount;
+            // $coaThirdSource->save();
+            // $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->amount;
+            // $coaThirdDestination->save();
 
             $employee = Employee::find($record->employee_id);
             $employee->total_loan = $employee->total_loan + $record->amount;
@@ -520,6 +565,11 @@ class JournalRepository
             $coaThirdSource = CoaThird::find($record->coa_id_source);
             $coaThirdDestination = CoaThird::find($record->coa_id_destination);
 
+            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->payroll_total;
+            $coaThirdSource->save();
+            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->payroll_total;
+            $coaThirdDestination->save();
+
             //Journal from coa source
             GeneralJournalDetail::create([
                 'jurnal_id' => $journal->id,
@@ -542,10 +592,10 @@ class JournalRepository
                 'description' => $coaThirdDestination->name,
             ]);
 
-            $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->payroll_total;
-            $coaThirdSource->save();
-            $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->payroll_total;
-            $coaThirdDestination->save();
+            // $coaThirdSource->balance = (float) $coaThirdSource->balance - (float) $record->payroll_total;
+            // $coaThirdSource->save();
+            // $coaThirdDestination->balance = (float) $coaThirdDestination->balance + (float) $record->payroll_total;
+            // $coaThirdDestination->save();
 
             //jurnal pembayaran kas bon
             if ($record->payment_loan_total > 0) {
@@ -561,6 +611,11 @@ class JournalRepository
 
                 $coaThirdSource = CoaThird::find($record->coa_id_source);
                 $coaThirdDestination = CoaThird::find($record->coa_id_loan);
+
+                $coaThirdSource->balance = (float) $coaThirdSource->balance + (float) $record->payment_loan_total;
+                $coaThirdSource->save();
+                $coaThirdDestination->balance = (float) $coaThirdDestination->balance - (float) $record->payment_loan_total;
+                $coaThirdDestination->save();
 
                 //Journal from coa source
                 GeneralJournalDetail::create([
@@ -584,10 +639,10 @@ class JournalRepository
                     'description' => $coaThirdDestination->name,
                 ]);
 
-                $coaThirdSource->balance = (float) $coaThirdSource->balance + (float) $record->payment_loan_total;
-                $coaThirdSource->save();
-                $coaThirdDestination->balance = (float) $coaThirdDestination->balance - (float) $record->payment_loan_total;
-                $coaThirdDestination->save();
+                // $coaThirdSource->balance = (float) $coaThirdSource->balance + (float) $record->payment_loan_total;
+                // $coaThirdSource->save();
+                // $coaThirdDestination->balance = (float) $coaThirdDestination->balance - (float) $record->payment_loan_total;
+                // $coaThirdDestination->save();
 
                 // update total loan masing2 employee
                 foreach ($record->employeePayrollDetails as $value) {

@@ -100,7 +100,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                                 }),
                             Forms\Components\Select::make('project_plan_id')
                                 ->options(function () {
-                                    $main = ProjectPlan::all()->pluck('name', 'id')->toArray();
+                                    $main = ProjectPlan::whereIn('id', [2, 3])->pluck('name', 'id')->toArray();
                                     //$add = SysLookup::where('group_name', 'ADD PROJECT')->get()->pluck('name', 'name')->toArray();
                                     //$datas = array_merge($add, $main);
                                     return $main;

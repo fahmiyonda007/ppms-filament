@@ -58,11 +58,15 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
                                 ->maxLength(20)
                                 ->required()
                                 ->disabled()
-                                ->default(fn () => Common::getNewEmployeeLoanTransactionId()),
+                                ->default(fn() => Common::getNewEmployeeLoanTransactionId()),
                             Forms\Components\DatePicker::make('transaction_date')
                                 ->required(),
                             Forms\Components\Select::make('project_plan_id')
-                                ->relationship('projectPlan', 'name')
+                                ->relationship(
+                                    'projectPlan',
+                                    'name',
+                                    fn(Builder $query) => $query->whereNotIn('id', [1, 3])
+                                )
                                 ->preload()
                                 ->searchable(),
                             Forms\Components\Select::make('employee_id')
@@ -129,7 +133,7 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
                         ->required()
                         ->reactive()
                         ->mask(
-                            fn (Mask $mask) => $mask
+                            fn(Mask $mask) => $mask
                                 ->numeric()
                                 ->decimalPlaces(2)
                                 ->decimalSeparator(',')
@@ -141,14 +145,14 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
                             ->label('Source End Balance')
                             ->content(function (callable $get) {
                                 $coaThird = CoaThird::find($get('coa_id_source'))->balance ?? 0;
-                                $num = (float)$coaThird - (float)$get('amount');
+                                $num = (float) $coaThird - (float) $get('amount');
                                 return 'Rp ' . number_format($num, 0, ',', '.');
                             }),
                         Placeholder::make('destination_end_balance')
                             ->label('Destination End Balance')
                             ->content(function (callable $get) {
                                 $coaThird = CoaThird::find($get('coa_id_destination'))->balance ?? 0;
-                                $num = (float)$coaThird + (float)$get('amount');
+                                $num = (float) $coaThird + (float) $get('amount');
                                 return 'Rp ' . number_format($num, 0, ',', '.');
                             }),
                         AlertBox::make()
@@ -158,7 +162,7 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
                             ->warning()
                             ->hidden(function (callable $get) {
                                 $coaThird = CoaThird::find($get('coa_id_source'))->balance ?? 0;
-                                $num = (float)$coaThird - (float)$get('amount');
+                                $num = (float) $coaThird - (float) $get('amount');
                                 return $num >= 0;
                             })
                             ->columnSpanFull(),
@@ -201,13 +205,15 @@ class EmployeeLoanResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('coaThirdSource.fullname')
                     ->label('COA Source')
                     ->sortable(['name'])
-                    ->searchable(['coa_level_thirds.name'], isIndividual: true),
+                    ->searchable(['coa_level_thirds.name'],
+                        isIndividual: true),
                 Tables\Columns\TextColumn::make('source_start_balance')->money('idr', true),
                 Tables\Columns\TextColumn::make('source_end_balance')->money('idr', true),
                 Tables\Columns\TextColumn::make('coaThirdDestination.fullname')
                     ->label('COA Destination')
                     ->sortable(['name'])
-                    ->searchable(['coa_level_thirds.name'], isIndividual: true),
+                    ->searchable(['coa_level_thirds.name'],
+                        isIndividual: true),
                 Tables\Columns\TextColumn::make('destination_start_balance')->money('idr', true),
                 Tables\Columns\TextColumn::make('destination_end_balance')->money('idr', true),
                 Tables\Columns\TextColumn::make('created_at')

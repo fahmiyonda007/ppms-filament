@@ -60,7 +60,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'projectPlan',
                                     'name',
-                                    fn(Builder $query) => $query->whereNotIn('id', [1, 2])
+                                    fn(Builder $query) => $query->whereNotIn('id', [1, 2, 3])
                                 )
                                 ->reactive()
                                 ->required()

@@ -30,6 +30,6 @@ class ListProjectPlans extends ListRecords
 
     protected function getTableQuery(): Builder
     {
-        return static::getResource()::getEloquentQuery()->whereNotIn('id', [1, 2]);
+        return static::getResource()::getEloquentQuery()->whereNotIn('id', [1, 2, 3]);
     }
 }
