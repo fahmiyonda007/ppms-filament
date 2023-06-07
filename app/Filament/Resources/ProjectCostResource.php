@@ -36,7 +36,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-cash';
     protected static ?string $slug = 'project/costs';
     protected static ?string $navigationGroup = 'Projects';
-    protected static ?string $navigationLabel = 'Costs';
+    protected static ?string $navigationLabel = 'Project    Costs';
     protected static ?string $recordTitleAttribute = 'transaction_code';
     protected static ?int $navigationSort = 2;
 
