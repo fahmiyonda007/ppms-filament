@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ProjectPlanResource\RelationManagers;
 use App\Filament\Common\Common;
 use App\Filament\Resources\Common\JournalRepository;
 use App\Filament\Resources\ProjectPlanResource;
+use App\Models\CoaThird;
 use App\Models\ProjectPlanDetailPayment;
 use Closure;
 use Filament\Forms;
@@ -393,6 +394,16 @@ class ProjectPlanDetailsRelationManager extends RelationManager
         ) {
             Notification::make()
                 ->title('Pastikan Notary Fee, Tax, Commission, Other Commission sudah terisi dengan benar.')
+                ->danger()
+                ->send();
+            $action->halt();
+        }
+
+        $sourceBalance = CoaThird::find($record->coa_id_source)->balance;
+        $calc = (float)$sourceBalance - ((float)$record->notary_fee + (float)$record->tax + (float)$record->commission + (float)$record->other_commission);
+        if ($calc < 0) {
+            Notification::make()
+                ->title('COA Source balance tidak mencukupi.')
                 ->danger()
                 ->send();
             $action->halt();
