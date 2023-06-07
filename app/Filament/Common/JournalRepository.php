@@ -226,7 +226,7 @@ class JournalRepository
                 ['is_jurnal', '=', 0],
             ])->get();
 
-            if ($checkDetail->count() == 0 &&(float)$header->outstanding == 0) {
+            if ($checkDetail->count() == 0 && (float)$header->outstanding == 0) {
                 $header->update([
                     'project_status' => 1
                 ]);
@@ -336,6 +336,64 @@ class JournalRepository
             $coaThirdSource->save();
             $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$record->amount;
             $coaThirdDestination->save();
+
+            $record->update([
+                'is_jurnal' => 1,
+                'updated_by' => auth()->user()->email
+            ]);
+        });
+    }
+
+    public static function ProjectPlanDetailPostJournal($record, $header)
+    {
+        $mapping = [
+            ['code' => '501003', 'amount' => $record->notary_fee, 'desc' => 'BIAYA NOTARIS'],
+            ['code' => '501004',  'amount' => $record->tax, 'desc' => 'BIAYA PAJAK'],
+            ['code' => '505006',  'amount' => $record->commission, 'desc' => 'BIAYA KOMISI AGENT'],
+            ['code' => '505007', 'amount' => $record->other_commission, 'desc' => 'BIAYA KOMISI AGENT LAINNYA'],
+        ];
+
+        DB::transaction(function () use ($mapping, $record, $header) {
+            foreach ($mapping as $key => $value) {
+                $journal = GeneralJournal::create([
+                    "project_plan_id" => $header->id,
+                    'jurnal_id' => Common::getNewJournalId(),
+                    'reference_code' => $header->code,
+                    'description' => "[jurnal plan] - {$record->unit_kavling} {$value['desc']}",
+                    'transaction_date' => Carbon::now(),
+                    'created_by' => auth()->user()->email,
+                ]);
+
+                $coaThirdSource = CoaThird::find($record->coa_id_source);
+                $coaThirdDestination = CoaThird::where('code', $value['code'])->first();
+
+                //Journal credit from coa source
+                GeneralJournalDetail::create([
+                    'jurnal_id' => $journal->id,
+                    'no_inc' => 1,
+                    'coa_id' => $record->coa_id_source,
+                    'coa_code' => $coaThirdSource->code,
+                    'debet_amount' => $value['amount'],
+                    'credit_amount' => 0,
+                    'description' => $coaThirdSource->name,
+                ]);
+
+                //Journal credit from coa destination
+                GeneralJournalDetail::create([
+                    'jurnal_id' => $journal->id,
+                    'no_inc' => 2,
+                    'coa_id' => $coaThirdDestination->id,
+                    'coa_code' => $coaThirdDestination->code,
+                    'debet_amount' => 0,
+                    'credit_amount' => $value['amount'],
+                    'description' => $coaThirdDestination->name,
+                ]);
+
+                $coaThirdSource->balance = (float)$coaThirdSource->balance - (float)$value['amount'];
+                $coaThirdSource->save();
+                $coaThirdDestination->balance = (float)$coaThirdDestination->balance + (float)$value['amount'];
+                $coaThirdDestination->save();
+            }
 
             $record->update([
                 'is_jurnal' => 1,

@@ -37,6 +37,8 @@ return new class extends Migration
             $table->double('land_width')->nullable();
             $table->double('building_width')->nullable();
             $table->integer('sales_id')->nullable();
+            $table->integer('coa_id_source')->nullable();
+            $table->tinyInteger('is_jurnal')->nullable()->default(0);
             $table->timestamps();
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();

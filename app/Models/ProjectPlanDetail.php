@@ -38,6 +38,8 @@ class ProjectPlanDetail extends Model
         'land_width',
         'building_width',
         'sales_id',
+        'coa_id_source',
+        'is_jurnal',
         'created_by',
         'updated_by',
     ];
@@ -48,7 +50,9 @@ class ProjectPlanDetail extends Model
         'updated_at',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'is_jurnal' => 'boolean',
+    ];
 
     protected $hidden = [
         'project_plan_id',

@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\ProjectPlanResource\RelationManagers;
 
+use App\Filament\Common\Common;
+use App\Filament\Resources\Common\JournalRepository;
+use App\Filament\Resources\ProjectPlanResource;
 use App\Models\ProjectPlanDetailPayment;
 use Closure;
 use Filament\Forms;
@@ -11,11 +14,14 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput\Mask;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Actions\Position;
 use Filament\Tables\Contracts\HasRelationshipTable;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -72,28 +78,16 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                     ->schema([
                                         Forms\Components\TextInput::make('no_shm')
                                             ->label('No. SHM')
-                                            ->alphaNum()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            }),
+                                            ->alphaNum(),
                                         Forms\Components\TextInput::make('no_imb')
                                             ->label('No. IMB')
-                                            ->alphaNum()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            }),
+                                            ->alphaNum(),
                                         Forms\Components\TextInput::make('land_width')
                                             ->label('Land Width (m2)')
-                                            ->numeric()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            }),
+                                            ->numeric(),
                                         Forms\Components\TextInput::make('building_width')
                                             ->label('Building Width (m2)')
-                                            ->numeric()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            }),
+                                            ->numeric(),
 
                                     ]),
                             ]),
@@ -131,9 +125,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                         Forms\Components\TextInput::make('net_price')
                                             ->numeric()
                                             ->disabled()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->mask(
                                                 fn (Mask $mask) => $mask
                                                     ->numeric()
@@ -143,9 +134,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ),
                                         Forms\Components\TextInput::make('deal_price')
                                             ->numeric()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->reactive()
                                             ->afterStateUpdated(function (callable $get, Closure $set) {
                                                 static::calculatePrice($get, $set);
@@ -157,23 +145,35 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                     ->decimalSeparator(',')
                                                     ->thousandsSeparator(',')
                                             ),
-                                        Forms\Components\TextInput::make('down_payment')
-                                            ->numeric()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
-                                            ->mask(
-                                                fn (Mask $mask) => $mask
-                                                    ->numeric()
-                                                    ->decimalPlaces(2)
-                                                    ->decimalSeparator(',')
-                                                    ->thousandsSeparator(',')
-                                            ),
+                                        // Forms\Components\TextInput::make('down_payment')
+                                        //     ->numeric()
+                                        //     ->required(function (callable $get) {
+                                        //         return $get('booking_by') != null;
+                                        //     })
+                                        //     ->mask(
+                                        //         fn (Mask $mask) => $mask
+                                        //             ->numeric()
+                                        //             ->decimalPlaces(2)
+                                        //             ->decimalSeparator(',')
+                                        //             ->thousandsSeparator(',')
+                                        //     ),
+                                        Forms\Components\Select::make('coa_id_source')
+                                            ->label('COA Source')
+                                            ->required()
+                                            ->reactive()
+                                            ->preload()
+                                            ->searchable()
+                                            ->options(function () {
+                                                $datas = Common::getViewCoaMasterDetails([
+                                                    ["level_first_id", "=", 1],
+                                                    ["balance", ">", 0],
+                                                    ["level_second_code", "=", "01"],
+                                                ])->get();
+                                                return $datas->pluck('level_third_name', 'level_third_id');
+                                            }),
                                         Forms\Components\TextInput::make('notary_fee')
+                                            ->label('Notary Fee [501003]')
                                             ->numeric()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->default(0)
                                             ->mask(
                                                 fn (Mask $mask) => $mask
@@ -184,9 +184,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ),
                                         Forms\Components\TextInput::make('tax_rate')
                                             ->label('Tax rate (%)')
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->reactive()
                                             ->afterStateUpdated(function (callable $get, Closure $set) {
                                                 static::calculatePrice($get, $set);
@@ -201,11 +198,9 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                     ->thousandsSeparator(',')
                                             ),
                                         Forms\Components\TextInput::make('tax')
+                                            ->label('Tax [501004]')
                                             ->numeric()
                                             ->disabled()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->mask(
                                                 fn (Mask $mask) => $mask
                                                     ->numeric()
@@ -215,9 +210,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ),
                                         Forms\Components\TextInput::make('commission_rate')
                                             ->label('Commission rate (%)')
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->reactive()
                                             ->afterStateUpdated(function (callable $get, Closure $set) {
                                                 static::calculatePrice($get, $set);
@@ -232,11 +224,9 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                     ->thousandsSeparator(',')
                                             ),
                                         Forms\Components\TextInput::make('commission')
+                                            ->label('Commission [501006]')
                                             ->numeric()
                                             ->disabled()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->reactive()
                                             ->afterStateUpdated(function (callable $get, Closure $set) {
                                                 static::calculatePrice($get, $set);
@@ -249,10 +239,8 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                     ->thousandsSeparator(',')
                                             ),
                                         Forms\Components\TextInput::make('other_commission')
+                                            ->label('Other Commission [501007]')
                                             ->numeric()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->reactive()
                                             ->afterStateUpdated(function (callable $get, Closure $set) {
                                                 static::calculatePrice($get, $set);
@@ -266,9 +254,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ),
                                         Forms\Components\TextInput::make('added_bonus')
                                             ->numeric()
-                                            ->required(function (callable $get) {
-                                                return $get('booking_by') != null;
-                                            })
                                             ->reactive()
                                             ->afterStateUpdated(function (callable $get, Closure $set) {
                                                 static::calculatePrice($get, $set);
@@ -291,11 +276,11 @@ class ProjectPlanDetailsRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                Tables\Columns\IconColumn::make('is_jurnal')->label('Post Journal')->boolean(),
                 Tables\Columns\TextColumn::make('unit_kavling')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('unit_price')->money('idr', true),
-                Tables\Columns\TextColumn::make('customer.name')->label('Booking By'),
                 Tables\Columns\TextColumn::make('unit_price')->money('idr', true),
                 Tables\Columns\TextColumn::make('net_price')->money('idr', true),
                 Tables\Columns\TextColumn::make('deal_price')->money('idr', true),
@@ -316,45 +301,61 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->visible(function (RelationManager $livewire) {
-                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                        $isProgress = $livewire->ownerRecord->progress < 100.0;
-                        return $isEdit && $isProgress;
-                    })
-                    ->using(function (Model $record, array $data): Model {
-                        $data['updated_by'] = auth()->user()->email;
-                        if ($data['payment_type'] != 'KPR') {
-                            $data['kpr_type'] = null;
-                        }
-                        if ($data['payment_type'] == NULL) {
-                            $payment = ProjectPlanDetailPayment::where('plan_detail_id', $record->id);
-                            $payment->delete();
-                        }
-                        $record->update($data);
-                        return $record;
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make()
+                        ->visible(function (RelationManager $livewire, Model $record) {
+                            $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                            $isProgress = $livewire->ownerRecord->progress < 100.0;
+                            $isJournal = $record->is_jurnal == 0;
+                            return $isEdit && $isJournal;
+                        })
+                        ->using(function (Model $record, array $data): Model {
+                            $data['updated_by'] = auth()->user()->email;
+                            $record->update($data);
+                            return $record;
+                        }),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(function (RelationManager $livewire, Model $record) {
+                            $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                            $isProgress = $livewire->ownerRecord->progress < 100.0;
+                            $isJournal = $record->is_jurnal == 0;
+                            return $isEdit && $isJournal;
+                        }),
+                    Tables\Actions\ViewAction::make(),
+                ]),
+                Tables\Actions\Action::make('post_jurnal')
+                    ->button()
+                    ->label('Post Journal')
+                    ->icon('heroicon-s-cash')
+                    ->action(fn ($action, $record, $livewire) => static::postJournal($action, $record, $livewire->ownerRecord))
+                    ->requiresConfirmation()
+                    ->visible(function (Model $record) {
+                        return $record->is_jurnal == 0;
                     }),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(function (RelationManager $livewire) {
-                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                        $isProgress = $livewire->ownerRecord->progress < 100.0;
-                        return $isEdit && $isProgress;
-                    }),
-                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make()
-                    ->visible(function (RelationManager $livewire) {
-                        $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                        $isProgress = $livewire->ownerRecord->progress < 100.0;
-                        return $isEdit && $isProgress;
-                    }),
+                // Tables\Actions\DeleteBulkAction::make()
+                //     ->visible(function (RelationManager $livewire) {
+                //         $isEdit = Str::contains($livewire->pageClass, '\Edit');
+                //         $isProgress = $livewire->ownerRecord->progress < 100.0;
+                //         return $isEdit && $isProgress;
+                //     }),
             ]);
+    }
+
+    protected function getTableActionsPosition(): ?string
+    {
+        return Position::BeforeCells;
     }
 
     protected function getTableRecordsPerPageSelectOptions(): array
     {
         return [5, 10, 15, 20];
+    }
+
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->fastPaginate($this->getTableRecordsPerPage());
     }
 
     protected static function calculatePrice(callable $get, Closure $set): void
@@ -380,5 +381,24 @@ class ProjectPlanDetailsRelationManager extends RelationManager
         $set('commission', (string) $commission);
         $set('net_price', (string) $calc);
         // $set('deal_price', (string)$calc);
+    }
+
+    protected static function postJournal($action, $record, $header)
+    {
+        if (
+            $record->notary_fee == null ||
+            $record->tax == null ||
+            $record->commission == null ||
+            $record->other_commission == null
+        ) {
+            Notification::make()
+                ->title('Pastikan Notary Fee, Tax, Commission, Other Commission sudah terisi dengan benar.')
+                ->danger()
+                ->send();
+            $action->halt();
+        }
+
+        JournalRepository::ProjectPlanDetailPostJournal($record, $header);
+        redirect(ProjectPlanResource::getUrl('edit', ['record' => $header]));
     }
 }
