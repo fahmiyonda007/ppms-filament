@@ -373,8 +373,8 @@ class JournalRepository
                     'no_inc' => 1,
                     'coa_id' => $record->coa_id_source,
                     'coa_code' => $coaThirdSource->code,
-                    'debet_amount' => $value['amount'],
-                    'credit_amount' => 0,
+                    'debet_amount' => 0,
+                    'credit_amount' => $value['amount'],
                     'description' => $coaThirdSource->name,
                 ]);
 
@@ -384,8 +384,8 @@ class JournalRepository
                     'no_inc' => 2,
                     'coa_id' => $coaThirdDestination->id,
                     'coa_code' => $coaThirdDestination->code,
-                    'debet_amount' => 0,
-                    'credit_amount' => $value['amount'],
+                    'debet_amount' => $value['amount'],
+                    'credit_amount' => 0,
                     'description' => $coaThirdDestination->name,
                 ]);
 
