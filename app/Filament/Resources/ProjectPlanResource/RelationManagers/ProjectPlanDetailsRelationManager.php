@@ -174,6 +174,10 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->label('Notary Fee [501003]')
                                             ->numeric()
                                             ->default(0)
+                                            ->reactive()
+                                            ->afterStateUpdated(function (callable $get, Closure $set) {
+                                                static::calculatePrice($get, $set);
+                                            })
                                             ->mask(
                                                 fn(Mask $mask) => $mask
                                                     ->numeric()
@@ -366,7 +370,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
         $notaryFee = (float) $get('notary_fee');
         $oth = (float) $get('other_commission');
         $addBonus = (float) $get('added_bonus');
-        $calc = $dealPrice - ($notaryFee + $addBonus + $oth);
+        $calc = $dealPrice;
 
         $commissionRate = (float) $get('commission_rate');
         $commission = $calc * $commissionRate / 100;
@@ -374,7 +378,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
         $taxRate = (float) $get('tax_rate');
         $tax = $calc * $taxRate / 100;
 
-        $value = $calc - $tax - $commission;
+        $value = $calc - ($notaryFee + $addBonus + $oth + $tax + $commission);
 
         $set('tax', (string) $tax);
         $set('commission', (string) $commission);
