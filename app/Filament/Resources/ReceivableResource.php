@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 
 class ReceivableResource extends Resource implements HasShieldPermissions
 {
@@ -86,8 +87,8 @@ class ReceivableResource extends Resource implements HasShieldPermissions
                                 ),
                             Forms\Components\TextInput::make('payment_amount')
                                 ->numeric()
+                                ->reactive()
                                 ->required()
-                                // ->reactive()
                                 ->afterStateUpdated(function (Closure $set, callable $get, $state) {
                                     $calc = (float)$get('total_loan') - (float)$state;
                                     $set('outstanding', (string)$calc);
@@ -110,6 +111,16 @@ class ReceivableResource extends Resource implements HasShieldPermissions
                                         ->decimalSeparator(',')
                                         ->thousandsSeparator(',')
                                 ),
+                            AlertBox::make()
+                                ->label(label: 'Oops...')
+                                ->helperText(text: 'Payment Amount tidak boleh melebihi outstanding.')
+                                ->resolveIconUsing(name: 'heroicon-o-x-circle')
+                                ->warning()
+                                ->hidden(function (callable $get) {
+                                    $cond = (float)$get('outstanding') >= 0;
+                                    return $cond;
+                                })
+                                ->columnSpanFull(),
                             Forms\Components\Select::make('coa_id_source')
                                 ->label('Source')
                                 ->required()

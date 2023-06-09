@@ -115,6 +115,13 @@ class EditProjectCost extends EditRecord
                 ->send();
             $this->halt();
         }
+        if ($record->projectCostDetails->count() == 0) {
+            Notification::make()
+                ->title('Input detail terlebih dahulu.')
+                ->danger()
+                ->send();
+            $this->halt();
+        }
 
         $this->save(false);
         $data = $record->toArray();

@@ -11,6 +11,7 @@ use App\Models\EmployeeLoan;
 use App\Models\GeneralJournal;
 use App\Models\GeneralJournalDetail;
 use Carbon\Carbon;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -43,6 +44,18 @@ class EditReceivable extends EditRecord
     {
         if ($this->record->is_jurnal == 1) {
             $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record]));
+        }
+    }
+
+    protected function afterValidate()
+    {
+        $data = $this->data;
+        if ((float)$data['outstanding'] < 0) {
+            Notification::make()
+                ->title('Payment Amount tidak boleh melebihi outstanding.')
+                ->danger()
+                ->send();
+            $this->halt();
         }
     }
 
