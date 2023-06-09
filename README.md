@@ -82,6 +82,12 @@ Generate resource by model:
 php artisan make:filament-resource Bank --generate
 ```
 
+##  DEPLOY
+```
+ln -s /home/u1738662/ppms/storage/app/public/ /home/u1738662/public_html/storage
+```
+
+
 ## Authors
 
 - [@fahmiyonda007](https://www.github.com/fahmiyonda007)

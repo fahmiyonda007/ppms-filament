@@ -264,7 +264,7 @@ class ProjectCostResource extends Resource implements HasShieldPermissions
                 //     ->storeFileNamesIn('attachment_file_names')
                 SpatieMediaLibraryFileUpload::make('attachment')
                     ->multiple()
-                    ->responsiveImages()
+                    // ->responsiveImages()
                     ->disk('public')
                     ->enableOpen()
                     ->enableDownload()
