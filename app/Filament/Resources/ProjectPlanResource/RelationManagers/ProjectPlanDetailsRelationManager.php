@@ -374,11 +374,11 @@ class ProjectPlanDetailsRelationManager extends RelationManager
         $taxRate = (float) $get('tax_rate');
         $tax = $calc * $taxRate / 100;
 
-        $calc = $calc - $tax - $commission;
+        $value = $calc - $tax - $commission;
 
         $set('tax', (string) $tax);
         $set('commission', (string) $commission);
-        $set('net_price', (string) $calc);
+        $set('net_price', (string) $value);
         // $set('deal_price', (string)$calc);
     }
 
