@@ -79,11 +79,9 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                 Grid::make(2)
                                     ->schema([
                                         Forms\Components\TextInput::make('no_shm')
-                                            ->label('No. SHM')
-                                            ->alphaNum(),
+                                            ->label('No. SHM'),
                                         Forms\Components\TextInput::make('no_imb')
-                                            ->label('No. IMB')
-                                            ->alphaNum(),
+                                            ->label('No. IMB'),
                                         Forms\Components\TextInput::make('land_width')
                                             ->label('Land Width (m2)')
                                             ->numeric(),
