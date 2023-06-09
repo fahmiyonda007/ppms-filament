@@ -47,6 +47,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
                             ]);
                         }
                     )
+                    ->label('Item')
                     ->searchable()
                     ->preload()
                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->code} - {$record->name}")
@@ -150,7 +151,7 @@ class ProjectCostDetailsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('coaThird.fullname')->label('COA'),
+                Tables\Columns\TextColumn::make('coaThird.fullname')->label('Item'),
                 Tables\Columns\TextColumn::make('uom'),
                 Tables\Columns\TextColumn::make('qty'),
                 Tables\Columns\TextColumn::make('unit_price')->money('idr', true),
