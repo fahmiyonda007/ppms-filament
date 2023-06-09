@@ -161,7 +161,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                         //     ),
                                         Forms\Components\Select::make('coa_id_source')
                                             ->label('COA Source')
-                                            ->required()
                                             ->reactive()
                                             ->preload()
                                             ->searchable()
