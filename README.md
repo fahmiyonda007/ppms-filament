@@ -82,6 +82,18 @@ Generate resource by model:
 php artisan make:filament-resource Bank --generate
 ```
 
+##  DEPLOY
+storage link
+```
+ln -s /home/u1738662/ppms/storage/app/public/ /home/u1738662/public_html/storage
+```
+
+db backup cronjob
+```
+mysqldump -t -uu1738662_whjproperty -pnz^.6ahN9]4^ -h127.0.0.1 -t u1738662_whjproperty | gzip > /home/u1738662/backup_database/backup_$(date +"\%Y.\%m.\%d.\%S.\%N").sql.gz
+```
+
+
 ## Authors
 
 - [@fahmiyonda007](https://www.github.com/fahmiyonda007)
