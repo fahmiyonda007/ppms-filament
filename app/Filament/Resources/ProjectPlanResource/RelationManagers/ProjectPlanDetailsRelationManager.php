@@ -64,7 +64,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -128,7 +128,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->numeric()
                                             ->disabled()
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -141,7 +141,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -177,7 +177,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->numeric()
                                             ->default(0)
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -190,7 +190,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->minValue(0.01)
                                                     ->maxValue(100)
@@ -203,7 +203,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->numeric()
                                             ->disabled()
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -216,7 +216,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->minValue(0.01)
                                                     ->maxValue(100)
@@ -233,7 +233,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -247,7 +247,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -260,7 +260,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn (Mask $mask) => $mask
+                                                fn(Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -328,7 +328,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     ->button()
                     ->label('Post Journal')
                     ->icon('heroicon-s-cash')
-                    ->action(fn ($action, $record, $livewire) => static::postJournal($action, $record, $livewire->ownerRecord))
+                    ->action(fn($action, $record, $livewire) => static::postJournal($action, $record, $livewire->ownerRecord))
                     ->requiresConfirmation()
                     ->visible(function (Model $record) {
                         return $record->is_jurnal == 0;
@@ -398,9 +398,18 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                 ->send();
             $action->halt();
         }
+        if (
+            $record->coa_id_source == null
+        ) {
+            Notification::make()
+                ->title('COA Source harus diisi.')
+                ->danger()
+                ->send();
+            $action->halt();
+        }
 
         $sourceBalance = CoaThird::find($record->coa_id_source)->balance;
-        $calc = (float)$sourceBalance - ((float)$record->notary_fee + (float)$record->tax + (float)$record->commission + (float)$record->other_commission);
+        $calc = (float) $sourceBalance - ((float) $record->notary_fee + (float) $record->tax + (float) $record->commission + (float) $record->other_commission);
         if ($calc < 0) {
             Notification::make()
                 ->title('COA Source balance tidak mencukupi.')
