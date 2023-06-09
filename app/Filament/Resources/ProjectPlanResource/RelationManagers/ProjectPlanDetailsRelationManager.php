@@ -13,6 +13,7 @@ use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Notifications\Notification;
@@ -72,7 +73,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                     ]),
                                 Grid::make(1)
                                     ->schema([
-                                        Forms\Components\TextArea::make('description')
+                                        Textarea::make('description')
                                             ->maxLength(2000),
                                     ]),
                                 Grid::make(2)
