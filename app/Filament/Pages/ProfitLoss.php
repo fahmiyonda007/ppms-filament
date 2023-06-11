@@ -29,6 +29,7 @@ class ProfitLoss extends Page
     protected static ?string $navigationGroup = 'Reports';
 
     public $frameSrc;
+    public bool $showRpt = false;
 
     public function mount(): void
     {
@@ -61,6 +62,7 @@ class ProfitLoss extends Page
                             } else {
                                 $this->frameSrc = "";
                             }
+                            $this->showRpt = false;
                         })
                         ->searchable(),
                     Grid::make(2)
@@ -82,6 +84,7 @@ class ProfitLoss extends Page
                                     } else {
                                         $this->frameSrc = "";
                                     }
+                                    $this->showRpt = false;
                                 }),
                             DatePicker::make('period_end')
                                 ->reactive()
@@ -100,6 +103,7 @@ class ProfitLoss extends Page
                                     } else {
                                         $this->frameSrc = "";
                                     }
+                                    $this->showRpt = false;
                                 }),
                         ]),
                     // DateRangePicker::make('period')
@@ -126,5 +130,15 @@ class ProfitLoss extends Page
                     //     ->columnSpanFull(),
                 ])
         ];
+    }
+
+    public function src($asd)
+    {
+        dd($asd);
+        // $this->showRpt = true;
+        Notification::make()
+            ->title('succes')
+            ->success()
+            ->send();
     }
 }
