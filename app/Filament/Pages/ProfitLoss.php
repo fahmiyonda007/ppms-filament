@@ -131,14 +131,4 @@ class ProfitLoss extends Page
                 ])
         ];
     }
-
-    public function src($asd)
-    {
-        dd($asd);
-        // $this->showRpt = true;
-        Notification::make()
-            ->title('succes')
-            ->success()
-            ->send();
-    }
 }

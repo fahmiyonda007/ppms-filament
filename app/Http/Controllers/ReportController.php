@@ -158,4 +158,22 @@ class ReportController extends Controller
         return $pdf->stream($fileName);
     }
 
+    public function GeneralJournalPdf($refCode, ?string $startDate, ?string $endDate)
+    {
+
+        $invoiceDate = Carbon::now()->format('dmYs');
+        $fileName = "plan_GeneralJournal_{$refCode}.pdf";
+
+        $reportData = [
+            'startDate' => Carbon::parse($startDate)->format('d M Y'),
+            'endDate' => Carbon::parse($endDate)->format('d M Y'),
+        ];
+        $record = DB::select("CALL SP_GeneralJournal ('{$refCode}', '{$startDate}', '{$endDate}')");
+
+        $pdf = PDF::loadView('report/GeneralJournal/index', compact('reportData', 'record', 'fileName'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream($fileName);
+    }
+
 }

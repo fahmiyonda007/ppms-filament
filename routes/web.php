@@ -32,3 +32,4 @@ Route::get('cashflowlevel2/pdf/{startDate}/{endDate}', [ReportController::class,
 Route::get('dailycostreport/pdf/{periodDate}', [ReportController::class, 'DailyCostReportPdf'])->name('DailyCostReportPdf')->middleware('verified');
 Route::get('reportsummarysalary/pdf/{startDate}/{endDate}', [ReportController::class, 'ReportSummarySalaryPdf'])->name('ReportSummarySalaryPdf')->middleware('verified');
 Route::get('vendorliabilities/pdf/{status}/{startDate}/{endDate}', [ReportController::class, 'VendorLiabilitiesPdf'])->name('VendorLiabilitiesPdf')->middleware('verified');
+Route::get('generaljournal/pdf/{refCode}/{startDate}/{endDate}', [ReportController::class, 'GeneralJournalPdf'])->name('GeneralJournalPdf')->middleware('verified');
