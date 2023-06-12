@@ -41,19 +41,6 @@ class GeneralJournal extends Page
         return [
             Grid::make(2)
                 ->schema([
-                    TextInput::make('refCode')
-                        ->label("Reference Code")
-                        ->reactive()
-                        ->afterStateUpdated(function (callable $get, $state) {
-                            $refCode = $state??"0";
-
-                            $startDate = Carbon::parse($get('period_start')??"1999-01-01")->format('Y-m-d');
-                            $endDate = Carbon::parse($get('period_end')??"1999-01-01")->format('Y-m-d');
-
-                            $this->frameSrc = env('APP_URL') . "/generaljournal/pdf/{$refCode}/{$startDate}/{$endDate}";
-
-                            $this->showRpt = false;
-                        }),
                     Grid::make(2)
                         ->schema([
                             DatePicker::make('period_start')
@@ -66,10 +53,9 @@ class GeneralJournal extends Page
                                 })
                                 ->afterStateUpdated(function (callable $get, $state) {
 
-                                    $refCode = $get('refCode') ?? "0";
                                     $startDate = Carbon::parse($state)->format('Y-m-d');
                                     $endDate = Carbon::parse($get('period_end')??"1999-01-01")->format('Y-m-d');
-                                    $this->frameSrc = env('APP_URL') . "/generaljournal/pdf/{$refCode}/{$startDate}/{$endDate}";
+                                    $this->frameSrc = env('APP_URL') . "/generaljournal/pdf/0/{$startDate}/{$endDate}";
 
                                     $this->showRpt = false;
                                 }),
@@ -81,11 +67,9 @@ class GeneralJournal extends Page
                                     }
                                 })
                                 ->afterStateUpdated(function (callable $get, $state) {
-
-                                    $refCode = $get('refCode') ?? "0";
                                     $startDate = Carbon::parse($get('period_start')??"1999-01-01")->format('Y-m-d');
                                     $endDate = Carbon::parse($state)->format('Y-m-d');
-                                    $this->frameSrc = env('APP_URL') . "/generaljournal/pdf/{$refCode}/{$startDate}/{$endDate}";
+                                    $this->frameSrc = env('APP_URL') . "/generaljournal/pdf/0/{$startDate}/{$endDate}";
 
                                     $this->showRpt = false;
                                 }),

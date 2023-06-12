@@ -107,10 +107,15 @@
         background: #F5F5F5;
     }
 
-    table th,
+    table th{
+        width: auto;
+        height: 20px;
+    }
     table td {
         width: auto;
+        height: 20px;
     }
+
 
     table th {
 
