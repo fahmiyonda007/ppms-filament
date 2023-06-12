@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ReportController extends Controller
 {
@@ -177,7 +178,7 @@ class ReportController extends Controller
     }
     public function JournalVoucherPdf($refCode)
     {
-
+        $refCode = Str::replace("'", "", $refCode);
         $invoiceDate = Carbon::now()->format('dmYs');
         $fileName = "plan_JournalVoucher_{$refCode}.pdf";
 

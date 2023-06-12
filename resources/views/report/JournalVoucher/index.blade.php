@@ -5,7 +5,8 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Profit & Loss</title>
+
+    <title>Journal Voucher</title>
 
     {{-- <link href="css/report.css" rel="stylesheet"> --}}
     @include('report/style')
@@ -14,7 +15,6 @@
 
     </style> --}}
 </head>
-
 <body>
     <header class="clearfix">
         <div id="logo">
@@ -84,10 +84,6 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width : 100px; background-color : #feb24c;" class="headerdesc"><b>Ref. Code</b></th>
-                    <th style="width : 100px; background-color : #feb24c;" class="headerdesc"><b>Trx. Date</b></th>
-                    <th style="width : 100px; background-color : #feb24c;" class="headerdesc"><b>Project</b></th>
-                    <th style="width : 100px; background-color : #feb24c;" class="headerdesc"><b>Journal Souce</b></th>
                     <th style="width : 100px; background-color : #feb24c;" class="headercenter"><b>Account Code</b></th>
                     <th style="width : 150px; background-color : #feb24c;" class="headerdesc"><b>Account Name</b></th>
                     <th style="width : 150px; background-color : #feb24c;" class="headerright"><b>Debet</th>
@@ -98,10 +94,6 @@
                 @foreach ($record as $item)
                     @if ($item->reference_code != 'Total')
                         <tr>
-                            <td class="desc">{{ $item->reference_code }}</td>
-                            <td class="desc">{{ $item->transaction_date }}</td>
-                            <td class="desc">{{ $item->project_name }}</td>
-                            <td class="desc">{{ $item->journal_souce }}</td>
                             <td class="center">{{ $item->account_code }}</td>
                             <td class="desc">{{ $item->account_name }}</td>
                             <td>{{ $item->debet_amount }}</td>
@@ -109,7 +101,7 @@
                         </tr>
                     @else
                         <tr class="total">
-                            <td colspan="6" class="center" style="width : 100px; background-color : #feb24c;">
+                            <td colspan="2" class="center" style="width : 100px; background-color : #feb24c;">
                                 {{ $item->reference_code }}</td>
                             <td style="background-color : #feb24c;">{{ $item->debet_amount }}</td>
                             <td style="background-color : #feb24c;">{{ $item->credit_amount }}</td>

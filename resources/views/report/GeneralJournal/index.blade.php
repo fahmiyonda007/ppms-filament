@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Profit & Loss</title>
+    <title>General Journal</title>
 
     {{-- <link href="css/report.css" rel="stylesheet"> --}}
     @include('report/style')
