@@ -19,8 +19,11 @@ return new class extends Migration
             $table->integer('level_second_id');
             $table->string('code');
             $table->string('name');
-            $table->string('balance');
             $table->timestamps();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('balance');
+            $table->string('normal_position');
         });
     }
 
