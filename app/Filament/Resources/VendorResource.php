@@ -67,7 +67,6 @@ class VendorResource extends Resource implements HasShieldPermissions
                                 ->tel()
                                 ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
                             TextInput::make('pic')
-                                ->required()
                                 ->maxLength(50),
                         ]),
                     TextInput::make('deposit')
