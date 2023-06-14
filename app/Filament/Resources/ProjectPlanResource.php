@@ -166,6 +166,6 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
 
     protected static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::count() - 3;
     }
 }
