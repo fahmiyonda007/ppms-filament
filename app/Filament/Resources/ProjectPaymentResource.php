@@ -33,9 +33,9 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-cash';
     protected static ?string $slug = 'project/payments';
     protected static ?string $navigationGroup = 'Projects';
-    protected static ?string $navigationLabel = 'Payment Income';
+    protected static ?string $navigationLabel = 'Payment Incomes';
     protected static ?int $navigationSort = 2;
-
+    protected static ?string $label = 'Payment Income';
     public static function getPermissionPrefixes(): array
     {
         return ['view', 'view_any', 'create', 'update', 'delete', 'delete_any'];
