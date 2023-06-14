@@ -42,7 +42,7 @@ class CashFlow extends Model
 
     public function cashFlowDetails(): HasMany
     {
-        return $this->hasMany(\App\Models\CashFlowDetail::class, 'cash_flow_id', 'id');
+        return $this->hasMany(CashFlowDetail::class, 'cash_flow_id', 'id');
     }
 
     public function projectPlan(): BelongsTo
