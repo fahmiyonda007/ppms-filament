@@ -13,6 +13,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -172,7 +173,7 @@ class EmployeePayrollResource extends Resource implements HasShieldPermissions
                             }),
 
                     ])->columns(2),
-                    Forms\Components\TextArea::make('description')
+                    Textarea::make('description')
                         ->maxLength(500),
                 ]),
             ]);
