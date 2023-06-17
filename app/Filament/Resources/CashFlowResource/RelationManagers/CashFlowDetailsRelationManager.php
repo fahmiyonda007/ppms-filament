@@ -99,11 +99,11 @@ class CashFlowDetailsRelationManager extends RelationManager
                             ->columnSpan('full')
                             ->hidden(function (callable $get, RelationManager $livewire) {
                                 $header = $livewire->ownerRecord;
-                                if ($header->cash_flow_type == 'CASH_OUT') {
-                                    $coaThird = CoaThird::find($header->coa_id)->balance ?? 0;
-                                    $num = (float)$coaThird - (float)$get('amount');
-                                    return $num >= 0;
-                                }
+                                // if ($header->cash_flow_type == 'CASH_OUT') {
+                                //     $coaThird = CoaThird::find($header->coa_id)->balance ?? 0;
+                                //     $num = (float)$coaThird - (float)$get('amount');
+                                //     return $num >= 0;
+                                // }
                                 return true;
                             }),
                         Forms\Components\Textarea::make('description')
