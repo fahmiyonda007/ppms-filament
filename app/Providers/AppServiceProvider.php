@@ -57,9 +57,9 @@ class AppServiceProvider extends ServiceProvider
         };
 
         Filament::registerNavigationGroups([
+            'Masters',
             'Projects',
             'Cash',
-            'Masters',
             'Reports',
             'Settings',
         ]);

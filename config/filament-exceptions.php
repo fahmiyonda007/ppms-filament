@@ -8,7 +8,7 @@ return [
     'navigation_enabled' => true,
 
     /** Sort order, if shown. No effect, if navigation_enabled it set to false. */
-    'navigation_sort' => -1,
+    'navigation_sort' => 4,
 
     /** Whether to show a navigation badge. No effect, if navigation_enabled it set to false. */
     'navigation_badge' => true,
