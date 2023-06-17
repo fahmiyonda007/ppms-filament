@@ -92,7 +92,6 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                                     } else if ($get('cash_flow_type') == 'CASH_OUT') {
                                         $datas = Common::getViewCoaMasterDetails([
                                             ["level_first_id", "=", 1],
-                                            ["balance", ">", 0],
                                             ["level_second_code", "=", "01"],
                                         ])->get();
                                     }

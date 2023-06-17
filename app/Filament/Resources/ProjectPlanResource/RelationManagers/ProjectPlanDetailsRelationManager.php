@@ -165,7 +165,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->options(function () {
                                                 $datas = Common::getViewCoaMasterDetails([
                                                     ["level_first_id", "=", 1],
-                                                    ["balance", ">", 0],
                                                     ["level_second_code", "=", "01"],
                                                 ])->get();
                                                 return $datas->pluck('level_third_name', 'level_third_id');
