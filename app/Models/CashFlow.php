@@ -31,7 +31,9 @@ class CashFlow extends Model
         'updated_at',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'is_jurnal' => 'boolean'
+    ];
 
     protected $hidden = [
         'created_at',
