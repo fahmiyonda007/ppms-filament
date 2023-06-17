@@ -130,13 +130,13 @@ class CashFlowDetailsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->afterFormValidated(function (CreateAction $action, RelationManager $livewire, array $data) {
                         $header = $livewire->ownerRecord;
-                        if ($header->cash_flow_type == 'CASH_OUT') {
-                            $coaThird = CoaThird::find($header->coa_id)->balance ?? 0;
-                            $num = (float)$coaThird - (float)$data['amount'];
-                            if ($num < 0) {
-                                $action->halt();
-                            }
-                        }
+                        // if ($header->cash_flow_type == 'CASH_OUT') {
+                        //     $coaThird = CoaThird::find($header->coa_id)->balance ?? 0;
+                        //     $num = (float)$coaThird - (float)$data['amount'];
+                        //     if ($num < 0) {
+                        //         $action->halt();
+                        //     }
+                        // }
                     })
                     ->after(function (RelationManager $livewire) {
                         redirect(CashFlowResource::getUrl('view', ['record' => $livewire->ownerRecord]));

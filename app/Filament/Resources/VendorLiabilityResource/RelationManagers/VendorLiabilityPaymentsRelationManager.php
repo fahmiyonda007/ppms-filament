@@ -59,7 +59,7 @@ class VendorLiabilityPaymentsRelationManager extends RelationManager
                     ->options(function () {
                         $datas = Common::getViewCoaMasterDetails([
                             ["level_first_id", "=", 1],
-                            ["balance", ">", 0],
+                            // ["balance", ">", 0],
                             ["level_second_code", "=", "01"],
                         ])->get();
                         return $datas->pluck('level_third_name', 'level_third_id');
@@ -192,7 +192,7 @@ class VendorLiabilityPaymentsRelationManager extends RelationManager
                     ->button()
                     ->label('Post Journal')
                     ->icon('heroicon-s-cash')
-                    ->action(fn ($record, $livewire) => static::postJournal($record, $livewire->ownerRecord))
+                    ->action(fn ($record, $livewire, $action) => static::postJournal($record, $livewire->ownerRecord, $action))
                     ->requiresConfirmation()
                     ->visible(function (Model $record) {
                         return $record->is_jurnal == 0;
@@ -218,8 +218,16 @@ class VendorLiabilityPaymentsRelationManager extends RelationManager
         return $query->fastPaginate($this->getTableRecordsPerPage());
     }
 
-    protected static function postJournal($record, $header)
+    protected static function postJournal($record, $header, $action)
     {
+        $coaHeader = CoaThird::find($record->coa_id_source);
+        if ($coaHeader->balance < $record->amount) {
+            Notification::make()
+                ->title('COA Header Balance kurang.')
+                ->danger()
+                ->send();
+            $action->halt();
+        }
         JournalRepository::VendorLiabilityPaymentPostJournal($record, $header);
         redirect(VendorLiabilityResource::getUrl('edit', ['record' => $header]));
     }
