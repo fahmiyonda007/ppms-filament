@@ -22,7 +22,7 @@ class DailyCostReport extends Page
     use HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static string $view = 'filament.pages.profit-loss';
+    protected static string $view = 'filament.pages.daily-cost';
     protected static ?string $title = 'Daily Cost Report';
     protected static ?string $navigationLabel = 'Daily Cost Report';
     protected static ?string $slug = 'reports/daily-cost-report';
@@ -45,9 +45,9 @@ class DailyCostReport extends Page
                         ->required()
                         ->afterStateUpdated(function ($state, callable $get, Closure $set) {
                             if ($state) {
-                                $period = $state;                              
+                                $period = $state;
                                 $periodDate = Carbon::parse(Str::replace('/', '-', $period))->format('Y-m-d');
-                                
+
                                 $this->frameSrc = env('APP_URL') . "/dailycostreport/pdf/{$periodDate}";
                             } else {
                                 $this->frameSrc = "";

@@ -60,10 +60,10 @@ class CoaThirdResource extends Resource implements HasShieldPermissions
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->url(fn ($record) => CoaFirstResource::getUrl('index') . '/' . $record->level_first_id . '/edit?activeRelationManager=1'),
-                Tables\Actions\DeleteAction::make(),
+                //Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                //Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
