@@ -16,6 +16,7 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -349,6 +350,12 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
                         return $header->is_jurnal == 0 && $isEdit;
                     })
+                    ->using(function (HasRelationshipTable $livewire, array $data, $get): Model {
+                        $calc = static::getCalcPayroll($get);
+                        $data['total_gross_salary'] = $calc['total_gross'];
+                        $data['total_net_salary'] =  $calc['total_net'];
+                        return $livewire->getRelationship()->create($data);
+                    })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
                         $header = EmployeePayroll::find($record->payroll_id);
@@ -365,6 +372,13 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         $header = $livewire->ownerRecord;
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
                         return $header->is_jurnal == 0 && $isEdit;
+                    })
+                    ->using(function (Model $record, array $data, $get): Model {
+                        $calc = static::getCalcPayroll($get);
+                        $data['total_gross_salary'] = $calc['total_gross'];
+                        $data['total_net_salary'] =  $calc['total_net'];
+                        $record->update($data);
+                        return $record;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
