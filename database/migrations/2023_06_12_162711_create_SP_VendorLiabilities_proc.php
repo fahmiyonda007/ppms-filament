@@ -12,11 +12,11 @@ return new class extends Migration
      */
     public function up()
     {
-        DB::unprepared("CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_VendorLiabilities`(IN `status` int, IN `start_period` date, 
+        DB::unprepared("CREATE DEFINER=CURRENT_USER PROCEDURE `SP_VendorLiabilities`(IN `status` int, IN `start_period` date,
   IN `end_period` date)
 BEGIN
  SET `status` = case when `status` = 2 then 0 else `status` end;
-	select 
+	select
 	c.`name` as vendor_name,
 	DATE_FORMAT(a.transaction_date,'%d %b %Y') as transaction_date,
 	a.scope_of_work as SOW,
@@ -36,7 +36,7 @@ join vendors c
 	on a.vendor_id = c.id
 where cast( a.transaction_date AS date ) BETWEEN start_period AND end_period
 and project_status =  case when `status` = 9 then project_status else `status` end
-group by 
+group by
 	c.name,
 	a.transaction_date,
 	a.scope_of_work,

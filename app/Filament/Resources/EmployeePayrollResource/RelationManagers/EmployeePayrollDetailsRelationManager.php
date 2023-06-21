@@ -300,7 +300,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                                 }),
 
                         ])->columns(2),
-                        Forms\Components\TextArea::make('description')
+                        Forms\Components\Textarea::make('description')
                             ->columnSpanFull()
                             ->maxLength(500),
                     ])
