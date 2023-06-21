@@ -16,7 +16,6 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -350,25 +349,6 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
                         return $header->is_jurnal == 0 && $isEdit;
                     })
-                    ->using(function (HasRelationshipTable $livewire, array $data): Model {
-                        if ($data['salary_type'] == 'DAILY') {
-                            $salary = (float)$data['total_days'] * (float)$data['unit_price'];
-                            $overtime = (float)$data['total_days_overtime'] * (float)$data['overtime'];
-                            $support = (float)$data['total_days_support'] * (float)$data['support_price'];
-                            $cor = (float)$data['total_days_cor'] * (float)$data['cor_price'];
-                            $total_gross = $salary + $overtime + $support + $cor;
-                            $total_net = $total_gross - (float)$data['loan_payment'];
-                            $data['total_gross_salary'] = $total_gross;
-                            $data['total_net_salary'] =  $total_net;
-                        } else if ($data['salary_type'] == 'MONTHLY') {
-                            $salary = (float)$data['total_days'] * (float)$data['unit_price'];
-                            $total_gross = $salary;
-                            $total_net = $total_gross;
-                            $data['total_gross_salary'] = $total_gross;
-                            $data['total_net_salary'] =  $total_net;
-                        }
-                        return $livewire->getRelationship()->create($data);
-                    })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
                         $header = EmployeePayroll::find($record->payroll_id);
@@ -385,26 +365,6 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         $header = $livewire->ownerRecord;
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
                         return $header->is_jurnal == 0 && $isEdit;
-                    })
-                    ->using(function (Model $record, array $data): Model {
-                        if ($data['salary_type'] == 'DAILY') {
-                            $salary = (float)$data['total_days'] * (float)$data['unit_price'];
-                            $overtime = (float)$data['total_days_overtime'] * (float)$data['overtime'];
-                            $support = (float)$data['total_days_support'] * (float)$data['support_price'];
-                            $cor = (float)$data['total_days_cor'] * (float)$data['cor_price'];
-                            $total_gross = $salary + $overtime + $support + $cor;
-                            $total_net = $total_gross - (float)$data['loan_payment'];
-                            $data['total_gross_salary'] = $total_gross;
-                            $data['total_net_salary'] =  $total_net;
-                        } else if ($data['salary_type'] == 'MONTHLY') {
-                            $salary = (float)$data['total_days'] * (float)$data['unit_price'];
-                            $total_gross = $salary;
-                            $total_net = $total_gross;
-                            $data['total_gross_salary'] = $total_gross;
-                            $data['total_net_salary'] =  $total_net;
-                        }
-                        $record->update($data);
-                        return $record;
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
                         $details = EmployeePayrollDetail::where('payroll_id', $record->payroll_id);
