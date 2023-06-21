@@ -351,14 +351,22 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         return $header->is_jurnal == 0 && $isEdit;
                     })
                     ->using(function (HasRelationshipTable $livewire, array $data): Model {
-                        $salary = (float)$data['total_days'] * (float)$data['unit_price'];
-                        $overtime = (float)$data['total_days_overtime'] * (float)$data['overtime'];
-                        $support = (float)$data['total_days_support'] * (float)$data['support_price'];
-                        $cor = (float)$data['total_days_cor'] * (float)$data['cor_price'];
-                        $total_gross = $salary + $overtime + $support + $cor;
-                        $total_net = $total_gross - (float)$data['loan_payment'];
-                        $data['total_gross_salary'] = $total_gross;
-                        $data['total_net_salary'] =  $total_net;
+                        if ($data['salary_type'] == 'DAILY') {
+                            $salary = (float)$data['total_days'] * (float)$data['unit_price'];
+                            $overtime = (float)$data['total_days_overtime'] * (float)$data['overtime'];
+                            $support = (float)$data['total_days_support'] * (float)$data['support_price'];
+                            $cor = (float)$data['total_days_cor'] * (float)$data['cor_price'];
+                            $total_gross = $salary + $overtime + $support + $cor;
+                            $total_net = $total_gross - (float)$data['loan_payment'];
+                            $data['total_gross_salary'] = $total_gross;
+                            $data['total_net_salary'] =  $total_net;
+                        } else if ($data['salary_type'] == 'MONTHLY') {
+                            $salary = (float)$data['total_days'] * (float)$data['unit_price'];
+                            $total_gross = $salary;
+                            $total_net = $total_gross - (float)$data['loan_payment'];
+                            $data['total_gross_salary'] = $total_gross;
+                            $data['total_net_salary'] =  $total_net;
+                        }
                         return $livewire->getRelationship()->create($data);
                     })
                     ->after(function (RelationManager $livewire, Model $record) {
@@ -379,14 +387,22 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         return $header->is_jurnal == 0 && $isEdit;
                     })
                     ->using(function (Model $record, array $data): Model {
-                        $salary = (float)$data['total_days'] * (float)$data['unit_price'];
-                        $overtime = (float)$data['total_days_overtime'] * (float)$data['overtime'];
-                        $support = (float)$data['total_days_support'] * (float)$data['support_price'];
-                        $cor = (float)$data['total_days_cor'] * (float)$data['cor_price'];
-                        $total_gross = $salary + $overtime + $support + $cor;
-                        $total_net = $total_gross - (float)$data['loan_payment'];
-                        $data['total_gross_salary'] = $total_gross;
-                        $data['total_net_salary'] =  $total_net;
+                        if ($data['salary_type'] == 'DAILY') {
+                            $salary = (float)$data['total_days'] * (float)$data['unit_price'];
+                            $overtime = (float)$data['total_days_overtime'] * (float)$data['overtime'];
+                            $support = (float)$data['total_days_support'] * (float)$data['support_price'];
+                            $cor = (float)$data['total_days_cor'] * (float)$data['cor_price'];
+                            $total_gross = $salary + $overtime + $support + $cor;
+                            $total_net = $total_gross - (float)$data['loan_payment'];
+                            $data['total_gross_salary'] = $total_gross;
+                            $data['total_net_salary'] =  $total_net;
+                        } else if ($data['salary_type'] == 'MONTHLY') {
+                            $salary = (float)$data['total_days'] * (float)$data['unit_price'];
+                            $total_gross = $salary;
+                            $total_net = $total_gross - (float)$data['loan_payment'];
+                            $data['total_gross_salary'] = $total_gross;
+                            $data['total_net_salary'] =  $total_net;
+                        }
                         $record->update($data);
                         return $record;
                     })
