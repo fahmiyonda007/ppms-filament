@@ -363,7 +363,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         } else if ($data['salary_type'] == 'MONTHLY') {
                             $salary = (float)$data['total_days'] * (float)$data['unit_price'];
                             $total_gross = $salary;
-                            $total_net = $total_gross - (float)$data['loan_payment'];
+                            $total_net = $total_gross;
                             $data['total_gross_salary'] = $total_gross;
                             $data['total_net_salary'] =  $total_net;
                         }
@@ -399,7 +399,7 @@ class EmployeePayrollDetailsRelationManager extends RelationManager
                         } else if ($data['salary_type'] == 'MONTHLY') {
                             $salary = (float)$data['total_days'] * (float)$data['unit_price'];
                             $total_gross = $salary;
-                            $total_net = $total_gross - (float)$data['loan_payment'];
+                            $total_net = $total_gross;
                             $data['total_gross_salary'] = $total_gross;
                             $data['total_net_salary'] =  $total_net;
                         }
