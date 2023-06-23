@@ -48,6 +48,7 @@ class DailyCostReport extends Page
                                 $period = $state;
                                 $periodDate = Carbon::parse(Str::replace('/', '-', $period))->format('Y-m-d');
 
+
                                 $this->frameSrc = env('APP_URL') . "/dailycostreport/pdf/{$periodDate}";
                             } else {
                                 $this->frameSrc = "";
