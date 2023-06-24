@@ -192,4 +192,20 @@ class ReportController extends Controller
 
         return $pdf->stream($fileName);
     }
+    public function SalesReportPdf($refCode)
+    {
+        $refCode = Str::replace("'", "", $refCode);
+        $invoiceDate = Carbon::now()->format('dmYs');
+        $fileName = "SalesReport_{$refCode}.pdf";
+
+        $reportData = [
+
+        ];
+        $record = DB::select("CALL SP_ProjectSalesReport ('{$refCode}')");
+
+        $pdf = PDF::loadView('report/SalesReport/index', compact('reportData', 'record', 'fileName'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->stream($fileName);
+    }
 }

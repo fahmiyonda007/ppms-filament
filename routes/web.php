@@ -34,3 +34,4 @@ Route::get('reportsummarysalary/pdf/{startDate}/{endDate}', [ReportController::c
 Route::get('vendorliabilities/pdf/{status}/{startDate}/{endDate}', [ReportController::class, 'VendorLiabilitiesPdf'])->name('VendorLiabilitiesPdf')->middleware('verified');
 Route::get('generaljournal/pdf/{refCode}/{startDate}/{endDate}', [ReportController::class, 'GeneralJournalPdf'])->name('GeneralJournalPdf')->middleware('verified');
 Route::get('journalvoucher/pdf/{refCode}', [ReportController::class, 'JournalVoucherPdf'])->name('JournalVoucherPdf')->middleware('verified');
+Route::get('salesreport/pdf/{refCode}', [ReportController::class, 'SalesReportPdf'])->name('SalesReportPdf')->middleware('verified');
