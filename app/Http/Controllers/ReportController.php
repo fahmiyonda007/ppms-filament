@@ -208,4 +208,20 @@ class ReportController extends Controller
 
         return $pdf->stream($fileName);
     }
+    public function ProfitLossMonthlyPdf($refCode)
+    {
+        $refCode = Str::replace("'", "", $refCode);
+        $invoiceDate = Carbon::now()->format('dmYs');
+        $fileName = "ProfitLossMonthly_{$refCode}.pdf";
+
+        $reportData = [
+            'yearPeriod' => $refCode,
+        ];
+        $record = DB::select("CALL SP_ProfitLoss_Monthly ('{$refCode}')");
+
+        $pdf = PDF::loadView('report/ProfitLossMonthly/index', compact('reportData', 'record', 'fileName'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->stream($fileName);
+    }
 }
