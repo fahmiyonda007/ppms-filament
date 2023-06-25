@@ -107,20 +107,20 @@ class CoaFirstResource extends Resource implements HasShieldPermissions
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->url(fn (Model $record): string => CoaFirstResource::getUrl('index') . '/' . $record->id . '/edit?activeRelationManager=1'),
-                Tables\Actions\DeleteAction::make()
-                    ->before(function ($record) {
-                        $record->seconds()->where('level_first_id', $record->id)->delete();
-                        $record->thirds()->where('level_first_id', $record->id)->delete();
-                    }),
+                // Tables\Actions\DeleteAction::make()
+                //     ->before(function ($record) {
+                //         $record->seconds()->where('level_first_id', $record->id)->delete();
+                //         $record->thirds()->where('level_first_id', $record->id)->delete();
+                //     }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make()
-                    ->before(function ($records) {
-                        foreach ($records as $item) {
-                            $item->seconds()->where('level_first_id', $item->id)->delete();
-                            $item->thirds()->where('level_first_id', $item->id)->delete();
-                        }
-                    }),
+                // Tables\Actions\DeleteBulkAction::make()
+                //     ->before(function ($records) {
+                //         foreach ($records as $item) {
+                //             $item->seconds()->where('level_first_id', $item->id)->delete();
+                //             $item->thirds()->where('level_first_id', $item->id)->delete();
+                //         }
+                //     }),
             ]);
     }
 
