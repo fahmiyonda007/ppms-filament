@@ -70,10 +70,10 @@ class CoaLevelSecondsRelationManager extends RelationManager
                         $record->update($data);
                         return $record;
                     }),
-                Tables\Actions\DeleteAction::make()
-                    ->before(function ($record) {
-                        $record->thirds()->where('level_second_id', $record->id)->delete();
-                    }),
+                // Tables\Actions\DeleteAction::make()
+                //     ->before(function ($record) {
+                //         $record->thirds()->where('level_second_id', $record->id)->delete();
+                //     }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

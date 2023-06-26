@@ -168,10 +168,10 @@ class CoaLevelThirdsRelationManager extends RelationManager
                                 ]),
                         ];
                     }),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

@@ -104,6 +104,7 @@ class CashFlowResource extends Resource implements HasShieldPermissions
                                     //$datas = array_merge($add, $main);
                                     return $main;
                                 })
+                                ->required()
                                 ->preload()
                                 ->searchable(),
                         ]),
