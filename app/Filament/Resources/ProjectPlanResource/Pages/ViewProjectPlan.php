@@ -21,9 +21,9 @@ class ViewProjectPlan extends ViewRecord
             //     ->url(fn () => route('plan-excel', ['record' => $this->record]))
             //     ->openUrlInNewTab(),
             Actions\EditAction::make()
-                ->visible(function (Model $record) {
-                    return $record->progress < 100.0;
-                }),
+                // ->visible(function (Model $record) {
+                //     return $record->progress < 100.0;
+                // }),
         ];
     }
     protected function beforeFill(): void

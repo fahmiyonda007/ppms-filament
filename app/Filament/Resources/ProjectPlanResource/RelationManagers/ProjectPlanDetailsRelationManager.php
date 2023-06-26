@@ -64,7 +64,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -126,7 +126,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->numeric()
                                             ->disabled()
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -139,7 +139,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -178,7 +178,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -191,7 +191,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->minValue(0.01)
                                                     ->maxValue(100)
@@ -204,7 +204,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                             ->numeric()
                                             ->disabled()
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -217,7 +217,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->minValue(0.01)
                                                     ->maxValue(100)
@@ -234,7 +234,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -248,7 +248,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -261,7 +261,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                                                 static::calculatePrice($get, $set);
                                             })
                                             ->mask(
-                                                fn(Mask $mask) => $mask
+                                                fn (Mask $mask) => $mask
                                                     ->numeric()
                                                     ->decimalPlaces(2)
                                                     ->decimalSeparator(',')
@@ -294,8 +294,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->visible(function (RelationManager $livewire) {
                         $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                        $isProgress = $livewire->ownerRecord->progress < 100.0;
-                        return $isEdit && $isProgress;
+                        return $isEdit;
                     })
                     ->using(function (HasRelationshipTable $livewire, array $data): Model {
                         $data['created_by'] = auth()->user()->email;
@@ -307,7 +306,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     Tables\Actions\EditAction::make()
                         ->visible(function (RelationManager $livewire, Model $record) {
                             $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                            $isProgress = $livewire->ownerRecord->progress < 100.0;
                             $isJournal = $record->is_jurnal == 0;
                             return $isEdit && $isJournal;
                         })
@@ -319,7 +317,6 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     Tables\Actions\DeleteAction::make()
                         ->visible(function (RelationManager $livewire, Model $record) {
                             $isEdit = Str::contains($livewire->pageClass, '\Edit');
-                            $isProgress = $livewire->ownerRecord->progress < 100.0;
                             $isJournal = $record->is_jurnal == 0;
                             return $isEdit && $isJournal;
                         }),
@@ -329,7 +326,7 @@ class ProjectPlanDetailsRelationManager extends RelationManager
                     ->button()
                     ->label('Post Journal')
                     ->icon('heroicon-s-cash')
-                    ->action(fn($action, $record, $livewire) => static::postJournal($action, $record, $livewire->ownerRecord))
+                    ->action(fn ($action, $record, $livewire) => static::postJournal($action, $record, $livewire->ownerRecord))
                     ->requiresConfirmation()
                     ->visible(function (Model $record) {
                         return $record->is_jurnal == 0;

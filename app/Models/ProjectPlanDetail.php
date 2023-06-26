@@ -55,8 +55,6 @@ class ProjectPlanDetail extends Model
     ];
 
     protected $hidden = [
-        'project_plan_id',
-        'sales_id',
         'created_at',
         'updated_at',
         'created_by',

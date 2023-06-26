@@ -131,9 +131,9 @@ class ProjectPlanResource extends Resource implements HasShieldPermissions
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make()
-                        ->visible(function (Model $record) {
-                            return $record->progress < 100.0;
-                        }),
+                        // ->visible(function (Model $record) {
+                        //     return $record->progress < 100.0;
+                        // }),
                     // Tables\Actions\DeleteAction::make()
                     //     ->visible(function (Model $record) {
                     //         return $record->progress < 100.0;

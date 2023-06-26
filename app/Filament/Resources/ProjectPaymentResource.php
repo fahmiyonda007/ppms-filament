@@ -8,6 +8,9 @@ use App\Filament\Resources\ProjectPaymenteResource\RelationManagers\ProjectPayme
 use App\Filament\Resources\ProjectPaymentResource\Pages;
 use App\Filament\Resources\ProjectPaymentResource\RelationManagers;
 use App\Models\ProjectPayment;
+use App\Models\ProjectPaymentDetail;
+use App\Models\ProjectPlan;
+use App\Models\ProjectPlanDetail;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Carbon\Carbon;
 use Closure;
@@ -22,6 +25,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\BooleanFilter;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
 use Webbingbrasil\FilamentAdvancedFilter\Filters\NumberFilter;
@@ -60,7 +64,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'projectPlan',
                                     'name',
-                                    fn(Builder $query) => $query->whereNotIn('id', [1, 2, 3])
+                                    fn (Builder $query) => $query->whereNotIn('id', [1, 2, 3])
                                 )
                                 ->reactive()
                                 ->required()
@@ -73,7 +77,28 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->relationship(
                                     'projectPlanDetail',
                                     'unit_kavling',
-                                    fn(Builder $query, callable $get) => $query->where('project_plan_id', $get('project_plan_id'))
+                                    function (Builder $query, callable $get, $state, $record) {
+                                        if ($record) {
+                                            $notIns = ProjectPayment::select('project_plan_detail_id')
+                                                ->where([
+                                                    ['project_plan_id', (float)$get('project_plan_id')],
+                                                    ['project_plan_detail_id', '!=', (float)$record->project_plan_detail_id]
+                                                ]);
+                                        } else {
+                                            $notIns = ProjectPayment::select('project_plan_detail_id')
+                                                ->where([
+                                                    ['project_plan_id', (float)$get('project_plan_id')],
+                                                ]);
+                                        }
+                                        $notIns->get()->pluck('project_plan_detail_id')->toArray();
+                                        // dd($record->project_plan_detail_id);
+                                        $qry = $query->where([
+                                            ['project_plan_id', $get('project_plan_id')],
+                                            ['is_jurnal', 1],
+                                        ])
+                                            ->whereNotIn('id', $notIns);
+                                        return $qry;
+                                    }
                                 )
                                 ->preload()
                                 ->required()
@@ -83,7 +108,7 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                 ->searchable()
                                 ->preload()
                                 ->reactive()
-                                ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->phone}")
+                                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->phone}")
                                 ->label('Booking By'),
                             Forms\Components\DatePicker::make('booking_date')
                                 ->required(function (callable $get) {
@@ -117,19 +142,19 @@ class ProjectPaymentResource extends Resource implements HasShieldPermissions
                                     'PKS' => 'PKS',
                                     'NON PKS' => 'NON PKS',
                                 ]),
-                            Forms\Components\Select::make('sales_id')
-                                ->relationship(
-                                    'employee',
-                                    'employee_name',
-                                    fn(Builder $query) => $query
-                                        ->where('department', 'MARKETING')
-                                        ->Where('is_resign', 1)
-                                )
+                            Forms\Components\TextInput::make('sales_id')
+                                // ->relationship(
+                                //     'employee',
+                                //     'employee_name',
+                                //     fn(Builder $query) => $query
+                                //         ->where('department', 'MARKETING')
+                                //         ->Where('is_resign', 1)
+                                // )
                                 ->required(function (callable $get) {
                                     return $get('booking_by') != null;
                                 })
-                                ->searchable()
-                                ->preload()
+                                // ->searchable()
+                                // ->preload()
                                 ->columnSpanFull()
                                 ->label('Marketing'),
                             Forms\Components\Textarea::make('description')
